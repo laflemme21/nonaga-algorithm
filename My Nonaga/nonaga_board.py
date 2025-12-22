@@ -4,7 +4,7 @@ class NonagaBoard:
     def __init__(self):
         """Initialize the board state."""
         self.islands: list = self._create_initial_board()  # List of islands on the board
-    
+
         pass
 
     def get_state(self):
@@ -14,81 +14,201 @@ class NonagaBoard:
     def set_state(self, state):
         """Set the board to a given state."""
         pass
-    
+
     def move_piece(self, from_pos, to_pos):
         """Move a piece from one position to another."""
         pass
-    
+
     def move_tile(self, tile, direction):
         """Move a tile in the specified direction."""
         pass
-    
+
     def create_island(self):
         """Encapsulate an island on the board."""
         pass
-    
+
     def merge_islands(self):
         """Merge adjacent islands."""
         pass
-    
+
+
 class NonagaIsland:
     """Represents an independant group of connected tiles on the Nonaga board."""
 
-    def __init__(self, tiles : "NonagaTile" = None, pieces : "NonagaPiece" = None):
+    def __init__(self, tiles: list["NonagaTile"] = None, pieces: "NonagaPiece" = None):
         """Initialize the island with a list of tiles."""
-        self.tiles = tiles if tiles is not None else []
-        self.pieces = pieces if pieces is not None else []
-    
-    def add_tile(self, tile):
+
+        self.movable_tiles = []
+        self.unmovable_tiles = []
+        self.pieces = []
+
+        if tiles is not None:
+            self.add_tiles(tiles)
+            self.add_pieces(pieces)
+
+    def _add_tile(self, tile: "NonagaTile"):
         """Add a tile to the island."""
-        self.tiles.append(tile)
-    
-    def remove_tile(self, tile):
-        """Remove a tile from the island."""
-        self.tiles.remove(tile)
-    
+        pass
+
+    def add_tile(self, tile: "NonagaTile"):
+        """Add a tile to the island."""
+        self._add_tile(tile)
+        self.border_tiles = self.movable_tiles + self.unmovable_tiles
+
+    def add_tiles(self, tiles: list["NonagaTile"]):
+        """Add multiple tiles to the island."""
+        for i in tiles:
+            self._add_tile(i)
+        self.border_tiles = self.movable_tiles + self.unmovable_tiles
+
+    def add_piece(self, piece):
+        """Add a piece to the island."""
+        pass
+
+    def add_pieces(self, pieces):
+        """Add multiple pieces to the island."""
+        for p in pieces:
+            self.add_piece(p)
+
+    def merge_with(self, other_island):
+        """Merge another island into this one."""
+        self.add_tiles(other_island.tiles)
+        self.add_piece(other_island.pieces)
+
     def get_tiles(self):
         """Return the list of tiles in the island."""
         return self.tiles
-    
-    def add_piece(self, piece):
-        """Add a piece to the island."""
-        self.pieces.append(piece)
-    
+
+    def remove_tile(self, tile):
+        """Remove a tile from the island."""
+        pass
+
     def remove_piece(self, piece):
         """Remove a piece from the island."""
         self.pieces.remove(piece)
-    
+
+    def _get_all_tiles(self):
+        """Return all tiles in the island (both movable and unmovable)."""
+        return self.movable_tiles + self.unmovable_tiles
+
+    def _get_neighbor_offsets(self):
+        """Return the 6 neighbor offsets in cube coordinates (q, r, s)."""
+        return [
+            (1, -1, 0),
+            (1, 0, -1),
+            (0, 1, -1),
+            (-1, 1, 0),
+            (-1, 0, 1),
+            (0, -1, 1)
+        ]
+
+    def _get_tile_coords_set(self, tiles: list["NonagaTile"] = None):
+        """Return a set of coordinate tuples for all tiles in the island or the given tiles."""
+        if tiles is None:
+            tiles = self._get_all_tiles()
+        return {tile.get_position().get_coordinates() for tile in tiles}
+
+    def _get_neighbors(self, tile: "NonagaTile", tile_coords_set: set = None):
+        """Return a list of coordinates of neighboring tiles."""
+        if tile_coords_set is None:
+            tile_coords_set = self._get_tile_coords_set()
+
+        tile_coords = tile.get_position().get_coordinates()
+        neighbor_offsets = self._get_neighbor_offsets()
+
+        neighbors = []
+        for offset in neighbor_offsets:
+            neighbor_pos = (
+                tile_coords[0] + offset[0],
+                tile_coords[1] + offset[1],
+                tile_coords[2] + offset[2]
+            )
+            if neighbor_pos in tile_coords_set:
+                neighbors.append(neighbor_pos)
+
+        return neighbors
+
+    def _neighbors_are_connected(self, neighbors: list):
+        """Check if the set of neighbors forms a single connected component."""
+        if not neighbors:
+            return True
+
+        neighbor_set = set(neighbors)
+        start = neighbors[0]
+        visited = {start}
+        queue = [start]
+
+        neighbor_offsets = self._get_neighbor_offsets()
+
+        while queue:
+            curr = queue.pop(0)
+            for offset in neighbor_offsets:
+                adj_pos = (
+                    curr[0] + offset[0],
+                    curr[1] + offset[1],
+                    curr[2] + offset[2]
+                )
+                if adj_pos in neighbor_set and adj_pos not in visited:
+                    visited.add(adj_pos)
+                    queue.append(adj_pos)
+
+        return len(visited) == len(neighbors)
+
+    def update_tiles(self):
+        """Update the list of movable and unmovable tiles based on neighbor count.
+        
+        Rules:
+        - 5 or 6 neighbors -> unmovable
+        - 1 or 2 neighbors -> movable
+        - 3 or 4 neighbors -> check if neighbors are connected
+        """
+        all_tiles = self._get_all_tiles()
+        tile_coords_set = self._get_tile_coords_set(all_tiles)
+        new_movable = []
+        new_unmovable = []
+
+        for tile in all_tiles:
+            neighbors = self._get_neighbors(tile, tile_coords_set)
+            neighbor_count = len(neighbors)
+
+            if neighbor_count >= 5:
+                # 5 or 6 neighbors -> unmovable
+                new_unmovable.append(tile)
+            elif neighbor_count <= 2:
+                # 1 or 2 neighbors -> movable
+                new_movable.append(tile)
+            else:
+                # 3 or 4 neighbors -> check connectivity
+                if self._neighbors_are_connected(neighbors):
+                    new_movable.append(tile)
+                else:
+                    new_unmovable.append(tile)
+
+        self.movable_tiles = new_movable
+        self.unmovable_tiles = new_unmovable
+        self.border_tiles = self.movable_tiles + self.unmovable_tiles
+
+
 class NonagaTile:
     """Represents a tile on the Nonaga board."""
 
     def __init__(self, position: "NonagaTilesCoordinates"):
         """Initialize the tile with its position and optional color."""
         self.position = position  # (q, r, s) hexagonal coordinates
-    
-    def set_color(self, color):
-        """Set the color of the tile."""
-        self.color = color
 
     def set_position(self, position: "NonagaTilesCoordinates"):
         """Set the position of the tile."""
         self.position = position
-        
+
     def set_position(self, position: tuple[int, int, int]):
         """Set the position of the tile."""
         self.position.set_coordinates(*position)
-        
-    def get_color(self):
-        """Get the color of the tile."""
-        return self.color
-    
+
     def get_position(self):
         """Get the position of the tile."""
         return self.position
-    
-    
 
-    
+
 class NonagaPiece(NonagaTile):
     """Represents a game piece positioned on a tile on the Nonaga board, inherits from NonagaTile."""
 
@@ -96,28 +216,35 @@ class NonagaPiece(NonagaTile):
         """Initialize the piece with its position and color."""
         super().__init__(position)
         self.color = color  # "red" or "black"
-        
+
+    def get_color(self):
+        """Return the color of the piece."""
+        return self.color
+
+    def set_color(self, color):
+        """Set the color of the piece."""
+        self.color = color
+
+
 class NonagaTilesCoordinates:
     """Holds the hexagonal coordinates for all tiles on the Nonaga board."""
-    
+
     def __init__(self, q: int, r: int, s: int):
         """Initialize the tile coordinates."""
         self.q = q  # axial coordinate
         self.r = r  # axial coordinate
         self.s = s  # derived coordinate (s = -q - r)
-        
+
     def get_coordinates(self):
         """Return the (q, r, s) coordinates as a tuple."""
         return (self.q, self.r, self.s)
-    
+
     def set_coordinates(self, q: int, r: int, s: int):
         """Set the (q, r, s) coordinates."""
         self.q = q
         self.r = r
         self.s = s
-        
+
     def distance_to(self, other: "NonagaTilesCoordinates"):
         """Calculate the distance to another tile using hexagonal distance formula."""
         return (abs(self.q - other.q) + abs(self.r - other.r) + abs(self.s - other.s)) // 2
-    
-    
