@@ -1,34 +1,68 @@
+from nonaga_constants import RED,BLACK
+
 class NonagaBoard:
     """Represents the state of the Nonaga game board."""
 
     def __init__(self):
         """Initialize the board state."""
-        self.islands: list = self._create_initial_board()  # List of islands on the board
+        
+        """Create the initial board with islands, tiles, and pieces."""
+        
+        # Create a list of (q, r) axial coordinates for a hexagonal grid.
+        coords = []
+        radius = 2  # Default radius for the hexagonal board
 
-        pass
+        # q is the column-like axis
+        for q in range(-radius, radius + 1):
+            # r is the row-like axis, constrained to keep the shape hexagonal
+            r_start = max(-radius, -q - radius)
+            r_end = min(radius, -q + radius)
+
+            for r in range(r_start, r_end + 1):
+                coords.append((q, r, -q - r))  # s is derived as -q - r
+
+        tiles = [NonagaTile(NonagaTilesCoordinates(q, r, s))
+                 for q, r, s in coords]
+
+        pieces_coord = [((-2, 0, 2),RED), ((-2, 2, 0),BLACK), ((0, 2, -2),RED),
+                        ((2, 0, -2),BLACK), ((2, -2, 0),RED), ((0, -2, 2),BLACK)] 
+        pieces = [NonagaPiece(NonagaTilesCoordinates(q, r, s), color) for (q, r, s), color in pieces_coord]
+
+        # Create the initial island
+        self.islands = [NonagaIsland(tiles,pieces)]
+        self.pieces = [[0,piece] for piece in pieces]
+        self.tiles = [[0,tile] for tile in tiles]
+        
+        
 
     def get_state(self):
         """Return the current state of the board."""
+        # TODO: Implement board state getter
         pass
 
     def set_state(self, state):
         """Set the board to a given state."""
+        # TODO: Implement board state setter
         pass
 
     def move_piece(self, from_pos, to_pos):
         """Move a piece from one position to another."""
+        # TODO: Implement piece movement
         pass
 
     def move_tile(self, tile, direction):
         """Move a tile in the specified direction."""
+        # TODO: Implement tile movement
         pass
 
     def create_island(self):
         """Encapsulate an island on the board."""
+        # TODO: Implement island creation
         pass
 
     def merge_islands(self):
         """Merge adjacent islands."""
+        # TODO: Implement island merging
         pass
 
 
@@ -48,22 +82,26 @@ class NonagaIsland:
 
     def _add_tile(self, tile: "NonagaTile"):
         """Add a tile to the island."""
-        pass
+        self.movable_tiles.append(tile)
 
     def add_tile(self, tile: "NonagaTile"):
         """Add a tile to the island."""
         self._add_tile(tile)
+        self.update_tiles()
         self.border_tiles = self.movable_tiles + self.unmovable_tiles
 
     def add_tiles(self, tiles: list["NonagaTile"]):
         """Add multiple tiles to the island."""
         for i in tiles:
             self._add_tile(i)
+        self.update_tiles()
         self.border_tiles = self.movable_tiles + self.unmovable_tiles
 
     def add_piece(self, piece):
         """Add a piece to the island."""
-        pass
+        self.pieces.append(piece)
+        self.unmovable_tiles.append(piece)
+        self.update_tiles()
 
     def add_pieces(self, pieces):
         """Add multiple pieces to the island."""
@@ -81,7 +119,9 @@ class NonagaIsland:
 
     def remove_tile(self, tile):
         """Remove a tile from the island."""
-        pass
+        self.movable_tiles.remove(tile)
+        self.unmovable_tiles.remove(tile)
+        self.update_tiles()
 
     def remove_piece(self, piece):
         """Remove a piece from the island."""
@@ -156,7 +196,7 @@ class NonagaIsland:
 
     def update_tiles(self):
         """Update the list of movable and unmovable tiles based on neighbor count.
-        
+
         Rules:
         - 5 or 6 neighbors -> unmovable
         - 1 or 2 neighbors -> movable
@@ -171,7 +211,9 @@ class NonagaIsland:
             neighbors = self._get_neighbors(tile, tile_coords_set)
             neighbor_count = len(neighbors)
 
-            if neighbor_count >= 5:
+            if tile in self.pieces:
+                new_unmovable.append(tile)
+            elif neighbor_count >= 5:
                 # 5 or 6 neighbors -> unmovable
                 new_unmovable.append(tile)
             elif neighbor_count <= 2:
@@ -196,6 +238,16 @@ class NonagaTile:
         """Initialize the tile with its position and optional color."""
         self.position = position  # (q, r, s) hexagonal coordinates
 
+    def __eq__(self, other):
+        """Check equality based on position."""
+        if not isinstance(other, NonagaTile):
+            return False
+        return self.position.get_coordinates() == other.position.get_coordinates()
+    
+    def __hash__(self):
+        """Hash based on position."""
+        return hash(self.position.get_coordinates())
+    
     def set_position(self, position: "NonagaTilesCoordinates"):
         """Set the position of the tile."""
         self.position = position

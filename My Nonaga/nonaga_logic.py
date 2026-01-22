@@ -1,10 +1,9 @@
-# RED and BLACK are constants representing the two players.
-RED = 0
-BLACK = 1
+
+
 
 class NonagaLogic:
     """Manages the game logic for Nonaga."""
-    
+
     def __init__(self, player_red=None, player_black=None):
         """Initialize the game logic.
 
@@ -24,7 +23,7 @@ class NonagaLogic:
 
     def _create_initial_board(self):
         """Create the initial board state."""
-        # Stub for initial board setup
+        # TODO: Implement initial board setup
         return {}
 
     def get_board_state(self):
@@ -44,24 +43,30 @@ class NonagaLogic:
 
     def reset(self):
         """Reset the game to initial state."""
+        # TODO: Implement game reset
         pass
 
     def get_valid_moves(self):
         """Get all valid moves for the current player."""
+        # TODO: Implement valid move calculation
         pass
 
     def make_move(self, move):
         """Execute a move."""
+        # TODO: Implement move execution
         pass
 
     def check_win_condition(self):
         """Check if a player has won."""
+        # TODO: Implement win condition check
         pass
 
     def get_current_player(self):
         """Get the current player."""
+        # TODO: Implement current player getter
         pass
 
     def switch_player(self):
         """Switch to the next player."""
+        # TODO: Implement player switching
         pass
