@@ -1,4 +1,4 @@
-
+from nonaga_constants import RED, BLACK
 
 
 class NonagaLogic:
@@ -11,9 +11,7 @@ class NonagaLogic:
             player_red: Player 1 - can be None for human or a callable for AI.
             player_black: Player 2 - can be None for human or a callable for AI.
         """
-        # Board state - stores the current game board for display and logic
-        self.board_state = self._create_initial_board()
-
+        
         # Players - None means human player, callable means AI/computer player
         self.player_red = player_red
         self.player_black = player_black
@@ -21,10 +19,6 @@ class NonagaLogic:
         # Current player ("red" or "black")
         self.current_player = RED
 
-    def _create_initial_board(self):
-        """Create the initial board state."""
-        # TODO: Implement initial board setup
-        return {}
 
     def get_board_state(self):
         """Get the current board state for display."""
@@ -40,11 +34,6 @@ class NonagaLogic:
         """
         player = self.player_red if player_color == 1 else self.player_black
         return callable(player)
-
-    def reset(self):
-        """Reset the game to initial state."""
-        # TODO: Implement game reset
-        pass
 
     def get_valid_moves(self):
         """Get all valid moves for the current player."""

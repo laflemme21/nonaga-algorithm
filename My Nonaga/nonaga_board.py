@@ -21,12 +21,12 @@ class NonagaBoard:
             for r in range(r_start, r_end + 1):
                 coords.append((q, r, -q - r))  # s is derived as -q - r
 
-        tiles = [NonagaTile(NonagaTilesCoordinates(q, r, s))
+        tiles = [NonagaTile(q, r, s)
                  for q, r, s in coords]
 
         pieces_coord = [((-2, 0, 2),RED), ((-2, 2, 0),BLACK), ((0, 2, -2),RED),
                         ((2, 0, -2),BLACK), ((2, -2, 0),RED), ((0, -2, 2),BLACK)] 
-        pieces = [NonagaPiece(NonagaTilesCoordinates(q, r, s), color) for (q, r, s), color in pieces_coord]
+        pieces = [NonagaPiece(q, r, s, color) for (q, r, s), color in pieces_coord]
 
         # Create the initial island
         self.islands = [NonagaIsland(tiles,pieces)]
@@ -36,9 +36,10 @@ class NonagaBoard:
         
 
     def get_state(self):
-        """Return the current state of the board."""
-        # TODO: Implement board state getter
-        pass
+        """Return the current state of the board for rendering."""
+        tiles = [tile for _, tile in self.tiles]
+        pieces = [piece for _, piece in self.pieces]
+        return {"tiles": tiles, "pieces": pieces}
 
     def set_state(self, state):
         """Set the board to a given state."""
@@ -146,14 +147,14 @@ class NonagaIsland:
         """Return a set of coordinate tuples for all tiles in the island or the given tiles."""
         if tiles is None:
             tiles = self._get_all_tiles()
-        return {tile.get_position().get_coordinates() for tile in tiles}
+        return {tile.get_position() for tile in tiles}
 
     def _get_neighbors(self, tile: "NonagaTile", tile_coords_set: set = None):
         """Return a list of coordinates of neighboring tiles."""
         if tile_coords_set is None:
             tile_coords_set = self._get_tile_coords_set()
 
-        tile_coords = tile.get_position().get_coordinates()
+        tile_coords = tile.get_position()
         neighbor_offsets = self._get_neighbor_offsets()
 
         neighbors = []
@@ -231,42 +232,55 @@ class NonagaIsland:
         self.border_tiles = self.movable_tiles + self.unmovable_tiles
 
 
-class NonagaTile:
+class NonagaTilesCoordinates:
+    """Holds the hexagonal coordinates for all tiles on the Nonaga board."""
+
+    def __init__(self, q: int, r: int, s: int):
+        """Initialize the tile coordinates."""
+        self.q = q  # axial coordinate
+        self.r = r  # axial coordinate
+        self.s = s  # derived coordinate (s = -q - r)
+
+    def get_position(self):
+        """Return the (q, r, s) coordinates as a tuple."""
+        return (self.q, self.r, self.s)
+
+    def set_position(self, q: int, r: int, s: int):
+        """Set the (q, r, s) coordinates."""
+        self.q = q
+        self.r = r
+        self.s = s
+
+    def distance_to(self, other: "NonagaTilesCoordinates"):
+        """Calculate the distance to another tile using hexagonal distance formula."""
+        return (abs(self.q - other.q) + abs(self.r - other.r) + abs(self.s - other.s)) // 2
+    
+class NonagaTile(NonagaTilesCoordinates):
     """Represents a tile on the Nonaga board."""
 
-    def __init__(self, position: "NonagaTilesCoordinates"):
-        """Initialize the tile with its position and optional color."""
-        self.position = position  # (q, r, s) hexagonal coordinates
+    def __init__(self, q: int, r: int, s: int):
+        """Initialize the tile with its position."""
+        super().__init__(q, r, s)
+    
 
     def __eq__(self, other):
         """Check equality based on position."""
         if not isinstance(other, NonagaTile):
             return False
-        return self.position.get_coordinates() == other.position.get_coordinates()
+        return self.get_position() == other.get_position()
     
     def __hash__(self):
         """Hash based on position."""
-        return hash(self.position.get_coordinates())
+        return hash(self.get_position())
     
-    def set_position(self, position: "NonagaTilesCoordinates"):
-        """Set the position of the tile."""
-        self.position = position
-
-    def set_position(self, position: tuple[int, int, int]):
-        """Set the position of the tile."""
-        self.position.set_coordinates(*position)
-
-    def get_position(self):
-        """Get the position of the tile."""
-        return self.position
 
 
 class NonagaPiece(NonagaTile):
     """Represents a game piece positioned on a tile on the Nonaga board, inherits from NonagaTile."""
 
-    def __init__(self, position, color):
+    def __init__(self, q, r, s, color):
         """Initialize the piece with its position and color."""
-        super().__init__(position)
+        super().__init__(q, r, s)
         self.color = color  # "red" or "black"
 
     def get_color(self):
@@ -278,25 +292,4 @@ class NonagaPiece(NonagaTile):
         self.color = color
 
 
-class NonagaTilesCoordinates:
-    """Holds the hexagonal coordinates for all tiles on the Nonaga board."""
 
-    def __init__(self, q: int, r: int, s: int):
-        """Initialize the tile coordinates."""
-        self.q = q  # axial coordinate
-        self.r = r  # axial coordinate
-        self.s = s  # derived coordinate (s = -q - r)
-
-    def get_coordinates(self):
-        """Return the (q, r, s) coordinates as a tuple."""
-        return (self.q, self.r, self.s)
-
-    def set_coordinates(self, q: int, r: int, s: int):
-        """Set the (q, r, s) coordinates."""
-        self.q = q
-        self.r = r
-        self.s = s
-
-    def distance_to(self, other: "NonagaTilesCoordinates"):
-        """Calculate the distance to another tile using hexagonal distance formula."""
-        return (abs(self.q - other.q) + abs(self.r - other.r) + abs(self.s - other.s)) // 2
