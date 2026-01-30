@@ -1,5 +1,6 @@
 from nonaga_constants import RED, BLACK
 
+from nonaga_board import NonagaBoard, NonagaPiece, NonagaTile
 
 class NonagaLogic:
     """Manages the game logic for Nonaga."""
@@ -12,17 +13,20 @@ class NonagaLogic:
             player_black: Player 2 - can be None for human or a callable for AI.
         """
         
-        # Players - None means human player, callable means AI/computer player
+        # Players 
         self.player_red = player_red
         self.player_black = player_black
 
+        # Board
+        self.board = NonagaBoard()
+        
         # Current player ("red" or "black")
         self.current_player = RED
 
 
     def get_board_state(self):
         """Get the current board state for display."""
-        return self.board_state
+        return self.board.get_state()
 
     def is_ai_player(self, player_color):
         """Check if a player is controlled by AI.
@@ -39,6 +43,18 @@ class NonagaLogic:
         """Get all valid moves for the current player."""
         # TODO: Implement valid move calculation
         pass
+    
+    def _get_tile_valid_moves(self, tile):
+        """Get valid moves for a specific tile.
+
+        Args:
+            tile: NonagaTile object
+        Returns:
+            List of valid positions for the tile.
+        """
+        
+        
+        return []
 
     def make_move(self, move):
         """Execute a move."""

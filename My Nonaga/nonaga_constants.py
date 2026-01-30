@@ -8,3 +8,6 @@ HEX_COLOR = (188, 158, 106)  # Default hex color
 CIRCLE_SIZE = HEX_SIZE * 0.66  # Size of each piece in pixels
 RED_PIECE_COLOR = (200, 20, 15)  # Color for RED pieces
 BLACK_PIECE_COLOR = (20, 30, 30)  # Color for BLACK pieces
+
+SCREEN_WIDTH = 800  # Width of the game window
+SCREEN_HEIGHT = 500  # Height of the game window
