@@ -2,7 +2,7 @@ import pygame
 import math
 from nonaga_constants import *
 from nonaga_board import NonagaBoard, NonagaPiece, NonagaTile
-
+from nonaga_logic import NonagaLogic
 
 class Game:
     """Manages the PyGame game loop and rendering."""
@@ -16,7 +16,7 @@ class Game:
         self.running = False
         self.fps = 60
         self.title = "Red to play"
-        self.board = NonagaBoard()
+        self.game_logic = NonagaLogic()
         self.hovered_piece: NonagaPiece = None
         self.hovered_tile: NonagaTile = None
         self.board_center_x = None
@@ -44,10 +44,10 @@ class Game:
     def render_frame(self):
         """Clear screen and render game state."""
         self.screen.fill((255, 255, 255))  # Clear screen with white background
-        state = self.board.get_state()
+        state = self.game_logic.get_board_state()
         self.board_center_x = self.screen.get_width() // 2
         self.board_center_y = self.screen.get_height() // 2
-        self.render(self.screen, state["tiles"], state["pieces"],
+        self.render(self.screen, state["tiles"], state["pieces"], self.game_logic._get_all_valid_piece_moves(),
                     self.board_center_x, self.board_center_y)
         pygame.display.flip()
 
@@ -75,7 +75,7 @@ class Game:
         # TODO: Implement game state updates
         pass
 
-    def render(self, screen, tiles, pieces,
+    def render(self, screen, tiles, pieces, piece_moves,
                center_x=None, center_y=None):
         """Render hexagons and circles on the board.
 
@@ -106,6 +106,14 @@ class Game:
             ) == RED else BLACK_PIECE_COLOR  # Red or Black
             self._draw_circle(screen, q, r,
                               piece_color, center_x, center_y)
+            
+        # Render possible moves for hovered piece
+        if self.hovered_piece is not None:
+            color = RED_PIECE_MOVE_COLOR if self.hovered_piece.get_color() == RED else BLACK_PIECE_MOVE_COLOR
+            for move in piece_moves[self.hovered_piece.get_position()]:
+                q, r, s = move
+                self._draw_circle(screen, q, r,
+                                  color, center_x, center_y)
 
     def _draw_hexagon(self, screen, q, r, center_x, center_y):
         """Draw a hexagon at axial coordinates (q, r).
@@ -174,7 +182,7 @@ class Game:
         Args:
             mouse_pos: tuple of (x, y) mouse position
         """
-        state = self.board.get_state()
+        state = self.game_logic.get_board_state()
         mx, my = mouse_pos
 
         # Reset hovered piece first
