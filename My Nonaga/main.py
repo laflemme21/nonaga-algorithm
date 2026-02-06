@@ -6,6 +6,7 @@ from nonaga_board import NonagaBoard, NonagaIsland, NonagaPiece, NonagaTile
 
 def main():
     """Main entry point for the game."""
+    
     while True:
         # Show menu and get player choice
         menu = Menu(SCREEN_WIDTH, SCREEN_HEIGHT)

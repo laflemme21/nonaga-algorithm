@@ -44,7 +44,21 @@ class NonagaLogic:
         # TODO: Implement valid move calculation
         pass
 
-    def _get_valid_tile_moves(self, tile):
+    def get_all_valid_tile_moves(self):
+        """Get valid moves for a specific tile.
+
+        Args:
+            tile: NonagaTile object
+        Returns:
+            List of valid positions for the tile.
+        """
+        island = self.board.islands[0]
+        move ={}
+        for tile in island.get_movable_tiles():
+            move[tile.get_position()] = self._get_valid_tile_positions(tile, island)
+        return move
+
+    def _get_valid_tile_positions(self, tile: NonagaTile, island: NonagaIsland):
         """Get valid moves for a specific tile.
 
         Args:
@@ -53,9 +67,51 @@ class NonagaLogic:
             List of valid positions for the tile.
         """
 
-        return []
+        """
+        multiple things matter here
+        1- is there a piece on the tile
+        2- is the tile movable
+        3- where can the tile move
+        """
 
-    def _get_all_valid_piece_moves(self):
+        tile_coords_set = island._get_tile_coords_set()
+        tile_coords_set.remove(tile.get_position())
+        neighbor_offsets = island._get_neighbor_offsets()
+
+        candidate_positions = set()
+        for existing_pos in tile_coords_set:
+            for offset in neighbor_offsets:
+                candidate_positions.add(
+                    (
+                        existing_pos[0] + offset[0],
+                        existing_pos[1] + offset[1],
+                        existing_pos[2] + offset[2],
+                    )
+                )
+
+        candidate_positions.difference_update(tile_coords_set)
+
+        valid_positions = []
+        for candidate in candidate_positions:
+            neighbor_positions = []
+            for offset in neighbor_offsets:
+                neighbor_pos = (
+                    candidate[0] + offset[0],
+                    candidate[1] + offset[1],
+                    candidate[2] + offset[2],
+                )
+                if neighbor_pos in tile_coords_set:
+                    neighbor_positions.append(neighbor_pos)
+
+            neighbor_count = len(neighbor_positions)
+
+            if 2 <= neighbor_count <= 4:
+                if neighbor_count <= 2 or island._neighbors_are_connected(neighbor_positions):
+                    valid_positions.append(candidate)
+        valid_positions.remove(tile.get_position())
+        return valid_positions
+
+    def get_all_valid_piece_moves(self):
         """Get valid moves for a specific piece.
 
         Args:
@@ -87,13 +143,13 @@ class NonagaLogic:
             moves[piece.get_position()] = []
             for dimension in range(3):
                 for direction in [-1, 1]:
-                    valid_move = self._get_valid_moves_in_direction(
+                    valid_move = self._get_valid_piece_moves_in_direction(
                         piece, island, dimension, direction)
                     if valid_move:
                         moves[piece.get_position()].append(valid_move)
         return moves
 
-    def _get_valid_moves_in_direction(self, piece: NonagaPiece, island: NonagaIsland, dimension: int, direction: int):
+    def _get_valid_piece_moves_in_direction(self, piece: NonagaPiece, island: NonagaIsland, dimension: int, direction: int):
         destination = None
         for i in range(piece.get_position()[dimension]+direction, direction*island.get_number_of_tiles(), direction):
             tile_coords_list = list(piece.get_position())
