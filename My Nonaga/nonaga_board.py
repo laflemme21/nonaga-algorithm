@@ -276,10 +276,15 @@ class NonagaTilesCoordinates:
         self.q = q
         self.r = r
         self.s = s
+    
+    def set_position(self, position: tuple[int, int, int]):
+        """Set the (q, r, s) coordinates from a tuple."""
+        self.q, self.r, self.s = position
 
     def distance_to(self, other: "NonagaTilesCoordinates"):
         """Calculate the distance to another tile using hexagonal distance formula."""
         return (abs(self.q - other.q) + abs(self.r - other.r) + abs(self.s - other.s)) // 2
+    
     
 class NonagaTile(NonagaTilesCoordinates):
     """Represents a tile on the Nonaga board."""
@@ -301,6 +306,10 @@ class NonagaTile(NonagaTilesCoordinates):
         """Hash based on position."""
         return hash(self.get_position())
     
+    def __str__(self):
+        """String representation of the tile."""
+        return f"Tile({self.q}, {self.r}, {self.s})"
+    
 
 
 class NonagaPiece(NonagaTile):
@@ -319,5 +328,8 @@ class NonagaPiece(NonagaTile):
         """Set the color of the piece."""
         self.color = color
 
+    def __str__(self):        
+        """String representation of the piece."""
+        return f"Piece({self.q}, {self.r}, {self.s}, {self.color})"
 
 

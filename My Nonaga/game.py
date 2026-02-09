@@ -16,12 +16,24 @@ class Game:
         self.clock = None
         self.running = False
         self.fps = 60
+        
         self.title = "Red to play"
         self.game_logic = NonagaLogic()
+        
+        
         self.hovered_piece: NonagaPiece = None
         self.hovered_tile: NonagaTile = None
+        
         self.last_clicked_piece: NonagaPiece = None
         self.last_clicked_tile: NonagaTile = None
+        
+        self.piece_moving: NonagaPiece = None
+        self.tile_moving: NonagaTile = None
+        
+        self.last_clicked_piece_moves = []
+        self.last_clicked_tile_moves = []
+        
+        
         self.board_center_x = None
         self.board_center_y = None
         self.debug_text = ""
@@ -40,9 +52,19 @@ class Game:
         self.running = True
 
         while self.running:
+            # debug
+            # last = (self.last_clicked_tile, self.last_clicked_piece_moves)
             self.render_frame()
+            self.update_moves()
+            # if last != (self.last_clicked_tile, self.last_clicked_piece_moves):
+            #     print(self.last_clicked_tile,
+            #         self.last_clicked_piece_moves,'3')
             self.handle_events()
-            self.update()
+            # if last != (self.last_clicked_tile, self.last_clicked_piece_moves):
+            #     print(self.last`_clicked_tile,
+            #           self.last_clicked_piece_moves,'4')
+        
+            self.handle_moves()
             self.clock.tick(self.fps)
 
     def render_frame(self):
@@ -69,19 +91,45 @@ class Game:
                 # Update hovered piece/tile based on mouse position
                 self._handle_mouse_motion(event.pos)
                 hovered_piece_pos = self.hovered_piece.get_position() if self.hovered_piece else None
-                hovered_tile_pos = self.hovered_tile.get_position() if self.hovered_tile else None
+                if self.hovered_piece:
+                    hovered_tile_pos = None
+                else:
+                    hovered_tile_pos = self.hovered_tile.get_position() if self.hovered_tile else None
                 self.debug_text = f"Hovered piece: {hovered_piece_pos}, Hovered tile: {hovered_tile_pos}"
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:  # Left mouse button click
-                    self._handle_left_click(event.pos)
                     self.last_clicked_piece = self.hovered_piece
                     self.last_clicked_tile = self.hovered_tile
 
-    def update(self):
+    def update_moves(self):
         """Update game state."""
-        # TODO: Implement game state updates
-        pass
+        if self.last_clicked_piece is not None:
+            self.last_clicked_piece_moves = self.game_logic.get_all_valid_piece_moves().get(
+                self.last_clicked_piece.get_position(), [])
+            self.piece_moving = self.last_clicked_piece
+        else:
+            self.last_clicked_piece_moves = []
+            self.piece_moving = None
+        if self.last_clicked_tile is not None:
+            self.last_clicked_tile_moves = self.game_logic.get_all_valid_tile_moves().get(
+                self.last_clicked_tile.get_position(), [])
+            self.tile_moving = self.last_clicked_tile
+        else:
+            self.last_clicked_tile_moves = []
+            self.tile_moving = None
 
+    def handle_moves(self):
+        """Handle move execution based on last clicked piece/tile and valid moves."""
+
+        if self.last_clicked_piece_moves is not [] and self.piece_moving is not None and self.last_clicked_tile is not None and self.last_clicked_tile.get_position() in self.last_clicked_piece_moves:
+           
+            self.game_logic.move_piece(self.piece_moving, self.last_clicked_tile.get_position())
+            # to prevent highlighting possibe tile moves
+            self.last_clicked_tile = None
+
+        if self.last_clicked_tile is not None and self.tile_moving is not None and self.tile_moving in self.last_clicked_tile_moves:
+            self.game_logic.move_tile(self.tile_moving, self.last_clicked_tile)  # Example: move to the first valid position
+            
     def render(self, screen, tiles, pieces, tile_moves, piece_moves,
                center_x=None, center_y=None):
         """Render hexagons and circles on the board.
@@ -227,37 +275,6 @@ class Game:
         font = pygame.font.Font(None, 24)
         text_surface = font.render(text, True, color)
         screen.blit(text_surface, (x, y))
-
-    def _handle_left_click(self, mouse_pos):
-        """Handle left mouse button click.
-
-        Args:
-            mouse_pos: tuple of (x, y) mouse position
-        """
-        # Use the currently hovered piece or tile
-        if self.hovered_piece is not None:
-            self._on_piece_left_clicked(self.hovered_piece)
-        elif self.hovered_tile is not None:
-            self._on_tile_left_clicked(self.hovered_tile)
-
-
-    def _on_piece_left_clicked(self, piece: NonagaPiece):
-        """Handle left-click on a piece.
-
-        Args:
-            piece: NonagaPiece object that was clicked
-        """
-        # TODO: Implement piece left-click logic
-        # print(f"Left-clicked piece at {piece.get_position()}, color: {piece.get_color()}")
-
-    def _on_tile_left_clicked(self, tile: NonagaTile):
-        """Handle left-click on a tile.
-
-        Args:
-            tile: NonagaTile object that was clicked
-        """
-        # TODO: Implement tile left-click logic
-        # print(f"Left-clicked tile at {tile.get_position()}")
 
     def _point_in_circle(self, px, py, cx, cy, radius):
         """Check if a point is inside a circle.

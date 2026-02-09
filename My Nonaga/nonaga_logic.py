@@ -39,10 +39,6 @@ class NonagaLogic:
         player = self.player_red if player_color == 1 else self.player_black
         return callable(player)
 
-    def get_valid_moves(self):
-        """Get all valid moves for the current player."""
-        # TODO: Implement valid move calculation
-        pass
 
     def get_all_valid_tile_moves(self):
         """Get valid moves for a specific tile.
@@ -168,10 +164,13 @@ class NonagaLogic:
                 break
         return destination
 
-    def make_move(self, move):
+    def move_tile(self, tile: NonagaTile, destination: tuple[int, int, int]):
         """Execute a move."""
-        # TODO: Implement move execution
-        pass
+        tile.set_position(destination)
+    
+    def move_piece(self, piece: NonagaPiece, destination: tuple[int, int, int]):
+        """Execute a move."""
+        piece.set_position(destination)
 
     def check_win_condition(self):
         """Check if a player has won."""
