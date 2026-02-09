@@ -1,13 +1,14 @@
-from nonaga_constants import RED,BLACK
+from nonaga_constants import RED, BLACK
+
 
 class NonagaBoard:
     """Represents the state of the Nonaga game board."""
 
     def __init__(self):
         """Initialize the board state."""
-        
+
         """Create the initial board with islands, tiles, and pieces."""
-        
+
         # Create a list of (q, r) axial coordinates for a hexagonal grid.
         coords = []
         radius = 2  # Default radius for the hexagonal board
@@ -24,52 +25,40 @@ class NonagaBoard:
         tiles = [NonagaTile(q, r, s)
                  for q, r, s in coords]
 
-        pieces_coord = [((-2, 0, 2),RED), ((-2, 2, 0),BLACK), ((0, 2, -2),RED),
-                        ((2, 0, -2),BLACK), ((2, -2, 0),RED), ((0, -2, 2),BLACK)] 
-        pieces = [NonagaPiece(q, r, s, color) for (q, r, s), color in pieces_coord]
+        pieces_coord = [((-2, 0, 2), RED), ((-2, 2, 0), BLACK), ((0, 2, -2), RED),
+                        ((2, 0, -2), BLACK), ((2, -2, 0), RED), ((0, -2, 2), BLACK)]
+        pieces = [NonagaPiece(q, r, s, color)
+                  for (q, r, s), color in pieces_coord]
 
-        # Create the initial island
-        self.islands = [NonagaIsland(tiles,pieces)]
-        self.pieces = [[0,piece] for piece in pieces]
-        self.tiles = [[0,tile] for tile in tiles]
-        
-        
+        # Create the initial island with id 0
+        island = NonagaIsland(island_id=0, tiles=tiles, pieces=pieces)
+        self.islands = {0:island}
+        self.pieces = pieces
+        self.tiles = tiles
+
     def get_pieces(self):
         """Return the list of pieces on the board."""
         return self.pieces
-    
+
     def get_state(self):
         """Return the current state of the board for rendering."""
-        tiles = [tile for _, tile in self.tiles]
-        pieces = [piece for _, piece in self.pieces]
-        return {"tiles": tiles, "pieces": pieces}
-    
-    def get_island_index(self, movable_chip: "NonagaTile"):
-        """Get the index of the island containing a MOVABLE chip (tile or piece).
-        
-        Args:
-            movable_chip: NonagaTile or NonagaPiece object
-        Returns:
-            Index of the island containing the MOVABLE chip, or None if it is an unmovable tile"""
-        for index, island in enumerate(self.islands):
-            if movable_chip in island.get_pieces() or movable_chip in island.get_movable_tiles():
-                return index
-        return None
+        return {"tiles": self.tiles, "pieces": self.pieces}
 
     def set_state(self, state):
         """Set the board to a given state."""
         # TODO: Implement board state setter
         pass
 
-    def move_piece(self, from_pos, to_pos):
+    def move_piece(self, piece: "NonagaPiece", position: tuple[int, int, int]):
         """Move a piece from one position to another."""
-        # TODO: Implement piece movement
-        pass
+    
+        island: NonagaIsland = self.islands[piece.get_island_id()]
+        island.move_piece(piece, position)   
 
-    def move_tile(self, tile, direction):
-        """Move a tile in the specified direction."""
-        # TODO: Implement tile movement
-        pass
+    def move_tile(self, tile, position):
+        """Move a tile in the specified position."""
+        island: NonagaIsland = self.islands[tile.get_island_id()]
+        island.move_tile(tile, position)
 
     def create_island(self):
         """Encapsulate an island on the board."""
@@ -80,38 +69,57 @@ class NonagaBoard:
         """Merge adjacent islands."""
         # TODO: Implement island merging
         pass
-    
 
 
 class NonagaIsland:
     """Represents an independant group of connected tiles on the Nonaga board."""
 
-    def __init__(self, tiles: list["NonagaTile"] = None, pieces: list["NonagaPiece"] = None):
+    def __init__(self, island_id: int, tiles: list["NonagaTile"] = None, pieces: list["NonagaPiece"] = None):
         """Initialize the island with a list of tiles."""
 
+        self.id = island_id
         self.movable_tiles = set([])
         self.unmovable_tiles = set([])
         self.all_tiles = set([])
         self.border_tiles = set([])
         self.pieces = set([])
 
-        if tiles is not None:
+        if tiles is not None and pieces is not None:
             self.add_tiles(tiles)
             self.add_pieces(pieces)
 
+    def move_tile(self, tile: "NonagaTile", position: tuple[int, int, int]):
+        """Move a tile to a new position."""
+        self.all_tiles.remove(tile)
+        tile.set_position(position)
+        self.all_tiles.add(tile)
+        self.update_tiles()  
+    
+    def move_piece(self, piece: "NonagaPiece", position: tuple[int, int, int]):
+        """Move a piece to a new position."""
+        self.pieces.remove(piece)
+        piece.set_position(position)
+        self.pieces.add(piece)
+        self.update_tiles()  # can be optimised to only update affected tiles
+        
+    def get_id(self):
+        """Return the island's unique identifier."""
+        return self.id
+    
     def get_number_of_tiles(self):
         """Return the number of tiles in the island."""
         return len(self.all_tiles)
-    
+
     def get_all_tiles(self):
         """Return the list of all tiles in the island."""
         return self.all_tiles
-    
+
     def _add_tile(self, tile: "NonagaTile"):
         """Add a tile to the island."""
+        tile.island_id = self.id
         self.movable_tiles.add(tile)
         self.all_tiles.add(tile)
-        
+
     def add_tile(self, tile: "NonagaTile"):
         """Add a tile to the island."""
         self._add_tile(tile)
@@ -125,13 +133,14 @@ class NonagaIsland:
         self.update_tiles()
         self.border_tiles = self.movable_tiles.union(self.unmovable_tiles)
 
-    def add_piece(self, piece):
+    def add_piece(self, piece: "NonagaPiece"):
         """Add a piece to the island."""
+        piece.island_id = self.id
         self.pieces.add(piece)
         self.unmovable_tiles.add(piece)
         self.update_tiles()
 
-    def add_pieces(self, pieces):
+    def add_pieces(self, pieces: list["NonagaPiece"]):
         """Add multiple pieces to the island."""
         for p in pieces:
             self.add_piece(p)
@@ -140,7 +149,7 @@ class NonagaIsland:
         """Merge another island into this one."""
         self.add_tiles(other_island.all_tiles)
         self.add_pieces(other_island.pieces)
-        
+
     def get_movable_tiles(self):
         """Return the list of tiles in the island."""
         return self.movable_tiles
@@ -221,6 +230,8 @@ class NonagaIsland:
                     queue.append(adj_pos)
 
         return len(visited) == len(neighbors)
+    
+        
 
     def update_tiles(self):
         """Update the list of movable and unmovable tiles based on neighbor count.
@@ -258,6 +269,17 @@ class NonagaIsland:
         self.unmovable_tiles = new_unmovable
         self.border_tiles = self.movable_tiles.union(self.unmovable_tiles)
 
+    def __eq__(self, other):
+        """Check equality based on position."""
+        if isinstance(other, NonagaIsland):
+            return self.get_id() == other.get_id()
+        return False
+
+    def __hash__(self):
+        """Hash based on position."""
+        return hash(self.id)
+
+
 class NonagaTilesCoordinates:
     """Holds the hexagonal coordinates for all tiles on the Nonaga board."""
 
@@ -266,6 +288,11 @@ class NonagaTilesCoordinates:
         self.q = q  # axial coordinate
         self.r = r  # axial coordinate
         self.s = s  # derived coordinate (s = -q - r)
+        self.island_id = None  # Will be set when added to an island
+        
+    def get_island_id(self):
+        """Return the island ID that this tile belongs to."""
+        return self.island_id
 
     def get_position(self):
         """Return the (q, r, s) coordinates as a tuple."""
@@ -276,7 +303,7 @@ class NonagaTilesCoordinates:
         self.q = q
         self.r = r
         self.s = s
-    
+
     def set_position(self, position: tuple[int, int, int]):
         """Set the (q, r, s) coordinates from a tuple."""
         self.q, self.r, self.s = position
@@ -284,15 +311,14 @@ class NonagaTilesCoordinates:
     def distance_to(self, other: "NonagaTilesCoordinates"):
         """Calculate the distance to another tile using hexagonal distance formula."""
         return (abs(self.q - other.q) + abs(self.r - other.r) + abs(self.s - other.s)) // 2
-    
-    
+
+
 class NonagaTile(NonagaTilesCoordinates):
     """Represents a tile on the Nonaga board."""
 
     def __init__(self, q: int, r: int, s: int):
         """Initialize the tile with its position."""
         super().__init__(q, r, s)
-    
 
     def __eq__(self, other):
         """Check equality based on position."""
@@ -301,15 +327,14 @@ class NonagaTile(NonagaTilesCoordinates):
         elif isinstance(other, tuple) and len(other) == 3:
             return self.get_position() == other
         return False
-    
+
     def __hash__(self):
         """Hash based on position."""
         return hash(self.get_position())
-    
+
     def __str__(self):
         """String representation of the tile."""
         return f"Tile({self.q}, {self.r}, {self.s})"
-    
 
 
 class NonagaPiece(NonagaTile):
@@ -328,8 +353,6 @@ class NonagaPiece(NonagaTile):
         """Set the color of the piece."""
         self.color = color
 
-    def __str__(self):        
+    def __str__(self):
         """String representation of the piece."""
         return f"Piece({self.q}, {self.r}, {self.s}, {self.color})"
-
-

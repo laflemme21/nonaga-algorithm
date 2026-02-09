@@ -39,7 +39,6 @@ class NonagaLogic:
         player = self.player_red if player_color == 1 else self.player_black
         return callable(player)
 
-
     def get_all_valid_tile_moves(self):
         """Get valid moves for a specific tile.
 
@@ -49,7 +48,7 @@ class NonagaLogic:
             List of valid positions for the tile.
         """
         island = self.board.islands[0]
-        move ={}
+        move = {}
         for tile in island.get_movable_tiles():
             move[tile.get_position()] = self._get_valid_tile_positions(tile, island)
         return move
@@ -87,7 +86,7 @@ class NonagaLogic:
 
         candidate_positions.difference_update(tile_coords_set)
 
-        valid_positions = []
+        valid_positions = set([])
         for candidate in candidate_positions:
             neighbor_positions = []
             for offset in neighbor_offsets:
@@ -103,8 +102,9 @@ class NonagaLogic:
 
             if 2 <= neighbor_count <= 4:
                 if neighbor_count <= 2 or island._neighbors_are_connected(neighbor_positions):
-                    valid_positions.append(candidate)
-        valid_positions.remove(tile.get_position())
+                    valid_positions.add(candidate)
+        if tile.get_position() in valid_positions:
+            valid_positions.remove(tile.get_position())
         return valid_positions
 
     def get_all_valid_piece_moves(self):
@@ -132,10 +132,8 @@ class NonagaLogic:
         This should give us the closest available tile in each of the six directions
         """
         moves = {}
-        for board_piece in self.board.get_pieces():
-
-            island: NonagaIsland = self.board.islands[board_piece[0]]
-            piece: NonagaPiece = board_piece[1]
+        for piece in self.board.get_pieces():
+            island: NonagaIsland = self.board.islands[piece.island_id]
             moves[piece.get_position()] = []
             for dimension in range(3):
                 for direction in [-1, 1]:
@@ -147,13 +145,17 @@ class NonagaLogic:
 
     def _get_valid_piece_moves_in_direction(self, piece: NonagaPiece, island: NonagaIsland, dimension: int, direction: int):
         destination = None
+        # iterate through one dimension in the specified direction
         for i in range(piece.get_position()[dimension]+direction, direction*island.get_number_of_tiles(), direction):
+            
+            # calculate the tile coordinates in the current dimension respecting the hexagonal coordinate system
             tile_coords_list = list(piece.get_position())
             tile_coords_list[dimension] = i
             fixed_index = (dimension + 1) % 3
             dependent_index = (dimension + 2) % 3
             tile_coords_list[dependent_index] = - \
                 (tile_coords_list[dimension] + tile_coords_list[fixed_index])
+            
             tile = tuple(tile_coords_list)
             if tile in island.pieces:
                 break
@@ -166,11 +168,12 @@ class NonagaLogic:
 
     def move_tile(self, tile: NonagaTile, destination: tuple[int, int, int]):
         """Execute a move."""
-        tile.set_position(destination)
-    
+        self.board.move_tile(tile,destination)
+
     def move_piece(self, piece: NonagaPiece, destination: tuple[int, int, int]):
         """Execute a move."""
-        piece.set_position(destination)
+        self.board.move_piece(piece, destination)
+        
 
     def check_win_condition(self):
         """Check if a player has won."""
