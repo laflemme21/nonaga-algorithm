@@ -101,7 +101,7 @@ class NonagaLogic:
             neighbor_count = len(neighbor_positions)
 
             if 2 <= neighbor_count <= 4:
-                if neighbor_count <= 2 or island._neighbors_are_connected(neighbor_positions):
+                if neighbor_count <= 2 or island._neighbors_restrain_piece(neighbor_positions):
                     valid_positions.add(candidate)
         if tile.get_position() in valid_positions:
             valid_positions.remove(tile.get_position())
@@ -147,7 +147,7 @@ class NonagaLogic:
         destination = None
         # iterate through one dimension in the specified direction
         for i in range(piece.get_position()[dimension]+direction, direction*island.get_number_of_tiles(), direction):
-            
+
             # calculate the tile coordinates in the current dimension respecting the hexagonal coordinate system
             tile_coords_list = list(piece.get_position())
             tile_coords_list[dimension] = i
@@ -155,7 +155,7 @@ class NonagaLogic:
             dependent_index = (dimension + 2) % 3
             tile_coords_list[dependent_index] = - \
                 (tile_coords_list[dimension] + tile_coords_list[fixed_index])
-            
+
             tile = tuple(tile_coords_list)
             if tile in island.pieces:
                 break
@@ -168,12 +168,11 @@ class NonagaLogic:
 
     def move_tile(self, tile: NonagaTile, destination: tuple[int, int, int]):
         """Execute a move."""
-        self.board.move_tile(tile,destination)
+        self.board.move_tile(tile, destination)
 
     def move_piece(self, piece: NonagaPiece, destination: tuple[int, int, int]):
         """Execute a move."""
         self.board.move_piece(piece, destination)
-        
 
     def check_win_condition(self):
         """Check if a player has won."""

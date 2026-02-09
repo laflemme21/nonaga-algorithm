@@ -32,7 +32,7 @@ class NonagaBoard:
 
         # Create the initial island with id 0
         island = NonagaIsland(island_id=0, tiles=tiles, pieces=pieces)
-        self.islands = {0:island}
+        self.islands = {0: island}
         self.pieces = pieces
         self.tiles = tiles
 
@@ -51,9 +51,9 @@ class NonagaBoard:
 
     def move_piece(self, piece: "NonagaPiece", position: tuple[int, int, int]):
         """Move a piece from one position to another."""
-    
+
         island: NonagaIsland = self.islands[piece.get_island_id()]
-        island.move_piece(piece, position)   
+        island.move_piece(piece, position)
 
     def move_tile(self, tile, position):
         """Move a tile in the specified position."""
@@ -93,19 +93,19 @@ class NonagaIsland:
         self.all_tiles.remove(tile)
         tile.set_position(position)
         self.all_tiles.add(tile)
-        self.update_tiles()  
-    
+        self.update_tiles()
+
     def move_piece(self, piece: "NonagaPiece", position: tuple[int, int, int]):
         """Move a piece to a new position."""
         self.pieces.remove(piece)
         piece.set_position(position)
         self.pieces.add(piece)
         self.update_tiles()  # can be optimised to only update affected tiles
-        
+
     def get_id(self):
         """Return the island's unique identifier."""
         return self.id
-    
+
     def get_number_of_tiles(self):
         """Return the number of tiles in the island."""
         return len(self.all_tiles)
@@ -205,8 +205,8 @@ class NonagaIsland:
 
         return neighbors
 
-    def _neighbors_are_connected(self, neighbors: list):
-        """Check if the set of neighbors forms a single connected component."""
+    def _neighbors_restrain_piece(self, neighbors: list):
+        """Check if the set of neighbors forms blocks the piece from moving"""
         if not neighbors:
             return True
 
@@ -229,9 +229,8 @@ class NonagaIsland:
                     visited.add(adj_pos)
                     queue.append(adj_pos)
 
-        return len(visited) == len(neighbors)
-    
-        
+        # Special case for 3 neighbors where one can be removed without disconnecting
+        return len(visited) == len(neighbors) or (abs(len(visited)-len(neighbors)) == 1 and neighbors.__len__() == 3)
 
     def update_tiles(self):
         """Update the list of movable and unmovable tiles based on neighbor count.
@@ -260,7 +259,7 @@ class NonagaIsland:
                 new_movable.add(tile)
             else:
                 # 3 or 4 neighbors -> check connectivity
-                if self._neighbors_are_connected(neighbors):
+                if self._neighbors_restrain_piece(neighbors):
                     new_movable.add(tile)
                 else:
                     new_unmovable.add(tile)
@@ -289,7 +288,7 @@ class NonagaTilesCoordinates:
         self.r = r  # axial coordinate
         self.s = s  # derived coordinate (s = -q - r)
         self.island_id = None  # Will be set when added to an island
-        
+
     def get_island_id(self):
         """Return the island ID that this tile belongs to."""
         return self.island_id
