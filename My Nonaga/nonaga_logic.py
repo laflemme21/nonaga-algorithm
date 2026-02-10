@@ -1,4 +1,4 @@
-from nonaga_constants import RED, BLACK
+from nonaga_constants import RED, BLACK, PIECE_TO_MOVE, TILE_TO_MOVE
 
 from nonaga_board import NonagaBoard, NonagaIsland, NonagaPiece, NonagaTile
 
@@ -23,6 +23,8 @@ class NonagaLogic:
 
         # Current player ("red" or "black")
         self.current_player = RED
+        
+        self.turn_phase = PIECE_TO_MOVE
 
     def get_board_state(self):
         """Get the current board state for display."""
@@ -168,23 +170,70 @@ class NonagaLogic:
 
     def move_tile(self, tile: NonagaTile, destination: tuple[int, int, int]):
         """Execute a move."""
-        self.board.move_tile(tile, destination)
+        if self.turn_phase == TILE_TO_MOVE:
+            self.board.move_tile(tile, destination)
+            self._next_turn_phase()
 
     def move_piece(self, piece: NonagaPiece, destination: tuple[int, int, int]):
         """Execute a move."""
-        self.board.move_piece(piece, destination)
+        if self.turn_phase == PIECE_TO_MOVE and self.get_current_player() == piece.color:
+            self.board.move_piece(piece, destination)
+            self._next_turn_phase()
 
-    def check_win_condition(self):
-        """Check if a player has won."""
-        # TODO: Implement win condition check
-        pass
+    def _next_turn_phase(self):
+        """Advance to the next turn phase."""
+        if self.turn_phase == PIECE_TO_MOVE:
+            self.turn_phase = TILE_TO_MOVE
+        else:
+            self.turn_phase = PIECE_TO_MOVE
+            self.switch_player()
+            
+    def get_current_turn_phase(self):
+        """Get the current turn phase."""
+        return self.turn_phase
+    
+    def check_win_condition(self, color: int):
+        """Check if the three pieces of a player are connected"""
+        if color == RED:
+            pieces = self.board.get_pieces(RED)
+        else:
+            pieces = self.board.get_pieces(BLACK)
+
+        pieces = [piece.get_position() for piece in pieces]
+        
+        start = pieces[0]
+        visited = {start}
+        queue = [start]
+
+        neighbor_offsets = ((1, -1, 0),
+        (1, 0, -1),
+        (0, 1, -1),
+        (-1, 1, 0),
+        (-1, 0, 1),
+        (0, -1, 1))
+
+        while queue:
+            curr = queue.pop(0)
+            for offset in neighbor_offsets:
+                adj_pos = (
+                    curr[0] + offset[0],
+                    curr[1] + offset[1],
+                    curr[2] + offset[2]
+                )
+                if adj_pos in pieces and adj_pos not in visited:
+                    visited.add(adj_pos)
+                    queue.append(adj_pos)
+        
+
+        return len(visited) == len(pieces)
 
     def get_current_player(self):
         """Get the current player."""
-        # TODO: Implement current player getter
-        pass
+        return self.current_player
 
     def switch_player(self):
         """Switch to the next player."""
-        # TODO: Implement player switching
-        pass
+        if self.current_player == RED:
+            self.current_player = BLACK
+        else:
+            self.current_player = RED

@@ -36,9 +36,12 @@ class NonagaBoard:
         self.pieces = pieces
         self.tiles = tiles
 
-    def get_pieces(self):
+    def get_pieces(self,color=None):
         """Return the list of pieces on the board."""
-        return self.pieces
+        if color is None:
+            return self.pieces
+        else:
+            return [piece for piece in self.pieces if piece.color == color]
 
     def get_state(self):
         """Return the current state of the board for rendering."""

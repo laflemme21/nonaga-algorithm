@@ -22,11 +22,11 @@ class Game:
 
         self.hovered_piece: NonagaPiece = None
         self.hovered_tile: NonagaTile = None
-        self.hovered_tile_move_pos: tuple[int,int,int] = None
+        self.hovered_tile_move_pos: tuple[int, int, int] = None
 
         self.last_clicked_piece: NonagaPiece = None
         self.last_clicked_tile: NonagaTile = None
-        self.tile_move_to: tuple[int,int,int] = None
+        self.tile_move_to: tuple[int, int, int] = None
 
         self.piece_moving: NonagaPiece = None
         self.tile_moving: NonagaTile = None
@@ -36,7 +36,6 @@ class Game:
 
         self.board_center_x = None
         self.board_center_y = None
-        self.debug_text = ""
 
     def setup(self):
         """Set up the game window and resources."""
@@ -52,9 +51,10 @@ class Game:
         self.running = True
 
         while self.running:
+            self.render_frame()
+            self.update_game_state()
             # debug
             # last = ( list(self.game_logic.board.islands[0].pieces))
-            self.render_frame()
             # if last != ( list(self.game_logic.board.islands[0].pieces)):
             #     print(list(self.game_logic.board.islands[0].pieces)[0], '1')
             self.update_moves()
@@ -67,8 +67,26 @@ class Game:
             self.handle_moves()
             # if last != ( list(self.game_logic.board.islands[0].pieces)):
             #     print(list(self.game_logic.board.islands[0].pieces)[0], '4')
-                # print('-----')
+            # print('-----')
+        self.running = True
+
+        while self.running:
+            self.render_frame()
+            self.handle_events()
             self.clock.tick(self.fps)
+
+    def update_game_state(self):
+        """Check if there's a winner, update the title and stop the game if so."""
+        if self.game_logic.check_win_condition(RED):
+            self.title = "Red won!"
+            self.running = False
+        elif self.game_logic.check_win_condition(BLACK):
+            self.title = "Black won!"
+            self.running = False
+        else:
+            current_player = "Red" if self.game_logic.get_current_player() == RED else "Black"
+            phase = "Piece" if self.game_logic.get_current_turn_phase() == PIECE_TO_MOVE else "Tile"
+            self.title = f"{current_player} has to move a {phase}"
 
     def render_frame(self):
         """Clear screen and render game state."""
@@ -76,10 +94,9 @@ class Game:
         state = self.game_logic.get_board_state()
         self.board_center_x = self.screen.get_width() // 2
         self.board_center_y = self.screen.get_height() // 2
-        self.render(self.screen, state["tiles"], state["pieces"], self.game_logic.get_all_valid_tile_moves(), self.game_logic.get_all_valid_piece_moves(),
+        self.render(self.screen, state["tiles"], state["pieces"], self.last_clicked_tile_moves, self.last_clicked_piece_moves,
                     self.board_center_x, self.board_center_y)
-        if self.debug_text:
-            self._draw_debug_text(self.screen, self.debug_text)
+        self._draw_title(self.screen)
         pygame.display.flip()
 
     def handle_events(self):
@@ -98,7 +115,6 @@ class Game:
                     hovered_tile_pos = None
                 else:
                     hovered_tile_pos = self.hovered_tile.get_position() if self.hovered_tile else None
-                self.debug_text = f"Hovered piece: {hovered_piece_pos}, Hovered tile: {hovered_tile_pos}"
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:  # Left mouse button click
                     self.last_clicked_piece = self.hovered_piece
@@ -107,14 +123,14 @@ class Game:
 
     def update_moves(self):
         """Update game state."""
-        if self.last_clicked_piece is not None:
+        if self.last_clicked_piece is not None and self.last_clicked_piece.get_color() == self.game_logic.get_current_player() and self.game_logic.get_current_turn_phase() == PIECE_TO_MOVE:
             self.last_clicked_piece_moves = self.game_logic.get_all_valid_piece_moves().get(
                 self.last_clicked_piece.get_position(), [])
             self.piece_moving = self.last_clicked_piece
         else:
             self.last_clicked_piece_moves = []
             self.piece_moving = None
-        if self.last_clicked_tile is not None:
+        if self.last_clicked_tile is not None and self.game_logic.get_current_turn_phase() == TILE_TO_MOVE:
             self.last_clicked_tile_moves = self.game_logic.get_all_valid_tile_moves().get(
                 self.last_clicked_tile.get_position(), [])
             self.tile_moving = self.last_clicked_tile
@@ -131,7 +147,7 @@ class Game:
             # to prevent highlighting possibe tile moves
             self.last_clicked_tile = None
         if self.tile_move_to is not None and self.tile_moving is not None and self.tile_move_to in self.last_clicked_tile_moves:
-           
+
             self.game_logic.move_tile(self.tile_moving, self.tile_move_to)
 
     def render(self, screen, tiles, pieces, tile_moves, piece_moves,
@@ -167,20 +183,18 @@ class Game:
                               piece_color, center_x, center_y)
 
         # Render possible moves for last clicked piece
-        if self.last_clicked_piece is not None:
-            color = RED_PIECE_MOVE_COLOR if self.last_clicked_piece.get_color(
-            ) == RED else BLACK_PIECE_MOVE_COLOR
-            for move in piece_moves[self.last_clicked_piece.get_position()]:
-                q, r, s = move
-                self._draw_circle(screen, q, r,
-                                  color, center_x, center_y)
+        color = RED_PIECE_MOVE_COLOR if self.last_clicked_piece is not None and self.last_clicked_piece.get_color(
+        ) == RED else BLACK_PIECE_MOVE_COLOR
+        for move in piece_moves:
+            q, r, s = move
+            self._draw_circle(screen, q, r,
+                              color, center_x, center_y)
 
         # Render possible moves for last clicked tile
-        if self.last_clicked_tile is not None and self.last_clicked_tile.get_position() in tile_moves:
-            for move in tile_moves[self.last_clicked_tile.get_position()]:
-                q, r, s = move
-                self._draw_hexagon(
-                    screen, q, r, HEX_MOVE_COLOR, center_x, center_y)
+        for move in tile_moves:
+            q, r, s = move
+            self._draw_hexagon(
+                screen, q, r, HEX_MOVE_COLOR, center_x, center_y)
 
     def _draw_hexagon(self, screen, q, r, color, center_x, center_y):
         """Draw a hexagon at axial coordinates (q, r).
@@ -283,14 +297,13 @@ class Game:
                     self.hovered_tile_move_pos = (q, r, s)
                     return
 
-         # Check each piece for collision with mouse position
-        self.debug_text = "Hovered piece: None, Hovered tile: None"
 
-    def _draw_debug_text(self, screen, text, x=10, y=10, color=(0, 0, 0)):
-        """Draw debug text in a corner of the window."""
-        font = pygame.font.Font(None, 24)
-        text_surface = font.render(text, True, color)
-        screen.blit(text_surface, (x, y))
+    def _draw_title(self, screen, color=(0, 0, 0)):
+        """Draw the title centered at the top of the window."""
+        font = pygame.font.Font(None, 32)
+        text_surface = font.render(self.title, True, color)
+        text_rect = text_surface.get_rect(center=(screen.get_width() // 2, 32))
+        screen.blit(text_surface, text_rect)
 
     def _point_in_circle(self, px, py, cx, cy, radius):
         """Check if a point is inside a circle.

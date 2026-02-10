@@ -2,6 +2,9 @@
 RED = 0
 BLACK = 1
 
+PIECE_TO_MOVE = 0
+TILE_TO_MOVE = 1
+
 
 HEX_SIZE = 50  # Size of each hex tile in pixels
 HEX_COLOR = (188, 158, 106)  # Default hex color
