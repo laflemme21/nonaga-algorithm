@@ -35,6 +35,20 @@ class NonagaBoard:
         self.islands = {0: island}
         self.pieces = pieces
         self.tiles = tiles
+        
+    def get_piece(self, position: tuple[int, int, int])-> "NonagaPiece":
+        """Return the piece at the given position, or None if there is no piece."""
+        for piece in self.pieces:
+            if piece.get_position() == position:
+                return piece
+        return None
+
+    def get_tile(self, position: tuple[int, int, int])-> "NonagaTile":
+        """Return the tile at the given position, or None if there is no tile."""
+        for tile in self.tiles:
+            if tile.get_position() == position:
+                return tile
+        return None
 
     def get_pieces(self,color=None):
         """Return the list of pieces on the board."""
@@ -58,10 +72,12 @@ class NonagaBoard:
         island: NonagaIsland = self.islands[piece.get_island_id()]
         island.move_piece(piece, position)
 
-    def move_tile(self, tile, position):
+    def move_tile(self, tile: "NonagaTile", position: tuple[int, int, int]):
         """Move a tile in the specified position."""
         island: NonagaIsland = self.islands[tile.get_island_id()]
         island.move_tile(tile, position)
+        
+    
 
     def create_island(self):
         """Encapsulate an island on the board."""

@@ -13,9 +13,13 @@ def main():
         result = menu.run()
         if result == "quit":
             break
-        elif result == "start":
+        elif result == "two_player":
             # Start the game
-            game = Game(SCREEN_WIDTH, SCREEN_HEIGHT)
+            game = Game(False,SCREEN_WIDTH, SCREEN_HEIGHT)
+            game.run()
+        elif result == "play_ai":
+            # Start the game with AI
+            game = Game(True,SCREEN_WIDTH, SCREEN_HEIGHT)
             game.run()
 
 if __name__ == "__main__":

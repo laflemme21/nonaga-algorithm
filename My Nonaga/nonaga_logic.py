@@ -2,6 +2,7 @@ from nonaga_constants import RED, BLACK, PIECE_TO_MOVE, TILE_TO_MOVE
 
 from nonaga_board import NonagaBoard, NonagaIsland, NonagaPiece, NonagaTile
 
+import copy
 
 class NonagaLogic:
     """Manages the game logic for Nonaga."""
@@ -25,6 +26,7 @@ class NonagaLogic:
         self.current_player = RED
         
         self.turn_phase = PIECE_TO_MOVE
+        
 
     def get_board_state(self):
         """Get the current board state for display."""
@@ -41,19 +43,34 @@ class NonagaLogic:
         player = self.player_red if player_color == 1 else self.player_black
         return callable(player)
 
-    def get_all_valid_tile_moves(self):
-        """Get valid moves for a specific tile.
+    def get_all_valid_tile_moves_ai(self) -> dict[NonagaTile, list[tuple[int, int, int]]]:
+        """Get valid moves for a specific tile. (used by the AI)
 
         Args:
             tile: NonagaTile object
         Returns:
-            List of valid positions for the tile.
+            List of valid positions for all tiles.
+        """
+        island = self.board.islands[0]
+        move = {}
+        for tile in island.get_movable_tiles():
+            move[tile] = self._get_valid_tile_positions(tile, island)
+        return move
+
+    
+    def get_all_valid_tile_moves(self)-> dict[tuple[int, int, int], list[tuple[int, int, int]]]:
+        """Get valid moves for a specific tile. (used by the UI)
+
+        Args:
+            tile: NonagaTile object
+        Returns:
+            List of valid positions for all tiles.
         """
         island = self.board.islands[0]
         move = {}
         for tile in island.get_movable_tiles():
             move[tile.get_position()] = self._get_valid_tile_positions(tile, island)
-        return move
+        return move 
 
     def _get_valid_tile_positions(self, tile: NonagaTile, island: NonagaIsland):
         """Get valid moves for a specific tile.
@@ -109,8 +126,29 @@ class NonagaLogic:
             valid_positions.remove(tile.get_position())
         return valid_positions
 
-    def get_all_valid_piece_moves(self):
-        """Get valid moves for a specific piece.
+    def get_all_valid_piece_moves_ai(self)-> dict[NonagaPiece, list[tuple[int, int, int]]]:
+        """Get valid moves for a specific piece. (Used by the AI)
+
+        Args:
+            piece: NonagaPiece object
+        Returns:
+            List of valid positions for the piece.
+        """
+        moves = {}
+        for piece in self.board.get_pieces():
+            if piece.color == self.get_current_player():
+                island: NonagaIsland = self.board.islands[piece.island_id]
+                moves[piece] = []
+                for dimension in range(3):
+                    for direction in [-1, 1]:
+                        valid_move = self._get_valid_piece_moves_in_direction(
+                            piece, island, dimension, direction)
+                        if valid_move:
+                            moves[piece].append(valid_move)
+        return moves
+
+    def get_all_valid_piece_moves(self)-> dict[tuple[int, int, int], list[tuple[int, int, int]]]:
+        """Get valid moves for a specific piece. (Used by the UI)
 
         Args:
             piece: NonagaPiece object
@@ -169,16 +207,40 @@ class NonagaLogic:
         return destination
 
     def move_tile(self, tile: NonagaTile, destination: tuple[int, int, int]):
-        """Execute a move."""
+        """Execute a tile move."""
         if self.turn_phase == TILE_TO_MOVE:
             self.board.move_tile(tile, destination)
             self._next_turn_phase()
+        else:
+            raise ValueError("Invalid move: It's not the tile move phase.")
 
     def move_piece(self, piece: NonagaPiece, destination: tuple[int, int, int]):
-        """Execute a move."""
+        """Execute a piece move."""
         if self.turn_phase == PIECE_TO_MOVE and self.get_current_player() == piece.color:
             self.board.move_piece(piece, destination)
             self._next_turn_phase()
+        else:
+            raise ValueError("Invalid move: It's either not the piece move phase or the piece does not belong to the current player.")
+
+    def move_tile_ai(self, tile: NonagaTile, destination: tuple[int, int, int]):
+        """Execute a tile move."""
+        new_self = copy.deepcopy(self)
+        if new_self.turn_phase == TILE_TO_MOVE:
+            new_self.board.move_tile(tile, destination)
+            new_self._next_turn_phase()
+        else:
+            raise ValueError("Invalid move: It's not the tile move phase.")
+        return new_self
+
+    def move_piece_ai(self, piece: NonagaPiece, destination: tuple[int, int, int]):
+        """Execute a piece move."""
+        new_self = copy.deepcopy(self)
+        if new_self.turn_phase == PIECE_TO_MOVE and new_self.get_current_player() == piece.color:
+            new_self.board.move_piece(piece, destination)
+            new_self._next_turn_phase()
+        else:
+            raise ValueError("Invalid move: It's either not the piece move phase or the piece does not belong to the current player.")
+        return new_self
 
     def _next_turn_phase(self):
         """Advance to the next turn phase."""

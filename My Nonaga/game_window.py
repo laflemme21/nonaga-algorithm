@@ -3,13 +3,16 @@ import math
 from nonaga_constants import *
 from nonaga_board import NonagaBoard, NonagaPiece, NonagaTile
 from nonaga_logic import NonagaLogic
-
+from AI import AI, load_parameters
+import cProfile
 
 class Game:
     """Manages the PyGame game loop and rendering."""
 
-    def __init__(self, screen_width=800, screen_height=500):
+    def __init__(self, ai:bool=False, screen_width=800, screen_height=500):
         """Initialize the game."""
+        self.ai_playing: bool = ai
+        self.ai = AI(load_parameters())
         self.screen_width = screen_width
         self.screen_height = screen_height
         self.screen = None
@@ -18,7 +21,7 @@ class Game:
         self.fps = 60
 
         self.title = "Red to play"
-        self.game_logic = NonagaLogic()
+        self.game_logic = NonagaLogic(None,self.ai_playing)
 
         self.hovered_piece: NonagaPiece = None
         self.hovered_tile: NonagaTile = None
@@ -52,6 +55,7 @@ class Game:
 
         while self.running:
             self.render_frame()
+            self.ai_plays()
             self.update_game_state()
             # debug
             # last = ( list(self.game_logic.board.islands[0].pieces))
@@ -70,7 +74,7 @@ class Game:
             # print('-----')
         self.running = True
 
-        while self.running:
+        while self.running and (self.game_logic.check_win_condition(RED) or self.game_logic.check_win_condition(BLACK)):
             self.render_frame()
             self.handle_events()
             self.clock.tick(self.fps)
@@ -120,9 +124,28 @@ class Game:
                     self.last_clicked_piece = self.hovered_piece
                     self.last_clicked_tile = self.hovered_tile
                     self.tile_move_to = self.hovered_tile_move_pos
+                    
 
+    def ai_plays(self):
+
+        if self.ai_playing and self.game_logic.get_current_player() == BLACK:
+            self.title = "AI is thinking..."
+            self.render_frame()
+            # Small delay to show the "AI is thinking..." message
+            
+            best_piece_move, best_tile_move = self.ai.get_best_move(self.game_logic)
+            print("Best piece move:", best_piece_move)
+            print("Best tile move:", best_tile_move)
+            if best_piece_move is not None and best_tile_move is not None:
+                self.game_logic.move_piece(
+                    best_piece_move[0], best_piece_move[1])
+                self.game_logic.move_tile(best_tile_move[0], best_tile_move[1])
+        self.update_game_state()
+
+    
     def update_moves(self):
         """Update game state."""
+        
         if self.last_clicked_piece is not None and self.last_clicked_piece.get_color() == self.game_logic.get_current_player() and self.game_logic.get_current_turn_phase() == PIECE_TO_MOVE:
             self.last_clicked_piece_moves = self.game_logic.get_all_valid_piece_moves().get(
                 self.last_clicked_piece.get_position(), [])

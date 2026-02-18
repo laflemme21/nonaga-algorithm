@@ -78,17 +78,21 @@ class Menu:
         button_height = 60
         center_x = screen_width // 2 - button_width // 2
 
-        self.start_button = Button(
-            center_x, 250, button_width, button_height, "Start Game", (50, 150, 50))
+        self.two_player_button = Button(
+            center_x, 210, button_width, button_height, "Two Player Game", (50, 150, 50))
+        
+        self.play_ai_button = Button(
+            center_x, 280, button_width, button_height, "Play vs AI", (50, 50, 150))
+        
         self.quit_button = Button(
             center_x, 350, button_width, button_height, "Quit", (150, 50, 50))
-        self.buttons = [self.start_button, self.quit_button]
+        self.buttons = [self.two_player_button, self.play_ai_button, self.quit_button]
 
     def handle_events(self):
         """Handle menu events.
 
         Returns:
-            "start" if Start Game is clicked, "quit" if Quit is clicked, None otherwise
+            "two_player" if Two Player Game is clicked, "play_ai" if Play vs AI is clicked, "quit" if Quit is clicked, None otherwise
         """
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -98,8 +102,10 @@ class Menu:
                     button.update_hover(event.pos)
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:  # Left click
-                    if self.start_button.is_clicked(event.pos):
-                        return "start"
+                    if self.two_player_button.is_clicked(event.pos):
+                        return "two_player"
+                    elif self.play_ai_button.is_clicked(event.pos):
+                        return "play_ai"
                     elif self.quit_button.is_clicked(event.pos):
                         return "quit"
             elif event.type == pygame.KEYDOWN:
@@ -134,7 +140,7 @@ class Menu:
         """Run the menu loop.
 
         Returns:
-            "start" if player selected Start Game, "quit" if selected Quit
+            "two_player" if player selected Two Player Game, "play_ai" if Play vs AI is selected, "quit" if selected Quit
         """
         pygame.init()
         screen = pygame.display.set_mode(
