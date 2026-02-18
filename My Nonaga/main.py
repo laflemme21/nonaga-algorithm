@@ -1,5 +1,5 @@
-from game import Game
-from menu import Menu
+from game_window import Game
+from menu_window import Menu
 from nonaga_constants import SCREEN_HEIGHT, SCREEN_WIDTH
 from nonaga_logic import NonagaLogic
 from nonaga_board import NonagaBoard, NonagaIsland, NonagaPiece, NonagaTile
