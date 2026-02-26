@@ -6,7 +6,7 @@ import os
 
 
 class AI:
-    def __init__(self, parameter, depth=4):
+    def __init__(self, parameter, depth=1):
         self.parameter = parameter
         self.depth = depth
 
@@ -117,8 +117,28 @@ class AI:
         return value, best_tile_move
 
     def cost_function(self, game_state: NonagaLogic) -> int:
+        
+        
+        
+        
+        
+        
         # Placeholder for a more sophisticated cost function based on the game state
         return random.randint(-10, 10)
+    
+    def pieces_aligned(self, game_state: NonagaLogic) -> int:
+        # Placeholder for a function that counts the number of pieces aligned for the AI player and the opponent
+        return random.randint(-5, 5)
+    
+    def pieces_distance(self, game_state: NonagaLogic) -> int:
+        # Placeholder for a function that calculates the distance between pieces for the AI player and the opponent
+        return random.randint(-5, 5)
+    
+    # is there a tile on our dream position? is it movable? is it reachable?
+    # count the missing tiles in parallelogram formed between the pieces
+    #
+    
+    
 
     def get_best_move(self, game_state: NonagaLogic) -> tuple[tuple[int, int, int], tuple[int, int, int]]:
         """Returns the best move for the AI player.

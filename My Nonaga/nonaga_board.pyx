@@ -161,11 +161,20 @@ cdef class NonagaIsland:
     cpdef NonagaIsland clone(self):
         cdef NonagaIsland c = NonagaIsland.__new__(NonagaIsland)
         c.id = self.id
-        c.all_tiles = {(<NonagaTile>t).clone() for t in self.all_tiles}
-        c.movable_tiles = {(<NonagaTile>t).clone() for t in self.movable_tiles}
-        c.unmovable_tiles = {(<NonagaTile>t).clone() for t in self.unmovable_tiles}
-        c.border_tiles = {(<NonagaTile>t).clone() for t in self.border_tiles}
-        c.pieces = {(<NonagaPiece>p).clone() for p in self.pieces}
+        c.all_tiles = {(<NonagaTile>t).clone() for t in self.all_tiles} 
+        c.movable_tiles = set()
+        c.unmovable_tiles = set()
+        c.border_tiles = set()
+        c.pieces = set()
+        for tile in c.all_tiles:
+            if tile in self.movable_tiles:
+                c.movable_tiles.add(tile)
+            elif tile in self.unmovable_tiles:
+                c.unmovable_tiles.add(tile)
+            if tile in self.border_tiles:
+                c.border_tiles.add(tile)
+            if tile in self.pieces:
+                c.pieces.add(tile)
         return c
 
     # ── move operations ─────────────────────────────────
