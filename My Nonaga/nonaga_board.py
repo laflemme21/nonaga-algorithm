@@ -137,9 +137,19 @@ class NonagaIsland:
         """Return a fast deep clone with identical attributes."""
         cloned = NonagaIsland(self.id)
         cloned.all_tiles = set(tile.clone() for tile in self.all_tiles)
-        cloned.movable_tiles = set(tile.clone() for tile in self.movable_tiles)
-        cloned.unmovable_tiles = set(tile.clone() for tile in self.unmovable_tiles)
-        cloned.border_tiles = set(tile.clone() for tile in self.border_tiles)
+        movable_tiles = []
+        unmovable_tiles = []
+        border_tiles = []
+        for tile in cloned.all_tiles:
+            if tile in self.movable_tiles:
+                movable_tiles.append(tile)
+            if tile in self.unmovable_tiles:
+                unmovable_tiles.append(tile)
+            if tile in self.border_tiles:
+                border_tiles.append(tile)
+        cloned.movable_tiles = set(movable_tiles)
+        cloned.unmovable_tiles = set(unmovable_tiles)
+        cloned.border_tiles = set(border_tiles)
         cloned.pieces = set(piece.clone() for piece in self.pieces)
         return cloned
 
