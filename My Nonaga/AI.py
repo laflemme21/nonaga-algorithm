@@ -1,11 +1,11 @@
+import random
 from nonaga_logic import NonagaLogic
 from nonaga_constants import RED, BLACK
 import json
 import os
-import copy
 
 class AI:
-    def __init__(self, parameter, depth=1):
+    def __init__(self, parameter, depth=2):
         self.parameter = parameter
         self.depth = depth
 
@@ -86,7 +86,7 @@ class AI:
         return value, best_tile_move
     
     def cost_function(self, game_state: NonagaLogic) -> int:
-        return 1
+        return random.randint(-10, 10)  # Placeholder for a more sophisticated cost function based on the game state
 
     def get_best_move(self, game_state: NonagaLogic) -> tuple[tuple[int, int, int], tuple[int, int, int]]:
         """Returns the best move for the AI player.
@@ -97,7 +97,7 @@ class AI:
             A tuple containing the best piece move and the best tile move combination.
             
         """
-        _, best_piece_move, best_tile_move = self.minimax_piece(copy.deepcopy(game_state), self.depth, True)
+        _, best_piece_move, best_tile_move = self.minimax_piece(game_state.clone(), self.depth, True)
         
         # Find the actual piece object in the current game state
         actual_piece = game_state.board.get_piece(best_piece_move[0])

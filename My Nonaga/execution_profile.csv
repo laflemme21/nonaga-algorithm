@@ -1,0 +1,537 @@
+ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+        1    0.000    0.000  202.724  202.724 AI.py:92(get_best_move)
+ 192692/1    0.117    0.000  202.722  202.722 AI.py:15(minimax_piece)
+   3519/9    0.690    0.000  202.713   22.524 AI.py:54(minimax_tile)
+   192691    0.623    0.000  195.563    0.001 nonaga_logic.py:225(move_tile_ai)
+82492021/196211   69.896    0.000  173.837    0.001 copy.py:119(deepcopy)
+7037208/196211   16.207    0.000  172.687    0.001 copy.py:248(_reconstruct)
+6252364/196211   13.767    0.000  171.055    0.001 copy.py:218(_deepcopy_dict)
+  1373477    5.891    0.000  137.697    0.000 copy.py:192(_deepcopy_list)
+14074416/4814600    2.652    0.000  118.875    0.000 copy.py:253(<genexpr>)
+   192693    0.151    0.000   23.996    0.000 nonaga_board.py:75(move_tile)
+   192693    0.324    0.000   23.816    0.000 nonaga_board.py:110(move_tile)
+   196221    3.968    0.000   23.071    0.000 nonaga_board.py:254(update_tiles)
+160828440   18.676    0.000   18.676    0.000 {method 'get' of 'dict' objects}
+ 18350183    6.533    0.000   10.560    0.000 nonaga_board.py:349(__hash__)
+112014331    9.300    0.000    9.300    0.000 {built-in method builtins.id}
+ 14663049    5.781    0.000    8.926    0.000 copy.py:232(_keep_alive)
+  3175004    5.090    0.000    6.914    0.000 nonaga_board.py:207(_get_neighbors)
+  7037208    3.931    0.000    5.660    0.000 {method '__reduce_ex__' of 'object' objects}
+   811665    4.021    0.000    5.304    0.000 nonaga_board.py:227(_neighbors_restrain_piece)
+ 44860305    5.145    0.000    5.145    0.000 {method 'append' of 'list' objects}
+ 56831533    3.978    0.000    3.978    0.000 copy.py:173(_deepcopy_atomic)
+  7595290    1.726    0.000    3.697    0.000 {method 'add' of 'set' objects}
+     3519    0.015    0.000    3.513    0.001 nonaga_logic.py:235(move_piece_ai)
+ 30124258    2.866    0.000    2.866    0.000 nonaga_board.py:315(get_position)
+  6056153    1.891    0.000    2.806    0.000 copyreg.py:98(__newobj__)
+ 18350183    2.279    0.000    2.279    0.000 {built-in method builtins.hash}
+  2369789    1.457    0.000    2.216    0.000 nonaga_board.py:341(__eq__)
+    22616    1.054    0.000    2.106    0.000 nonaga_logic.py:75(_get_valid_tile_positions)
+ 14079122    2.030    0.000    2.030    0.000 {built-in method builtins.getattr}
+     3519    0.037    0.000    2.002    0.001 nonaga_logic.py:46(get_all_valid_tile_moves_ai)
+ 15493563    1.911    0.000    1.911    0.000 {built-in method builtins.isinstance}
+  6056156    1.820    0.000    1.820    0.000 {method 'update' of 'dict' objects}
+     4514    1.743    0.000    1.743    0.000 {method 'render' of 'pygame.font.Font' objects}
+   981060    1.336    0.000    1.729    0.000 copyreg.py:107(_slotnames)
+      117    1.705    0.015    1.705    0.015 {method 'tick' of 'pygame.time.Clock' objects}
+   218837    0.798    0.000    1.106    0.000 nonaga_board.py:201(_get_tile_coords_set)
+  7037400    1.045    0.000    1.045    0.000 {built-in method builtins.hasattr}
+  6252374    0.985    0.000    0.985    0.000 {method 'items' of 'dict' objects}
+  6056343    0.915    0.000    0.915    0.000 {built-in method __new__ of type object at 0x00007FF9DE2608A0}
+  7037212    0.875    0.000    0.875    0.000 {built-in method builtins.issubclass}
+     4163    0.833    0.000    0.833    0.000 {built-in method pygame.display.flip}
+        3    0.789    0.263    0.791    0.264 {built-in method pygame.base.init}
+   192119    0.093    0.000    0.764    0.000 AI.py:89(cost_function)
+   160728    0.700    0.000    0.700    0.000 {built-in method pygame.draw.polygon}
+   192119    0.101    0.000    0.670    0.000 random.py:336(randint)
+5861754/5861726    0.644    0.000    0.644    0.000 {built-in method builtins.len}
+   192119    0.233    0.000    0.569    0.000 random.py:295(randrange)
+   238932    0.185    0.000    0.562    0.000 {method 'remove' of 'set' objects}
+     3521    0.003    0.000    0.474    0.000 nonaga_board.py:69(move_piece)
+     3521    0.006    0.000    0.471    0.000 nonaga_board.py:117(move_piece)
+  4009285    0.463    0.000    0.463    0.000 nonaga_board.py:190(_get_neighbor_offsets)
+        1    0.000    0.000    0.419    0.419 game_window.py:43(setup)
+     4282    0.017    0.000    0.416    0.000 pkgdata.py:45(getResource)
+  2548487    0.388    0.000    0.388    0.000 {method 'pop' of 'list' objects}
+     4283    0.343    0.000    0.343    0.000 {built-in method _io.open}
+     4164    0.323    0.000    0.323    0.000 {built-in method pygame.event.get}
+     4045    0.006    0.000    0.259    0.000 game_window.py:106(handle_events)
+   192119    0.171    0.000    0.254    0.000 random.py:245(_randbelow_with_getrandbits)
+        2    0.232    0.116    0.232    0.116 {built-in method pygame.base.quit}
+   981079    0.225    0.000    0.225    0.000 {method 'get' of 'mappingproxy' objects}
+      117    0.046    0.000    0.221    0.002 menu_window.py:117(render)
+     4163    0.219    0.000    0.219    0.000 {method 'fill' of 'pygame.surface.Surface' objects}
+   196222    0.196    0.000    0.215    0.000 {method 'union' of 'set' objects}
+     4045    0.003    0.000    0.203    0.000 game_window.py:146(update_moves)
+      348    0.004    0.000    0.160    0.000 nonaga_logic.py:61(get_all_valid_tile_moves)
+   196214    0.093    0.000    0.131    0.000 nonaga_logic.py:245(_next_turn_phase)
+        3    0.113    0.038    0.113    0.038 {built-in method pygame.display.set_mode}
+      119    0.001    0.000    0.110    0.001 menu_window.py:91(handle_events)
+    24987    0.019    0.000    0.107    0.000 game_window.py:248(_draw_circle)
+     8090    0.016    0.000    0.099    0.000 game_window.py:82(update_game_state)
+   108813    0.063    0.000    0.092    0.000 game_window.py:265(_axial_to_pixel)
+    17328    0.058    0.000    0.087    0.000 nonaga_logic.py:257(check_win_condition)
+     71/3    0.000    0.000    0.087    0.029 <frozen importlib._bootstrap>:1349(_find_and_load)
+     71/3    0.000    0.000    0.087    0.029 <frozen importlib._bootstrap>:1304(_find_and_load_unlocked)
+     66/3    0.000    0.000    0.086    0.029 <frozen importlib._bootstrap>:911(_load_unlocked)
+     31/3    0.000    0.000    0.086    0.029 <frozen importlib._bootstrap_external>:1016(exec_module)
+    167/6    0.000    0.000    0.085    0.014 <frozen importlib._bootstrap>:480(_call_with_frames_removed)
+        1    0.000    0.000    0.084    0.084 game_window.py:1(<module>)
+   576357    0.082    0.000    0.082    0.000 {built-in method _operator.index}
+      351    0.001    0.000    0.077    0.000 menu_window.py:24(draw)
+    18846    0.039    0.000    0.074    0.000 nonaga_logic.py:186(_get_valid_piece_moves_in_direction)
+   196214    0.067    0.000    0.067    0.000 nonaga_board.py:325(set_position)
+    24987    0.064    0.000    0.064    0.000 {built-in method pygame.draw.circle}
+   502956    0.054    0.000    0.054    0.000 {built-in method math.sin}
+      573    0.008    0.000    0.054    0.000 nonaga_logic.py:129(get_all_valid_piece_moves_ai)
+   502956    0.053    0.000    0.053    0.000 {built-in method math.cos}
+       31    0.000    0.000    0.049    0.002 <frozen importlib._bootstrap_external>:1089(get_code)
+   241804    0.048    0.000    0.048    0.000 {built-in method builtins.abs}
+        3    0.000    0.000    0.045    0.015 __init__.py:1(<module>)
+     4514    0.043    0.000    0.043    0.000 {method 'blit' of 'pygame.surface.Surface' objects}
+   292553    0.043    0.000    0.043    0.000 {method 'getrandbits' of '_random.Random' objects}
+       32    0.000    0.000    0.042    0.001 <frozen importlib._bootstrap_external>:1210(get_data)
+   192119    0.040    0.000    0.040    0.000 {method 'bit_length' of 'int' objects}
+      317    0.005    0.000    0.040    0.000 game_window.py:283(_handle_mouse_motion)
+      237    0.005    0.000    0.040    0.000 nonaga_logic.py:150(get_all_valid_piece_moves)
+       32    0.038    0.001    0.038    0.001 {built-in method _io.open_code}
+   192693    0.038    0.000    0.038    0.000 nonaga_logic.py:296(switch_player)
+     4283    0.003    0.000    0.036    0.000 <frozen ntpath>:261(dirname)
+   210702    0.034    0.000    0.034    0.000 {built-in method builtins.round}
+     4284    0.018    0.000    0.032    0.000 <frozen ntpath>:222(split)
+   196214    0.031    0.000    0.031    0.000 nonaga_board.py:311(get_island_id)
+     3462    0.013    0.000    0.029    0.000 game_window.py:345(_point_in_hexagon)
+   217627    0.028    0.000    0.028    0.000 {built-in method math.sqrt}
+    66/62    0.000    0.000    0.021    0.000 <frozen importlib._bootstrap>:806(module_from_spec)
+    28/26    0.000    0.000    0.020    0.001 <frozen importlib._bootstrap_external>:1314(create_module)
+    28/26    0.018    0.001    0.020    0.001 {built-in method _imp.create_dynamic}
+    22616    0.019    0.000    0.019    0.000 {method 'difference_update' of 'set' objects}
+     4282    0.010    0.000    0.015    0.000 <frozen ntpath>:99(join)
+     4514    0.012    0.000    0.012    0.000 {method 'get_rect' of 'pygame.surface.Surface' objects}
+    18138    0.012    0.000    0.012    0.000 nonaga_board.py:53(get_pieces)
+       71    0.000    0.000    0.012    0.000 <frozen importlib._bootstrap>:1240(_find_spec)
+       64    0.000    0.000    0.011    0.000 <frozen importlib._bootstrap_external>:1547(find_spec)
+       64    0.000    0.000    0.011    0.000 <frozen importlib._bootstrap_external>:1518(_get_spec)
+      126    0.001    0.000    0.010    0.000 <frozen importlib._bootstrap_external>:1620(find_spec)
+     3462    0.006    0.000    0.009    0.000 game_window.py:372(_point_in_polygon)
+        1    0.000    0.000    0.008    0.008 AI.py:1(<module>)
+    12848    0.008    0.000    0.008    0.000 {built-in method nt._path_splitroot_ex}
+      230    0.000    0.000    0.007    0.000 <frozen importlib._bootstrap_external>:145(_path_stat)
+      230    0.007    0.000    0.007    0.000 {built-in method nt.stat}
+    18846    0.004    0.000    0.005    0.000 nonaga_board.py:128(get_number_of_tiles)
+     4284    0.002    0.000    0.004    0.000 <frozen ntpath>:34(_get_bothseps)
+     4363    0.002    0.000    0.004    0.000 nonaga_logic.py:31(get_board_state)
+     4282    0.004    0.000    0.004    0.000 {built-in method nt._path_normpath}
+      702    0.004    0.000    0.004    0.000 {built-in method pygame.draw.rect}
+       30    0.000    0.000    0.003    0.000 <frozen importlib._bootstrap_external>:778(_compile_bytecode)
+     5912    0.003    0.000    0.003    0.000 {method 'rstrip' of 'str' objects}
+     8092    0.003    0.000    0.003    0.000 {method 'get_width' of 'pygame.surface.Surface' objects}
+        1    0.000    0.000    0.003    0.003 sysfont.py:1(<module>)
+       30    0.003    0.000    0.003    0.000 {built-in method marshal.loads}
+       69    0.000    0.000    0.003    0.000 <frozen importlib._bootstrap_external>:155(_path_is_mode_type)
+        1    0.000    0.000    0.003    0.003 queue.py:1(<module>)
+      522    0.002    0.000    0.003    0.000 <frozen importlib._bootstrap_external>:101(_path_join)
+       65    0.000    0.000    0.003    0.000 <frozen importlib._bootstrap_external>:164(_path_isfile)
+       32    0.003    0.000    0.003    0.000 {method 'read' of '_io.BufferedReader' objects}
+     4045    0.002    0.000    0.003    0.000 game_window.py:163(handle_moves)
+        1    0.000    0.000    0.003    0.003 sprite.py:1(<module>)
+    19331    0.003    0.000    0.003    0.000 nonaga_logic.py:292(get_current_player)
+    24750    0.002    0.000    0.002    0.000 nonaga_board.py:366(get_color)
+    26782    0.002    0.000    0.002    0.000 nonaga_board.py:132(get_all_tiles)
+     8687    0.002    0.000    0.002    0.000 {built-in method nt.fspath}
+        1    0.000    0.000    0.002    0.002 random.py:1(<module>)
+     4363    0.002    0.000    0.002    0.000 nonaga_board.py:60(get_state)
+        1    0.000    0.000    0.002    0.002 <frozen importlib._bootstrap_external>:1234(_cache_bytecode)
+    20939    0.002    0.000    0.002    0.000 {built-in method builtins.min}
+        1    0.000    0.000    0.002    0.002 <frozen importlib._bootstrap_external>:1239(set_data)
+        1    0.000    0.000    0.002    0.002 <frozen importlib._bootstrap_external>:200(_write_atomic)
+        1    0.000    0.000    0.002    0.002 game_window.py:12(__init__)
+      173    0.001    0.000    0.002    0.000 <frozen importlib._bootstrap>:304(acquire)
+        1    0.000    0.000    0.002    0.002 subprocess.py:1(<module>)
+        1    0.000    0.000    0.001    0.001 decoder.py:1(<module>)
+        1    0.001    0.001    0.001    0.001 {built-in method nt.replace}
+      102    0.000    0.000    0.001    0.000 <frozen importlib._bootstrap>:463(_lock_unlock_module)
+        1    0.000    0.000    0.001    0.001 freetype.py:1(<module>)
+        4    0.000    0.000    0.001    0.000 <frozen importlib._bootstrap>:1390(_handle_fromlist)
+        1    0.000    0.000    0.001    0.001 {built-in method builtins.__import__}
+       71    0.000    0.000    0.001    0.000 <frozen importlib._bootstrap>:416(__enter__)
+        1    0.000    0.000    0.001    0.001 nonaga_logic.py:10(__init__)
+        1    0.000    0.000    0.001    0.001 nonaga_board.py:7(__init__)
+        1    0.000    0.000    0.001    0.001 nonaga_board.py:96(__init__)
+       65    0.001    0.000    0.001    0.000 {built-in method builtins.__build_class__}
+       66    0.000    0.000    0.001    0.000 <frozen importlib._bootstrap>:733(_init_module_attrs)
+        1    0.000    0.000    0.001    0.001 <frozen importlib._bootstrap_external>:1081(source_to_code)
+        1    0.001    0.001    0.001    0.001 {built-in method builtins.compile}
+        6    0.000    0.000    0.001    0.000 __init__.py:287(compile)
+        6    0.000    0.000    0.001    0.000 __init__.py:330(_compile)
+        1    0.000    0.000    0.001    0.001 nonaga_board.py:162(add_pieces)
+        6    0.000    0.000    0.001    0.000 nonaga_board.py:155(add_piece)
+       62    0.000    0.000    0.001    0.000 <frozen importlib._bootstrap_external>:509(cache_from_source)
+        6    0.000    0.000    0.001    0.000 _compiler.py:738(compile)
+     8675    0.001    0.000    0.001    0.000 nonaga_logic.py:253(get_current_turn_phase)
+      173    0.000    0.000    0.001    0.000 <frozen importlib._bootstrap>:162(__enter__)
+     4046    0.001    0.000    0.001    0.000 {method 'get_height' of 'pygame.surface.Surface' objects}
+     4713    0.001    0.000    0.001    0.000 {built-in method builtins.max}
+        5    0.001    0.000    0.001    0.000 {built-in method builtins.print}
+       90    0.000    0.000    0.001    0.000 <frozen importlib._bootstrap>:632(cached)
+     4282    0.001    0.000    0.001    0.000 pkgdata.py:28(resource_exists)
+       31    0.000    0.000    0.001    0.000 <frozen importlib._bootstrap_external>:1229(path_stats)
+       34    0.001    0.000    0.001    0.000 {method '__exit__' of '_io._IOBase' objects}
+      173    0.000    0.000    0.001    0.000 <frozen importlib._bootstrap>:124(setdefault)
+       59    0.000    0.000    0.001    0.000 <frozen importlib._bootstrap_external>:638(_get_cached)
+     3867    0.001    0.000    0.001    0.000 nonaga_board.py:172(get_movable_tiles)
+        1    0.000    0.000    0.001    0.001 scanner.py:1(<module>)
+        1    0.000    0.000    0.001    0.001 AI.py:112(load_parameters)
+       59    0.000    0.000    0.001    0.000 <frozen importlib._bootstrap_external>:1615(_get_spec)
+        6    0.000    0.000    0.000    0.000 _parser.py:970(parse)
+        3    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:1671(_fill_cache)
+       95    0.000    0.000    0.000    0.000 {method 'index' of 'list' objects}
+       59    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:829(spec_from_file_location)
+     13/6    0.000    0.000    0.000    0.000 _parser.py:451(_parse_sub)
+      173    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:426(_get_module_lock)
+        1    0.000    0.000    0.000    0.000 sndarray.py:1(<module>)
+     15/6    0.000    0.000    0.000    0.000 _parser.py:511(_parse)
+      173    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:372(release)
+        1    0.000    0.000    0.000    0.000 surfarray.py:1(<module>)
+        1    0.000    0.000    0.000    0.000 pkgdata.py:1(<module>)
+        1    0.000    0.000    0.000    0.000 encoder.py:1(<module>)
+        2    0.000    0.000    0.000    0.000 nonaga_logic.py:217(move_piece)
+        1    0.000    0.000    0.000    0.000 signal.py:1(<module>)
+        2    0.000    0.000    0.000    0.000 nonaga_logic.py:209(move_tile)
+        6    0.000    0.000    0.000    0.000 _compiler.py:571(_code)
+      142    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:1496(_path_importer_cache)
+        1    0.000    0.000    0.000    0.000 {built-in method nt.open}
+        2    0.000    0.000    0.000    0.000 enum.py:887(_convert_)
+        3    0.000    0.000    0.000    0.000 {built-in method nt.listdir}
+        3    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:1483(_path_hooks)
+        1    0.000    0.000    0.000    0.000 nonaga_board.py:148(add_tiles)
+       62    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:190(_path_abspath)
+       71    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:420(__exit__)
+        1    0.000    0.000    0.000    0.000 threading.py:1(<module>)
+     1846    0.000    0.000    0.000    0.000 {method 'endswith' of 'str' objects}
+       63    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:137(_path_split)
+       62    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:177(_path_isabs)
+        3    0.000    0.000    0.000    0.000 {built-in method pygame.display.set_caption}
+       81    0.000    0.000    0.000    0.000 menu_window.py:53(update_hover)
+     25/6    0.000    0.000    0.000    0.000 _compiler.py:37(_compile)
+      173    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:74(__new__)
+        1    0.000    0.000    0.000    0.000 {built-in method nt.chdir}
+        2    0.000    0.000    0.000    0.000 enum.py:1738(convert_class)
+       71    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:982(find_spec)
+      173    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:82(remove)
+     1230    0.000    0.000    0.000    0.000 {method 'startswith' of 'str' objects}
+       31    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:693(_classify_pyc)
+       83    0.000    0.000    0.000    0.000 {method 'collidepoint' of 'pygame.rect.Rect' objects}
+        3    0.000    0.000    0.000    0.000 <frozen zipimport>:68(__init__)
+        1    0.000    0.000    0.000    0.000 bisect.py:1(<module>)
+      586    0.000    0.000    0.000    0.000 {method 'join' of 'str' objects}
+      173    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:79(__init__)
+        4    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:169(_path_isdir)
+        1    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:650(_calc_mode)
+        7    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:989(create_module)
+        3    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:1712(path_hook_for_FileFinder)
+        1    0.000    0.000    0.000    0.000 __init__.py:274(load)
+        1    0.000    0.000    0.000    0.000 {method 'write' of '_io.FileIO' objects}
+       71    0.000    0.000    0.000    0.000 {built-in method _imp.is_builtin}
+       71    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:445(cb)
+      144    0.000    0.000    0.000    0.000 menu_window.py:32(<genexpr>)
+        7    0.000    0.000    0.000    0.000 {built-in method _imp.create_builtin}
+      173    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:173(__exit__)
+       92    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:89(_unpack_uint32)
+       71    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:232(__init__)
+      364    0.000    0.000    0.000    0.000 {method 'rpartition' of 'str' objects}
+       14    0.000    0.000    0.000    0.000 _compiler.py:241(_optimize_charset)
+      173    0.000    0.000    0.000    0.000 {built-in method _weakref._remove_dead_weakref}
+       64    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:1128(find_spec)
+        6    0.000    0.000    0.000    0.000 _compiler.py:509(_compile_info)
+       28    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:1322(exec_module)
+       31    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:726(_validate_timestamp_pyc)
+        4    0.000    0.000    0.000    0.000 enum.py:1581(__or__)
+      631    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:491(_verbose_message)
+        1    0.000    0.000    0.000    0.000 nonaga_board.py:1(<module>)
+        1    0.000    0.000    0.000    0.000 cursors.py:1(<module>)
+      189    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:139(<genexpr>)
+       10    0.000    0.000    0.000    0.000 enum.py:691(__call__)
+        1    0.000    0.000    0.000    0.000 heapq.py:1(<module>)
+      199    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:1226(__exit__)
+        1    0.000    0.000    0.000    0.000 {method 'read' of '_io.TextIOWrapper' objects}
+       10    0.000    0.000    0.000    0.000 enum.py:1145(__new__)
+       62    0.000    0.000    0.000    0.000 {built-in method nt._path_splitroot}
+      347    0.000    0.000    0.000    0.000 {method '__exit__' of '_thread.RLock' objects}
+       58    0.000    0.000    0.000    0.000 {built-in method builtins.setattr}
+        1    0.000    0.000    0.000    0.000 version.py:1(<module>)
+        1    0.000    0.000    0.000    0.000 warnings.py:1(<module>)
+      199    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:1222(__enter__)
+       68    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:645(parent)
+      443    0.000    0.000    0.000    0.000 {built-in method _imp.acquire_lock}
+        7    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:997(exec_module)
+      126    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:67(_relax_case)
+        7    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:662(spec_from_loader)
+        1    0.000    0.000    0.000    0.000 typing.py:426(inner)
+      443    0.000    0.000    0.000    0.000 {built-in method _imp.release_lock}
+        1    0.000    0.000    0.000    0.000 fastevent.py:1(<module>)
+        2    0.000    0.000    0.000    0.000 enum.py:1444(_missing_)
+        2    0.000    0.000    0.000    0.000 menu_window.py:65(__init__)
+        7    0.000    0.000    0.000    0.000 {built-in method _imp.exec_builtin}
+        1    0.000    0.000    0.000    0.000 typing.py:1207(_generic_class_getitem)
+       19    0.000    0.000    0.000    0.000 nonaga_board.py:136(_add_tile)
+      346    0.000    0.000    0.000    0.000 {built-in method _thread.get_ident}
+      123    0.000    0.000    0.000    0.000 _parser.py:167(__getitem__)
+        1    0.000    0.000    0.000    0.000 colordict.py:1(<module>)
+      173    0.000    0.000    0.000    0.000 {method 'remove' of 'list' objects}
+        1    0.000    0.000    0.000    0.000 threading.py:1350(__init__)
+        3    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:1594(__init__)
+       31    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:670(_check_name_wrapper)
+        1    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:791(_code_to_timestamp_pyc)
+    31/12    0.000    0.000    0.000    0.000 _parser.py:177(getwidth)
+       71    0.000    0.000    0.000    0.000 _parser.py:260(get)
+       28    0.000    0.000    0.000    0.000 {built-in method _imp.exec_dynamic}
+        1    0.000    0.000    0.000    0.000 <frozen os>:1153(add_dll_directory)
+        1    0.000    0.000    0.000    0.000 {method 'disable' of '_lsprof.Profiler' objects}
+        1    0.000    0.000    0.000    0.000 subprocess.py:756(Popen)
+       31    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:48(_new_module)
+        6    0.000    0.000    0.000    0.000 enum.py:1592(__and__)
+        2    0.000    0.000    0.000    0.000 enum.py:489(__new__)
+        7    0.000    0.000    0.000    0.000 enum.py:1434(_iter_member_by_def_)
+      259    0.000    0.000    0.000    0.000 {method 'lower' of 'str' objects}
+       64    0.000    0.000    0.000    0.000 {built-in method _imp.find_frozen}
+        1    0.000    0.000    0.000    0.000 nonaga_logic.py:1(<module>)
+        1    0.000    0.000    0.000    0.000 random.py:119(__init__)
+        1    0.000    0.000    0.000    0.000 typing.py:1423(__init__)
+        1    0.000    0.000    0.000    0.000 {built-in method nt._add_dll_directory}
+        1    0.000    0.000    0.000    0.000 __init__.py:299(loads)
+       16    0.000    0.000    0.000    0.000 _parser.py:311(_class_escape)
+        1    0.000    0.000    0.000    0.000 <frozen os>:719(__setitem__)
+        7    0.000    0.000    0.000    0.000 typing.py:1256(_generic_init_subclass)
+        1    0.000    0.000    0.000    0.000 menu_window.py:1(<module>)
+       65    0.000    0.000    0.000    0.000 {method 'replace' of 'str' objects}
+        6    0.000    0.000    0.000    0.000 _parser.py:97(closegroup)
+        1    0.000    0.000    0.000    0.000 cProfile.py:1(<module>)
+        1    0.000    0.000    0.000    0.000 random.py:128(seed)
+        2    0.000    0.000    0.000    0.000 {built-in method builtins.sorted}
+       30    0.000    0.000    0.000    0.000 {built-in method _imp._fix_co_filename}
+      126    0.000    0.000    0.000    0.000 {method 'rfind' of 'str' objects}
+       70    0.000    0.000    0.000    0.000 {method 'pop' of 'dict' objects}
+      102    0.000    0.000    0.000    0.000 _parser.py:239(__next)
+       30    0.000    0.000    0.000    0.000 signal.py:9(<lambda>)
+        1    0.000    0.000    0.000    0.000 {built-in method nt.putenv}
+        6    0.000    0.000    0.000    0.000 cursors.py:57(__init__)
+        1    0.000    0.000    0.000    0.000 decoder.py:339(decode)
+       71    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:599(__init__)
+       92    0.000    0.000    0.000    0.000 {built-in method from_bytes}
+       71    0.000    0.000    0.000    0.000 {built-in method _thread.allocate_lock}
+      173    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:158(__init__)
+      134    0.000    0.000    0.000    0.000 {method 'partition' of 'str' objects}
+       14    0.000    0.000    0.000    0.000 _compiler.py:214(_compile_charset)
+        6    0.000    0.000    0.000    0.000 menu_window.py:6(__init__)
+        1    0.000    0.000    0.000    0.000 {function Random.seed at 0x000001ECE01F00E0}
+        4    0.000    0.000    0.000    0.000 _compiler.py:384(_mk_bitmap)
+        1    0.000    0.000    0.000    0.000 threading.py:869(__init__)
+       30    0.000    0.000    0.000    0.000 enum.py:1574(_get_value)
+        1    0.000    0.000    0.000    0.000 {built-in method marshal.dumps}
+       15    0.000    0.000    0.000    0.000 enum.py:818(__setattr__)
+        2    0.000    0.000    0.000    0.000 typing.py:260(_collect_type_parameters)
+       88    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:653(has_location)
+       25    0.000    0.000    0.000    0.000 nonaga_board.py:337(__init__)
+        7    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:501(_requires_builtin_wrapper)
+        3    0.000    0.000    0.000    0.000 <frozen os>:711(__getitem__)
+        2    0.000    0.000    0.000    0.000 <frozen _collections_abc>:815(__contains__)
+       79    0.000    0.000    0.000    0.000 _parser.py:255(match)
+       19    0.000    0.000    0.000    0.000 {method 'extend' of 'list' objects}
+        1    0.000    0.000    0.000    0.000 random.py:103(Random)
+      8/5    0.000    0.000    0.000    0.000 _compiler.py:434(_get_literal_prefix)
+       52    0.000    0.000    0.000    0.000 _parser.py:163(__len__)
+       33    0.000    0.000    0.000    0.000 {method 'format' of 'str' objects}
+       38    0.000    0.000    0.000    0.000 _parser.py:292(tell)
+        1    0.000    0.000    0.000    0.000 contextlib.py:276(contextmanager)
+       71    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:412(__init__)
+        1    0.000    0.000    0.000    0.000 threading.py:620(set)
+        2    0.000    0.000    0.000    0.000 menu_window.py:42(is_clicked)
+        1    0.000    0.000    0.000    0.000 nonaga_constants.py:1(<module>)
+        9    0.000    0.000    0.000    0.000 _parser.py:448(_uniq)
+        7    0.000    0.000    0.000    0.000 typing.py:1368(__setattr__)
+        9    0.000    0.000    0.000    0.000 _compiler.py:396(_simple)
+        1    0.000    0.000    0.000    0.000 nonaga_logic.py:7(NonagaLogic)
+        7    0.000    0.000    0.000    0.000 enum.py:1424(_iter_member_by_value_)
+        1    0.000    0.000    0.000    0.000 typing.py:1307(__init__)
+        1    0.000    0.000    0.000    0.000 sprite.py:729(LayeredUpdates)
+       45    0.000    0.000    0.000    0.000 {method 'setdefault' of 'dict' objects}
+        1    0.000    0.000    0.000    0.000 queue.py:40(Queue)
+       25    0.000    0.000    0.000    0.000 _parser.py:175(append)
+        1    0.000    0.000    0.000    0.000 game_window.py:9(Game)
+        1    0.000    0.000    0.000    0.000 sprite.py:99(Sprite)
+        6    0.000    0.000    0.000    0.000 _parser.py:85(opengroup)
+        1    0.000    0.000    0.000    0.000 sprite.py:363(AbstractGroup)
+        2    0.000    0.000    0.000    0.000 __init__.py:56(__init__)
+        1    0.000    0.000    0.000    0.000 decoder.py:350(raw_decode)
+        4    0.000    0.000    0.000    0.000 <frozen os>:785(encodekey)
+        1    0.000    0.000    0.000    0.000 queue.py:300(LifoQueue)
+        6    0.000    0.000    0.000    0.000 _parser.py:230(__init__)
+       11    0.000    0.000    0.000    0.000 enum.py:36(_is_descriptor)
+        1    0.000    0.000    0.000    0.000 threading.py:449(Semaphore)
+        1    0.000    0.000    0.000    0.000 threading.py:858(Thread)
+       11    0.000    0.000    0.000    0.000 enum.py:77(_is_private)
+        1    0.000    0.000    0.000    0.000 cp1252.py:22(decode)
+       48    0.000    0.000    0.000    0.000 {method 'find' of 'bytearray' objects}
+        3    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:79(_pack_uint32)
+        1    0.000    0.000    0.000    0.000 sprite.py:1062(LayeredDirty)
+        4    0.000    0.000    0.000    0.000 _parser.py:264(getwhile)
+       15    0.000    0.000    0.000    0.000 enum.py:46(_is_dunder)
+        1    0.000    0.000    0.000    0.000 decoder.py:291(__init__)
+        1    0.000    0.000    0.000    0.000 subprocess.py:132(CalledProcessError)
+        6    0.000    0.000    0.000    0.000 {built-in method _sre.compile}
+        1    0.000    0.000    0.000    0.000 typing.py:1599(__mro_entries__)
+       24    0.000    0.000    0.000    0.000 _parser.py:82(groups)
+        1    0.000    0.000    0.000    0.000 nonaga_board.py:93(NonagaIsland)
+        1    0.000    0.000    0.000    0.000 functools.py:36(update_wrapper)
+       10    0.000    0.000    0.000    0.000 _parser.py:171(__setitem__)
+        2    0.000    0.000    0.000    0.000 {method 'sort' of 'list' objects}
+        5    0.000    0.000    0.000    0.000 _compiler.py:465(_get_charset_prefix)
+        6    0.000    0.000    0.000    0.000 nonaga_board.py:361(__init__)
+       31    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:1180(__init__)
+       28    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:1303(__init__)
+        1    0.000    0.000    0.000    0.000 subprocess.py:476(CompletedProcess)
+        9    0.000    0.000    0.000    0.000 typing.py:1294(_is_dunder)
+        1    0.000    0.000    0.000    0.000 queue.py:316(_PySimpleQueue)
+        1    0.000    0.000    0.000    0.000 threading.py:592(__init__)
+        1    0.000    0.000    0.000    0.000 AI.py:8(AI)
+        2    0.000    0.000    0.000    0.000 copyreg.py:12(pickle)
+        3    0.000    0.000    0.000    0.000 {built-in method pygame.base.get_sdl_version}
+       31    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:1205(get_filename)
+        1    0.000    0.000    0.000    0.000 nonaga_board.py:4(NonagaBoard)
+        1    0.000    0.000    0.000    0.000 threading.py:428(notify_all)
+       25    0.000    0.000    0.000    0.000 nonaga_board.py:304(__init__)
+        2    0.000    0.000    0.000    0.000 typing.py:1358(__getattr__)
+        4    0.000    0.000    0.000    0.000 _parser.py:371(_escape)
+        9    0.000    0.000    0.000    0.000 {method 'setter' of 'property' objects}
+        1    0.000    0.000    0.000    0.000 typing.py:3789(__getattr__)
+       30    0.000    0.000    0.000    0.000 cursors.py:90(<genexpr>)
+        7    0.000    0.000    0.000    0.000 enum.py:114(_iter_bits_lsb)
+       11    0.000    0.000    0.000    0.000 enum.py:57(_is_sunder)
+       12    0.000    0.000    0.000    0.000 _compiler.py:568(isstring)
+        2    0.000    0.000    0.000    0.000 {method 'match' of 're.Pattern' objects}
+       30    0.000    0.000    0.000    0.000 {method 'isupper' of 'str' objects}
+       31    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:1013(create_module)
+        9    0.000    0.000    0.000    0.000 {built-in method fromkeys}
+       26    0.000    0.000    0.000    0.000 _parser.py:112(__init__)
+        1    0.000    0.000    0.000    0.000 sprite.py:262(DirtySprite)
+        1    0.000    0.000    0.000    0.000 threading.py:674(Barrier)
+        1    0.000    0.000    0.000    0.000 threading.py:281(__init__)
+        6    0.000    0.000    0.000    0.000 _parser.py:954(fix_flags)
+        3    0.000    0.000    0.000    0.000 signal.py:51(decorator)
+        1    0.000    0.000    0.000    0.000 version.py:35(SoftwareVersion)
+        2    0.000    0.000    0.000    0.000 version.py:42(__new__)
+        5    0.000    0.000    0.000    0.000 <frozen os>:779(check_str)
+        1    0.000    0.000    0.000    0.000 threading.py:398(notify)
+        1    0.000    0.000    0.000    0.000 sprite.py:1400(GroupSingle)
+       31    0.000    0.000    0.000    0.000 signal.py:16(<lambda>)
+       32    0.000    0.000    0.000    0.000 {built-in method builtins.chr}
+       24    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:1600(<genexpr>)
+        1    0.000    0.000    0.000    0.000 threading.py:269(Condition)
+        1    0.000    0.000    0.000    0.000 random.py:225(__init_subclass__)
+        1    0.000    0.000    0.000    0.000 {built-in method builtins.all}
+        1    0.000    0.000    0.000    0.000 _weakrefset.py:37(__init__)
+        1    0.000    0.000    0.000    0.000 subprocess.py:169(TimeoutExpired)
+        1    0.000    0.000    0.000    0.000 threading.py:303(__enter__)
+        2    0.000    0.000    0.000    0.000 {built-in method math.log}
+        2    0.000    0.000    0.000    0.000 typing.py:1221(<genexpr>)
+       12    0.000    0.000    0.000    0.000 _compiler.py:31(_combine_flags)
+        1    0.000    0.000    0.000    0.000 _weakrefset.py:85(add)
+        1    0.000    0.000    0.000    0.000 typing.py:1122(_is_unpacked_typevartuple)
+        1    0.000    0.000    0.000    0.000 decoder.py:261(JSONDecoder)
+       13    0.000    0.000    0.000    0.000 _compiler.py:426(_get_iscased)
+        4    0.000    0.000    0.000    0.000 nonaga_constants.py:11(<genexpr>)
+        3    0.000    0.000    0.000    0.000 enum.py:198(__get__)
+        2    0.000    0.000    0.000    0.000 typing.py:1230(<genexpr>)
+        1    0.000    0.000    0.000    0.000 cursors.py:56(Cursor)
+        1    0.000    0.000    0.000    0.000 threading.py:141(_RLock)
+        1    0.000    0.000    0.000    0.000 threading.py:318(_is_owned)
+        1    0.000    0.000    0.000    0.000 __init__.py:127(WorkerQueue)
+        1    0.000    0.000    0.000    0.000 random.py:880(SystemRandom)
+       17    0.000    0.000    0.000    0.000 {built-in method builtins.ord}
+        1    0.000    0.000    0.000    0.000 warnings.py:518(deprecated)
+        1    0.000    0.000    0.000    0.000 nonaga_board.py:39(get_piece)
+        4    0.000    0.000    0.000    0.000 {method 'extend' of 'bytearray' objects}
+        1    0.000    0.000    0.000    0.000 functools.py:66(wraps)
+        2    0.000    0.000    0.000    0.000 typing.py:1437(__eq__)
+        1    0.000    0.000    0.000    0.000 nonaga_board.py:301(NonagaTilesCoordinates)
+        1    0.000    0.000    0.000    0.000 cProfile.py:29(Profile)
+        1    0.000    0.000    0.000    0.000 {built-in method _codecs.charmap_decode}
+       11    0.000    0.000    0.000    0.000 enum.py:910(<lambda>)
+        1    0.000    0.000    0.000    0.000 warnings.py:442(catch_warnings)
+        1    0.000    0.000    0.000    0.000 encoder.py:74(JSONEncoder)
+        4    0.000    0.000    0.000    0.000 {method 'upper' of 'str' objects}
+        7    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:1014(is_package)
+        6    0.000    0.000    0.000    0.000 _parser.py:76(__init__)
+        1    0.000    0.000    0.000    0.000 encoder.py:105(__init__)
+        1    0.000    0.000    0.000    0.000 decoder.py:20(JSONDecodeError)
+        4    0.000    0.000    0.000    0.000 {method 'translate' of 'bytearray' objects}
+        1    0.000    0.000    0.000    0.000 threading.py:306(__exit__)
+       11    0.000    0.000    0.000    0.000 enum.py:1203(__init__)
+        1    0.000    0.000    0.000    0.000 threading.py:1022(_set_native_id)
+        1    0.000    0.000    0.000    0.000 nonaga_board.py:46(get_tile)
+        1    0.000    0.000    0.000    0.000 menu_window.py:3(Button)
+        2    0.000    0.000    0.000    0.000 enum.py:796(__members__)
+        1    0.000    0.000    0.000    0.000 subprocess.py:221(Handle)
+        1    0.000    0.000    0.000    0.000 __init__.py:53(MissingModule)
+        3    0.000    0.000    0.000    0.000 {method 'to_bytes' of 'int' objects}
+        1    0.000    0.000    0.000    0.000 <frozen codecs>:263(__init__)
+        1    0.000    0.000    0.000    0.000 threading.py:581(Event)
+        2    0.000    0.000    0.000    0.000 copyreg.py:22(constructor)
+        1    0.000    0.000    0.000    0.000 sprite.py:251(WeakSprite)
+        1    0.000    0.000    0.000    0.000 threading.py:1265(_make_invoke_excepthook)
+        1    0.000    0.000    0.000    0.000 nonaga_board.py:334(NonagaTile)
+        4    0.000    0.000    0.000    0.000 nonaga_constants.py:18(<genexpr>)
+        1    0.000    0.000    0.000    0.000 {built-in method math.exp}
+        1    0.000    0.000    0.000    0.000 typing.py:1127(_is_typevar_like)
+        1    0.000    0.000    0.000    0.000 sprite.py:701(OrderedUpdates)
+        1    0.000    0.000    0.000    0.000 queue.py:31(Full)
+        1    0.000    0.000    0.000    0.000 sprite.py:1588(collide_circle_ratio)
+        1    0.000    0.000    0.000    0.000 subprocess.py:198(STARTUPINFO)
+        1    0.000    0.000    0.000    0.000 threading.py:122(RLock)
+        1    0.000    0.000    0.000    0.000 <frozen os>:1137(__init__)
+        5    0.000    0.000    0.000    0.000 enum.py:1441(<lambda>)
+        2    0.000    0.000    0.000    0.000 enum.py:1722(_simple_enum)
+        1    0.000    0.000    0.000    0.000 __init__.py:176(FuncResult)
+        1    0.000    0.000    0.000    0.000 threading.py:536(BoundedSemaphore)
+        2    0.000    0.000    0.000    0.000 {method 'items' of 'mappingproxy' objects}
+        3    0.000    0.000    0.000    0.000 enum.py:1322(value)
+        3    0.000    0.000    0.000    0.000 signal.py:50(_wraps)
+        1    0.000    0.000    0.000    0.000 nonaga_board.py:358(NonagaPiece)
+        1    0.000    0.000    0.000    0.000 sprite.py:1487(collide_rect_ratio)
+        1    0.000    0.000    0.000    0.000 warnings.py:420(WarningMessage)
+        1    0.000    0.000    0.000    0.000 queue.py:281(PriorityQueue)
+        1    0.000    0.000    0.000    0.000 AI.py:9(__init__)
+        1    0.000    0.000    0.000    0.000 menu_window.py:62(Menu)
+        1    0.000    0.000    0.000    0.000 {method 'acquire' of '_thread.lock' objects}
+        1    0.000    0.000    0.000    0.000 typing.py:164(_type_convert)
+        1    0.000    0.000    0.000    0.000 sprite.py:642(Group)
+        1    0.000    0.000    0.000    0.000 sprite.py:671(RenderUpdates)
+        1    0.000    0.000    0.000    0.000 warnings.py:207(_OptionError)
+        1    0.000    0.000    0.000    0.000 threading.py:1318(Timer)
+        1    0.000    0.000    0.000    0.000 threading.py:1395(_DummyThread)
+        2    0.000    0.000    0.000    0.000 {method 'end' of 're.Match' objects}
+        1    0.000    0.000    0.000    0.000 {method '__enter__' of '_thread.lock' objects}
+        1    0.000    0.000    0.000    0.000 {built-in method _thread._make_thread_handle}
+        7    0.000    0.000    0.000    0.000 {method '__init_subclass__' of 'object' objects}
+        4    0.000    0.000    0.000    0.000 {built-in method builtins.callable}
+        1    0.000    0.000    0.000    0.000 {built-in method builtins.globals}
+        2    0.000    0.000    0.000    0.000 {built-in method sys.exc_info}
+        2    0.000    0.000    0.000    0.000 typing.py:1427(<genexpr>)
+        1    0.000    0.000    0.000    0.000 threading.py:1366(_DeleteDummyThreadOnDel)
+        1    0.000    0.000    0.000    0.000 subprocess.py:129(SubprocessError)
+        4    0.000    0.000    0.000    0.000 nonaga_constants.py:21(<genexpr>)
+        1    0.000    0.000    0.000    0.000 {method 'insert' of 'list' objects}
+        1    0.000    0.000    0.000    0.000 version.py:56(PygameVersion)
+        1    0.000    0.000    0.000    0.000 {built-in method _thread.get_native_id}
+        1    0.000    0.000    0.000    0.000 {built-in method _thread._get_main_thread_ident}
+        1    0.000    0.000    0.000    0.000 warnings.py:212(_processoptions)
+        1    0.000    0.000    0.000    0.000 sprite.py:357(WeakDirtySprite)
+        1    0.000    0.000    0.000    0.000 threading.py:1348(_MainThread)
+        1    0.000    0.000    0.000    0.000 queue.py:36(ShutDown)
+        1    0.000    0.000    0.000    0.000 {method '__exit__' of '_thread.lock' objects}
+        1    0.000    0.000    0.000    0.000 subprocess.py:701(_use_posix_spawn)
+        1    0.000    0.000    0.000    0.000 version.py:61(SDLVersion)
+        1    0.000    0.000    0.000    0.000 threading.py:837(BrokenBarrierError)
+        1    0.000    0.000    0.000    0.000 {method 'index' of 'tuple' objects}
+        1    0.000    0.000    0.000    0.000 {method 'has_default' of 'typing.TypeVar' objects}

@@ -2,12 +2,12 @@ from nonaga_constants import RED, BLACK, PIECE_TO_MOVE, TILE_TO_MOVE
 
 from nonaga_board import NonagaBoard, NonagaIsland, NonagaPiece, NonagaTile
 
-import copy
 
 class NonagaLogic:
     """Manages the game logic for Nonaga."""
 
-    def __init__(self, player_red=None, player_black=None):
+    __slots__ = ['player_red', 'player_black', 'board', 'current_player', 'turn_phase']
+    def __init__(self, player_red=None, player_black=None, new_game:bool = True):
         """Initialize the game logic.
 
         Args:
@@ -20,13 +20,20 @@ class NonagaLogic:
         self.player_black = player_black
 
         # Board
-        self.board = NonagaBoard()
+        self.board = NonagaBoard(new_game=new_game)
 
         # Current player ("red" or "black")
         self.current_player = RED
         
         self.turn_phase = PIECE_TO_MOVE
         
+    def clone(self)-> "NonagaLogic":
+        """Return a fast deep clone with identical attributes."""
+        cloned = NonagaLogic(self.player_red, self.player_black, new_game=False)
+        cloned.board = self.board.clone()
+        cloned.current_player = self.current_player
+        cloned.turn_phase = self.turn_phase
+        return cloned
 
     def get_board_state(self):
         """Get the current board state for display."""
@@ -89,8 +96,11 @@ class NonagaLogic:
         """
 
         tile_coords_set = island._get_tile_coords_set()
-        tile_coords_set.remove(tile.get_position())
-        neighbor_offsets = island._get_neighbor_offsets()
+        tile_position = tile.get_position()
+        if tile_position not in tile_coords_set:
+            return set([])
+        tile_coords_set.remove(tile_position)
+        neighbor_offsets = island._NEIGHBOR_OFFSETS
 
         candidate_positions = set()
         for existing_pos in tile_coords_set:
@@ -224,7 +234,8 @@ class NonagaLogic:
 
     def move_tile_ai(self, tile: NonagaTile, destination: tuple[int, int, int]):
         """Execute a tile move."""
-        new_self = copy.deepcopy(self)
+        new_self = self.clone()
+        tile = new_self.board.get_tile(tile.get_position())  # Ensure we are moving the correct tile object in the cloned board
         if new_self.turn_phase == TILE_TO_MOVE:
             new_self.board.move_tile(tile, destination)
             new_self._next_turn_phase()
@@ -234,7 +245,8 @@ class NonagaLogic:
 
     def move_piece_ai(self, piece: NonagaPiece, destination: tuple[int, int, int]):
         """Execute a piece move."""
-        new_self = copy.deepcopy(self)
+        new_self = self.clone()
+        piece = new_self.board.get_piece(piece.get_position())  # Ensure we are moving the correct piece object in the cloned board
         if new_self.turn_phase == PIECE_TO_MOVE and new_self.get_current_player() == piece.color:
             new_self.board.move_piece(piece, destination)
             new_self._next_turn_phase()
