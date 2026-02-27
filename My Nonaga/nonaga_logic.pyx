@@ -3,7 +3,7 @@ from nonaga_constants import RED, BLACK, PIECE_TO_MOVE, TILE_TO_MOVE
 from nonaga_board import NonagaBoard, NonagaIsland, NonagaPiece, NonagaTile
 
 # Module-level C neighbor offsets for check_win_condition
-cdef int _WIN_OFFSETS[6][3]
+cdef int[6][3] _WIN_OFFSETS
 _WIN_OFFSETS[0] = [1, -1,  0]
 _WIN_OFFSETS[1] = [1,  0, -1]
 _WIN_OFFSETS[2] = [0,  1, -1]
@@ -25,11 +25,6 @@ _PY_NEIGHBOR_OFFSETS = (
 cdef class NonagaLogic:
     """Manages the game logic for Nonaga."""
 
-    cdef public object player_red, player_black
-    cdef public object board            # NonagaBoard
-    cdef public int current_player
-    cdef public int turn_phase
-
     def __init__(self, player_red=None, player_black=None, bint new_game=True):
         self.player_red = player_red
         self.player_black = player_black
@@ -48,15 +43,15 @@ cdef class NonagaLogic:
         return c
 
     # ── board state ──────────────────────────────────────
-    def get_board_state(self):
+    cpdef object get_board_state(self):
         return self.board.get_state()
 
-    def is_ai_player(self, int player_color):
+    cdef is_ai_player(self, int player_color):
         player = self.player_red if player_color == 1 else self.player_black
         return callable(player)
 
     # ── tile moves ───────────────────────────────────────
-    def get_all_valid_tile_moves_ai(self):
+    cpdef dict get_all_valid_tile_moves_ai(self):
         """Get valid tile moves keyed by NonagaTile objects (for the AI)."""
         cdef object island = self.board.islands[0]
         cdef dict move = {}
@@ -64,7 +59,7 @@ cdef class NonagaLogic:
             move[tile] = self._get_valid_tile_positions(tile, island)
         return move
 
-    def get_all_valid_tile_moves(self):
+    cpdef dict get_all_valid_tile_moves(self):
         """Get valid tile moves keyed by position tuples (for the UI)."""
         cdef object island = self.board.islands[0]
         cdef dict move = {}
@@ -117,7 +112,7 @@ cdef class NonagaLogic:
         return valid_positions
 
     # ── piece moves ──────────────────────────────────────
-    def get_all_valid_piece_moves_ai(self):
+    cpdef dict get_all_valid_piece_moves_ai(self):
         """Get valid piece moves keyed by NonagaPiece objects (for the AI)."""
         cdef dict moves = {}
         cdef int cur = self.current_player
@@ -137,7 +132,7 @@ cdef class NonagaLogic:
                             moves[piece].append(valid_move)
         return moves
 
-    def get_all_valid_piece_moves(self):
+    cpdef dict get_all_valid_piece_moves(self):
         """Get valid piece moves keyed by position tuples (for the UI)."""
         cdef dict moves = {}
         cdef object island
@@ -186,14 +181,14 @@ cdef class NonagaLogic:
         return destination
 
     # ── execute moves ────────────────────────────────────
-    def move_tile(self, object tile, tuple destination):
+    cpdef void move_tile(self, object tile, tuple destination):
         if self.turn_phase == TILE_TO_MOVE:
             self.board.move_tile(tile, destination)
             self._next_turn_phase()
         else:
             raise ValueError("Invalid move: It's not the tile move phase.")
 
-    def move_piece(self, object piece, tuple destination):
+    cpdef void move_piece(self, object piece, tuple destination):
         if self.turn_phase == PIECE_TO_MOVE and self.current_player == piece.color:
             self.board.move_piece(piece, destination)
             self._next_turn_phase()
@@ -202,7 +197,7 @@ cdef class NonagaLogic:
                 "Invalid move: It's either not the piece move phase "
                 "or the piece does not belong to the current player.")
 
-    def move_tile_ai(self, object tile, tuple destination):
+    cpdef NonagaLogic move_tile_ai(self, object tile, tuple destination):
         cdef NonagaLogic new_self = self.clone()
         tile = new_self.board.get_tile(tile.get_position())
         if new_self.turn_phase == TILE_TO_MOVE:
@@ -212,7 +207,7 @@ cdef class NonagaLogic:
             raise ValueError("Invalid move: It's not the tile move phase.")
         return new_self
 
-    def move_piece_ai(self, object piece, tuple destination):
+    cpdef NonagaLogic move_piece_ai(self, object piece, tuple destination):
         cdef NonagaLogic new_self = self.clone()
         piece = new_self.board.get_piece(piece.get_position())
         if new_self.turn_phase == PIECE_TO_MOVE and new_self.current_player == piece.color:

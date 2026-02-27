@@ -4,7 +4,7 @@ from nonaga_constants import RED, BLACK
 # ──────────────────────────────────────────────────────────
 # Neighbor offsets as a module-level C-array for speed
 # ──────────────────────────────────────────────────────────
-cdef int NEIGHBOR_OFFSETS[6][3]
+cdef int[6][3] NEIGHBOR_OFFSETS
 NEIGHBOR_OFFSETS[0] = [1, -1,  0]
 NEIGHBOR_OFFSETS[1] = [1,  0, -1]
 NEIGHBOR_OFFSETS[2] = [0,  1, -1]
@@ -23,14 +23,9 @@ _PY_NEIGHBOR_OFFSETS = (
 )
 
 
-# ══════════════════════════════════════════════════════════
 #  NonagaTilesCoordinates
-# ══════════════════════════════════════════════════════════
 cdef class NonagaTilesCoordinates:
     """Holds the hexagonal coordinates for all tiles on the Nonaga board."""
-
-    cdef public int q, r, s
-    cdef public object island_id          # int or None
 
     def __init__(self, int q, int r, int s):
         self.q = q
@@ -71,9 +66,7 @@ cdef class NonagaTilesCoordinates:
         return c
 
 
-# ══════════════════════════════════════════════════════════
 #  NonagaTile
-# ══════════════════════════════════════════════════════════
 cdef class NonagaTile(NonagaTilesCoordinates):
     """Represents a tile on the Nonaga board."""
 
@@ -102,13 +95,9 @@ cdef class NonagaTile(NonagaTilesCoordinates):
         return c
 
 
-# ══════════════════════════════════════════════════════════
 #  NonagaPiece
-# ══════════════════════════════════════════════════════════
 cdef class NonagaPiece(NonagaTile):
     """Represents a game piece positioned on a tile."""
-
-    cdef public int color
 
     def __init__(self, int q, int r, int s, int color):
         NonagaTile.__init__(self, q, r, s)
@@ -133,14 +122,9 @@ cdef class NonagaPiece(NonagaTile):
         return f"Piece({self.q}, {self.r}, {self.s}, {self.color})"
 
 
-# ══════════════════════════════════════════════════════════
 #  NonagaIsland
-# ══════════════════════════════════════════════════════════
 cdef class NonagaIsland:
     """Represents an independent group of connected tiles on the Nonaga board."""
-
-    cdef public int id
-    cdef public set movable_tiles, unmovable_tiles, all_tiles, border_tiles, pieces
 
     # Expose the offsets for external readers (e.g. nonaga_logic.py)
     _NEIGHBOR_OFFSETS = _PY_NEIGHBOR_OFFSETS
@@ -382,9 +366,6 @@ cdef class NonagaIsland:
 cdef class NonagaBoard:
     """Represents the state of the Nonaga game board."""
 
-    cdef public dict islands
-    cdef public list pieces, tiles
-
     def __init__(self, bint new_game=True):
         cdef list tiles, pieces
         if new_game:
@@ -448,7 +429,7 @@ cdef class NonagaBoard:
                 return t
         return None
 
-    def get_pieces(self, color=None):
+    cpdef get_pieces(self, color=None):
         if color is None:
             return self.pieces
         return [p for p in self.pieces if (<NonagaPiece>p).color == color]

@@ -10,21 +10,18 @@ def compile_cython_files():
     # setup.py is in the project root (one level up from this file)
     project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     nonaga_dir = os.path.join(project_root, "My Nonaga")
-    try:
-        subprocess.check_call(
-            [sys.executable, "setup.py", "build_ext", "--inplace"],
-            cwd=project_root,
-        )
-        # Move .pyd files from project root into My Nonaga/
-        for pyd_file in glob.glob(os.path.join(project_root, "*.pyd")):
-            dest = os.path.join(nonaga_dir, os.path.basename(pyd_file))
-            if os.path.exists(dest):
-                os.remove(dest)
-            shutil.move(pyd_file, dest)
-            print(f"Moved {os.path.basename(pyd_file)} -> My Nonaga/")
-        print("Cython files compiled successfully.")
-    except subprocess.CalledProcessError as e:
-        print(f"Error compiling Cython files: {e}")
+    subprocess.check_call(
+        [sys.executable, "setup.py", "build_ext", "--inplace"],
+        cwd=project_root,
+    )
+    # Move .pyd files from project root into My Nonaga/
+    for pyd_file in glob.glob(os.path.join(project_root, "*.pyd")):
+        dest = os.path.join(nonaga_dir, os.path.basename(pyd_file))
+        if os.path.exists(dest):
+            os.remove(dest)
+        shutil.move(pyd_file, dest)
+        print(f"Moved {os.path.basename(pyd_file)} -> My Nonaga/")
+    print("Cython files compiled successfully.")
 
 
 def game_loop():

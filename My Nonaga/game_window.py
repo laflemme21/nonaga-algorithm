@@ -131,15 +131,52 @@ class Game:
         if self.ai_playing and self.game_logic.get_current_player() == BLACK:
             self.title = "AI is thinking..."
             self.render_frame()
-            # Small delay to show the "AI is thinking..." message
             
             best_piece_move, best_tile_move = self.ai.get_best_move(self.game_logic)
+            
+            # Debug output for AI move ===================================
             print("Best piece move:", best_piece_move)
             print("Best tile move:", best_tile_move)
+            # end debug
+            
             if best_piece_move is not None and best_tile_move is not None:
                 self.game_logic.move_piece(
                     best_piece_move[0], best_piece_move[1])
                 self.game_logic.move_tile(best_tile_move[0], best_tile_move[1])
+                
+            # Debug output for board state after AI move ==================
+            pieces = self.game_logic.board.get_pieces(BLACK)
+            d1 = pieces[0].distance_to(pieces[1])
+            d2 = pieces[1].distance_to(pieces[2])
+            d3 = pieces[2].distance_to(pieces[0])
+            if d1 > d2 and d1 > d3:
+                print("Distance sum:", d2+d3)
+            elif d2 > d1 and d2 > d3:
+                print("Distance sum:", d3+d1)
+            else:
+                print("Distance sum:", d1+d2)
+            pieces = [piece.get_position() for piece in pieces]
+            aligned_count = 0
+            for i in range(3):
+                if pieces[0][i] == pieces[1][i]:
+                    aligned_count += 1
+                if pieces[1][i] == pieces[2][i]:
+                    aligned_count += 1
+                if pieces[2][i] == pieces[0][i]:
+                    aligned_count += 1
+            print("Black Aligned pieces:", aligned_count)
+            pieces = self.game_logic.board.get_pieces(RED)
+            pieces = [piece.get_position() for piece in pieces]
+            aligned_count = 0
+            for i in range(3):
+                if pieces[0][i] == pieces[1][i]:
+                    aligned_count += 1
+                if pieces[1][i] == pieces[2][i]:
+                    aligned_count += 1
+                if pieces[2][i] == pieces[0][i]:
+                    aligned_count += 1
+            print("Red Aligned pieces:", aligned_count)
+            # end debug
         self.update_game_state()
 
     

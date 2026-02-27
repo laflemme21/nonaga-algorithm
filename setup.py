@@ -5,7 +5,7 @@ import os
 setup(
     name="nonaga",
     ext_modules=cythonize(
-        ["My Nonaga/nonaga_board.pyx", "My Nonaga/nonaga_logic.pyx"],
+        ["My Nonaga/nonaga_board.pyx", "My Nonaga/nonaga_logic.pyx", "My Nonaga/AI.pyx"],
         compiler_directives={
             "language_level": "3",
             "boundscheck": False,
