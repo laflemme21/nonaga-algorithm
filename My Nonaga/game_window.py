@@ -1,3 +1,5 @@
+from turtle import color
+
 import pygame
 import math
 from nonaga_constants import *
@@ -155,6 +157,31 @@ class Game:
                 print("Distance sum:", d3+d1)
             else:
                 print("Distance sum:", d1+d2)
+            missing_count = 0
+
+            p1 = pieces[0].get_position()
+            p2 = pieces[1].get_position()
+            p3 = pieces[2].get_position()
+
+            q_min = min(p1[0], p2[0], p3[0])
+            q_max = max(p1[0], p2[0], p3[0])
+            r_min = min(p1[1], p2[1], p3[1])
+            r_max = max(p1[1], p2[1], p3[1])
+            s_min = min(p1[2], p2[2], p3[2])
+            s_max = max(p1[2], p2[2], p3[2])
+            enemy_count = 0
+            for q in range(q_min, q_max + 1):
+                for r in range(r_min, r_max + 1):
+                    s = -q - r
+                    if s < s_min or s > s_max:
+                        continue
+                    if self.game_logic.board.get_tile((q, r, s)) is None:
+                        missing_count += 1
+
+                    elif self.game_logic.board.get_piece((q, r, s)) is not None and self.game_logic.board.get_piece((q, r, s)).get_color() != BLACK:
+                            enemy_count += 1
+            print("Missing pieces black:", missing_count)
+            print("Enemy pieces:", enemy_count)
             pieces = [piece.get_position() for piece in pieces]
             aligned_count = 0
             for i in range(3):

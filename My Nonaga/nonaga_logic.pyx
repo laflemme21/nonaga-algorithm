@@ -1,5 +1,6 @@
-# cython: language_level=3, boundscheck=False, wraparound=False
+# cython: language_level=3, boundscheck=False, wraparound=False, profile = True
 from nonaga_constants import RED, BLACK, PIECE_TO_MOVE, TILE_TO_MOVE
+from nonaga_board cimport NonagaBoard, NonagaIsland, NonagaPiece, NonagaTile
 from nonaga_board import NonagaBoard, NonagaIsland, NonagaPiece, NonagaTile
 
 # Module-level C neighbor offsets for check_win_condition
@@ -51,23 +52,25 @@ cdef class NonagaLogic:
         return callable(player)
 
     # ── tile moves ───────────────────────────────────────
-    cpdef dict get_all_valid_tile_moves_ai(self):
+    cdef dict get_all_valid_tile_moves_ai(self):
         """Get valid tile moves keyed by NonagaTile objects (for the AI)."""
-        cdef object island = self.board.islands[0]
+        cdef NonagaIsland island = <NonagaIsland>self.board.islands[0]
         cdef dict move = {}
+        cdef NonagaTile tile
         for tile in island.get_movable_tiles():
             move[tile] = self._get_valid_tile_positions(tile, island)
         return move
 
     cpdef dict get_all_valid_tile_moves(self):
         """Get valid tile moves keyed by position tuples (for the UI)."""
-        cdef object island = self.board.islands[0]
+        cdef NonagaIsland island = <NonagaIsland>self.board.islands[0]
         cdef dict move = {}
+        cdef NonagaTile tile
         for tile in island.get_movable_tiles():
             move[tile.get_position()] = self._get_valid_tile_positions(tile, island)
         return move
 
-    cdef set _get_valid_tile_positions(self, object tile, object island):
+    cdef set _get_valid_tile_positions(self, NonagaTile tile, NonagaIsland island):
         cdef set tile_coords_set = island._get_tile_coords_set()
         cdef tuple tile_position = tile.get_position()
 
@@ -112,17 +115,18 @@ cdef class NonagaLogic:
         return valid_positions
 
     # ── piece moves ──────────────────────────────────────
-    cpdef dict get_all_valid_piece_moves_ai(self):
+    cdef dict get_all_valid_piece_moves_ai(self):
         """Get valid piece moves keyed by NonagaPiece objects (for the AI)."""
         cdef dict moves = {}
         cdef int cur = self.current_player
-        cdef object island
+        cdef NonagaIsland island
         cdef int dimension, direction
-        cdef object valid_move
+        cdef tuple valid_move
+        cdef NonagaPiece piece
 
         for piece in self.board.get_pieces():
             if piece.color == cur:
-                island = self.board.islands[piece.island_id]
+                island = <NonagaIsland>self.board.islands[piece.island_id]
                 moves[piece] = []
                 for dimension in range(3):
                     for direction in range(-1, 2, 2):   # -1, 1
@@ -135,14 +139,15 @@ cdef class NonagaLogic:
     cpdef dict get_all_valid_piece_moves(self):
         """Get valid piece moves keyed by position tuples (for the UI)."""
         cdef dict moves = {}
-        cdef object island
+        cdef NonagaIsland island
         cdef int dimension, direction
-        cdef object valid_move
+        cdef tuple valid_move
         cdef tuple pos
+        cdef NonagaPiece piece
 
         for piece in self.board.get_pieces():
-            island = self.board.islands[piece.island_id]
-            pos = piece.get_position()
+            island = <NonagaIsland>self.board.islands[piece.island_id]
+            pos = (piece.q, piece.r, piece.s)
             moves[pos] = []
             for dimension in range(3):
                 for direction in range(-1, 2, 2):
@@ -152,25 +157,28 @@ cdef class NonagaLogic:
                         moves[pos].append(valid_move)
         return moves
 
-    cdef object _get_valid_piece_moves_in_direction(self, object piece, object island,
+    cdef tuple _get_valid_piece_moves_in_direction(self, NonagaPiece piece, NonagaIsland island,
                                                      int dimension, int direction):
-        cdef tuple piece_pos = piece.get_position()
+        cdef int pq = piece.q, pr = piece.r, ps = piece.s
         cdef int num_tiles = island.get_number_of_tiles()
-        cdef object destination = None
+        cdef tuple destination = None
         cdef int i
         cdef int fixed_index = (dimension + 1) % 3
         cdef int dependent_index = (dimension + 2) % 3
-        cdef list tc
+        cdef int coords[3]
         cdef tuple tile
-        cdef set all_tiles = island.get_all_tiles()
+        cdef set all_tiles = island.all_tiles
         cdef set pieces_set = island.pieces
 
-        for i in range(piece_pos[dimension] + direction,
+        coords[0] = pq
+        coords[1] = pr
+        coords[2] = ps
+
+        for i in range(coords[dimension] + direction,
                        direction * num_tiles, direction):
-            tc = list(piece_pos)
-            tc[dimension] = i
-            tc[dependent_index] = -(tc[dimension] + tc[fixed_index])
-            tile = tuple(tc)
+            coords[dimension] = i
+            coords[dependent_index] = -(coords[dimension] + coords[fixed_index])
+            tile = (coords[0], coords[1], coords[2])
 
             if tile in pieces_set:
                 break
@@ -178,17 +186,23 @@ cdef class NonagaLogic:
                 destination = tile
             else:
                 break
+
+            # reset for next iteration
+            coords[0] = pq
+            coords[1] = pr
+            coords[2] = ps
+
         return destination
 
     # ── execute moves ────────────────────────────────────
-    cpdef void move_tile(self, object tile, tuple destination):
+    cpdef void move_tile(self, NonagaTile tile, tuple destination):
         if self.turn_phase == TILE_TO_MOVE:
             self.board.move_tile(tile, destination)
             self._next_turn_phase()
         else:
             raise ValueError("Invalid move: It's not the tile move phase.")
 
-    cpdef void move_piece(self, object piece, tuple destination):
+    cpdef void move_piece(self, NonagaPiece piece, tuple destination):
         if self.turn_phase == PIECE_TO_MOVE and self.current_player == piece.color:
             self.board.move_piece(piece, destination)
             self._next_turn_phase()
@@ -197,21 +211,21 @@ cdef class NonagaLogic:
                 "Invalid move: It's either not the piece move phase "
                 "or the piece does not belong to the current player.")
 
-    cpdef NonagaLogic move_tile_ai(self, object tile, tuple destination):
+    cdef NonagaLogic move_tile_ai(self, NonagaTile tile, tuple destination):
         cdef NonagaLogic new_self = self.clone()
-        tile = new_self.board.get_tile(tile.get_position())
+        cdef NonagaTile new_tile = new_self.board.get_tile((tile.q, tile.r, tile.s))
         if new_self.turn_phase == TILE_TO_MOVE:
-            new_self.board.move_tile(tile, destination)
+            new_self.board.move_tile(new_tile, destination)
             new_self._next_turn_phase()
         else:
             raise ValueError("Invalid move: It's not the tile move phase.")
         return new_self
 
-    cpdef NonagaLogic move_piece_ai(self, object piece, tuple destination):
+    cdef NonagaLogic move_piece_ai(self, NonagaPiece piece, tuple destination):
         cdef NonagaLogic new_self = self.clone()
-        piece = new_self.board.get_piece(piece.get_position())
-        if new_self.turn_phase == PIECE_TO_MOVE and new_self.current_player == piece.color:
-            new_self.board.move_piece(piece, destination)
+        cdef NonagaPiece new_piece = new_self.board.get_piece((piece.q, piece.r, piece.s))
+        if new_self.turn_phase == PIECE_TO_MOVE and new_self.current_player == new_piece.color:
+            new_self.board.move_piece(new_piece, destination)
             new_self._next_turn_phase()
         else:
             raise ValueError(
@@ -234,10 +248,11 @@ cdef class NonagaLogic:
     cpdef bint check_win_condition(self, int color):
         """Check if the three pieces of a player are connected."""
         cdef list pieces
+        cdef NonagaPiece p
         if color == RED:
-            pieces = [p.get_position() for p in self.board.get_pieces(RED)]
+            pieces = [(p.q, p.r, p.s) for p in self.board.get_pieces(RED)]
         else:
-            pieces = [p.get_position() for p in self.board.get_pieces(BLACK)]
+            pieces = [(p.q, p.r, p.s) for p in self.board.get_pieces(BLACK)]
 
         cdef set piece_set = set(pieces)
         cdef tuple start = <tuple>pieces[0]

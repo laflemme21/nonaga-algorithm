@@ -1,4 +1,4 @@
-# cython: language_level=3, boundscheck=False, wraparound=False
+# cython: language_level=3, boundscheck=False, wraparound=False, profile=True
 from nonaga_constants import RED, BLACK
 
 # ──────────────────────────────────────────────────────────
@@ -234,12 +234,12 @@ cdef class NonagaIsland:
         self.pieces.discard(piece)
 
     # ── neighbor helpers ─────────────────────────────────
-    cpdef set _get_tile_coords_set(self, tiles=None):
+    cdef set _get_tile_coords_set(self, tiles=None):
         if tiles is None:
             tiles = self.all_tiles
         return {(<NonagaTile>t).get_position() for t in tiles}
 
-    cpdef list _get_neighbors(self, NonagaTile tile, set tile_coords_set=None):
+    cdef list _get_neighbors(self, NonagaTile tile, set tile_coords_set=None):
         if tile_coords_set is None:
             tile_coords_set = self._get_tile_coords_set()
 
@@ -256,7 +256,7 @@ cdef class NonagaIsland:
                 neighbors.append(pos)
         return neighbors
 
-    cpdef bint _neighbors_restrain_piece(self, list neighbors):
+    cdef bint _neighbors_restrain_piece(self, list neighbors):
         if not neighbors:
             return True
 
@@ -428,6 +428,12 @@ cdef class NonagaBoard:
             if t.get_position() == position:
                 return t
         return None
+
+    cpdef bint is_there_tile(self, tuple position):
+        return self.get_tile(position) is not None
+
+    cpdef bint is_there_piece(self, tuple position):
+        return self.get_piece(position) is not None
 
     cpdef get_pieces(self, color=None):
         if color is None:

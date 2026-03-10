@@ -33,9 +33,9 @@ cdef class NonagaIsland:
     cpdef set get_movable_tiles(self)
     cpdef set get_pieces(self)
     cdef void _add_tile(self, NonagaTile tile)
-    cpdef set _get_tile_coords_set(self, tiles=*)
-    cpdef list _get_neighbors(self, NonagaTile tile, set tile_coords_set=*)
-    cpdef bint _neighbors_restrain_piece(self, list neighbors)
+    cdef set _get_tile_coords_set(self, tiles=*)
+    cdef list _get_neighbors(self, NonagaTile tile, set tile_coords_set=*)
+    cdef bint _neighbors_restrain_piece(self, list neighbors)
 
 
 cdef class NonagaBoard:
@@ -46,4 +46,6 @@ cdef class NonagaBoard:
     cpdef NonagaBoard clone(self)
     cpdef NonagaPiece get_piece(self, tuple position)
     cpdef NonagaTile get_tile(self, tuple position)
+    cpdef bint is_there_tile(self, tuple position)
+    cpdef bint is_there_piece(self, tuple position)
     cpdef get_pieces(self, color=*)
