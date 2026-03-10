@@ -279,7 +279,7 @@ cdef class AI:
         cdef double score
         result = self.minimax_piece(
             game_state.clone(), self.depth, True, game_state.get_current_player(), NEG_INF, POS_INF)
-        print("AI is thinking...")
+      
         score = result[0]
         best_piece_move = result[1]
         best_tile_move = result[2]
@@ -290,13 +290,20 @@ cdef class AI:
         # Find the actual tile object in the current game state
         actual_tile = game_state.board.get_tile(best_tile_move[0])
 
-        print(f"Best piece move value: {score}")
         return (actual_piece, best_piece_move[1]), (actual_tile, best_tile_move[1])
 
+def execute_best_move(self, game_state: NonagaLogic):
+        """Executes the best move for the AI player.
+        Args:
+            game_state: current game state
+        """
+        best_piece_move, best_tile_move = self.get_best_move(game_state)
+        game_state.move_piece_ai(best_piece_move[0], best_piece_move[1])
+        game_state.move_tile_ai(best_tile_move[0], best_tile_move[1])
 
 def load_parameters():
     os.chdir(os.path.dirname(__file__))
     with open("parameters.json", "r") as f:
         parameters = json.load(f)
-    print(f"Loaded parameters: {parameters}")
-    return parameters
+    print(f"Loaded parameters: {parameters[0]}")
+    return parameters[0]
