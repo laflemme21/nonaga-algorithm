@@ -29,16 +29,20 @@ class ModularGA:
                            "Worst_Fitness"] + [f"Top_{i}_Genome" for i in range(1, 11)]
                 writer.writerow(headers)
 
-    def _generate_initial_population(self, pop_size: int, genome_length: int, min_val: int = -50, max_val: int = 50) -> List[List[int]]:
+    def _generate_initial_population(self, pop_size: int, genome_length: int, min_val: int = -100, max_val: int = 100) -> List[List[int]]:
         """Creates the initial population of integer lists."""
         return [[random.randint(min_val, max_val) for _ in range(genome_length)] for _ in range(pop_size)]
 
-    def run(self, generations: int, pop_size: int = 100, genome_length: int = 8, min_gene_val: int = -50, max_gene_val: int = 50, mutation_prob: float = 0.2):
+    def run(self, generations: int, pop_size: int = 100, genome_length: int = 8, min_gene_val: int = -100, max_gene_val: int = 100, mutation_prob: float = 0.2):
         """Execute the genetic algorithm search."""
         population = self._generate_initial_population(
             pop_size, genome_length, min_gene_val, max_gene_val)
 
         for generation in range(generations):
+            # 0. Inject current population into fitness function if needed (for tournaments/k-matchups)
+            if hasattr(self.fitness, 'population'):
+                self.fitness.population = list(population)
+
             # 1. Map Evaluation (Delegated to Backend)
             fitnesses = self.backend.map_evaluate(
                 self.fitness.evaluate, population)
