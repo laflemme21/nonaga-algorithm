@@ -5,6 +5,9 @@ from nonaga_board cimport NonagaBoard, NonagaIsland, NonagaPiece, NonagaTile
 import json
 import os
 
+import faulthandler
+faulthandler.enable()
+
 # Module-level constants for alpha-beta bounds
 cdef double NEG_INF = float('-inf')
 cdef double POS_INF = float('inf')
@@ -25,16 +28,20 @@ cdef class AI:
     cdef tuple minimax_piece(self, NonagaLogic game_state, int depth, bint maximizingPlayer, int color, double alpha, double beta):
         """Moves a piece in the minimax algorithm then calls minimax_tile."""
 
-        cdef double value, tmp
-        cdef tuple original_position, best_piece_move, best_tile_move, candidate_tile_move
-        cdef dict all_possible_piece_moves
+        cdef double value = 0
+        cdef double tmp = 0
+        cdef tuple original_position = None
+        cdef tuple best_piece_move = None
+        cdef tuple best_tile_move = None
+        cdef tuple candidate_tile_move = None
+        cdef dict all_possible_piece_moves = {}
         cdef NonagaPiece piece
-        cdef tuple move
+        cdef tuple move = None
         cdef NonagaLogic child
 
         # end of the loop
         if depth == 0: 
-            return (self.cost_function(game_state, maximizingPlayer, self.parameter[0], self.parameter[1], self.parameter[2], self.parameter[3], self.parameter[4]), None, None)
+            return (self.cost_function(game_state, maximizingPlayer, self.max_color, self.parameter), None, None)
         elif game_state.check_win_condition(RED) or game_state.check_win_condition(BLACK):
             # the last player to play won
             if maximizingPlayer:
@@ -42,13 +49,12 @@ cdef class AI:
             else:
                 return (99999999, None, None)
          
-        cost = self.cost_function(game_state, maximizingPlayer, self.max_color, self.parameter)
-        
-                
         # AI's turn
         if maximizingPlayer:
             value = NEG_INF
             all_possible_piece_moves = game_state.get_all_valid_piece_moves_ai()
+            if not all_possible_piece_moves:
+                return (self.cost_function(game_state, maximizingPlayer, self.max_color, self.parameter), None, None)
             for piece in all_possible_piece_moves:
                 original_position = piece.get_position()
                 for move in all_possible_piece_moves[piece]:
@@ -71,6 +77,8 @@ cdef class AI:
         else:
             value = POS_INF
             all_possible_piece_moves = game_state.get_all_valid_piece_moves_ai()
+            if not all_possible_piece_moves:
+                return (self.cost_function(game_state, maximizingPlayer, self.max_color, self.parameter), None, None)
             for piece in all_possible_piece_moves:
                 original_position = piece.get_position()
                 for move in all_possible_piece_moves[piece]:
@@ -89,6 +97,9 @@ cdef class AI:
                     continue
                 break
 
+        if best_piece_move is None or best_tile_move is None:
+            return (self.cost_function(game_state, maximizingPlayer, self.max_color, self.parameter), None, None)
+
         return (value, best_piece_move, best_tile_move)
 
     cdef tuple minimax_tile(self, NonagaLogic game_state, int depth, bint maximizingPlayer, int color, double alpha, double beta):
@@ -96,15 +107,20 @@ cdef class AI:
         # We don't evaluate the game state after a piece move because the depth is only decreased after a tile move, which is the end of a turn.
         # So we only evaluate the game state at the end of a turn, which is more efficient.
 
-        cdef double value, tmp
-        cdef tuple original_position, best_tile_move, result
-        cdef dict all_possible_tile_moves
+        cdef double value = 0
+        cdef double tmp = 0
+        cdef tuple original_position = None
+        cdef tuple best_tile_move = None
+        cdef tuple result = None
+        cdef dict all_possible_tile_moves = {}
         cdef NonagaTile tile
-        cdef tuple move
+        cdef tuple move = None
         cdef NonagaLogic child
 
         # tile moves are independant of the current player
         all_possible_tile_moves = game_state.get_all_valid_tile_moves_ai()
+        if not all_possible_tile_moves:
+            return (self.cost_function(game_state, maximizingPlayer, self.max_color, self.parameter), None)
 
         # AI's turn
         if maximizingPlayer:
@@ -148,6 +164,9 @@ cdef class AI:
                     continue
                 break
 
+        if best_tile_move is None:
+            return (self.cost_function(game_state, maximizingPlayer, self.max_color, self.parameter), None)
+
         return (value, best_tile_move)
 
 
@@ -159,7 +178,7 @@ cdef class AI:
         cdef NonagaPiece p2 = <NonagaPiece>pieces[2]
         cdef list pieces_pos = [(p0.q, p0.r, p0.s), (p1.q, p1.r, p1.s), (p2.q, p2.r, p2.s)]
         cdef tuple mt_ep = self.missing_tiles_and_enemy_pieces(game_state, pieces, pieces_pos, max_color)
-
+        
         cdef int max_cost = params[0] * self.pieces_aligned(game_state, pieces, pieces_pos, max_color)\
               -params[1] * self.pieces_distance(game_state, pieces, max_color)\
               -params[2] * mt_ep[0]\
@@ -175,7 +194,7 @@ cdef class AI:
         # if not maximizingPlayer:
         #     max_cost = -max_cost
         #     min_cost = -min_cost
-
+        
         return max_cost + min_cost
                
 
@@ -258,9 +277,9 @@ cdef class AI:
         cdef NonagaTile actual_tile
         cdef tuple best_piece_move, best_tile_move
         cdef double score
-
         result = self.minimax_piece(
             game_state.clone(), self.depth, True, game_state.get_current_player(), NEG_INF, POS_INF)
+        print("AI is thinking...")
         score = result[0]
         best_piece_move = result[1]
         best_tile_move = result[2]
@@ -279,4 +298,5 @@ def load_parameters():
     os.chdir(os.path.dirname(__file__))
     with open("parameters.json", "r") as f:
         parameters = json.load(f)
-    return parameters[0]
+    print(f"Loaded parameters: {parameters}")
+    return parameters
