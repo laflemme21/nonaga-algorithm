@@ -164,6 +164,9 @@ cdef class NonagaIsland:
     # ── move operations ─────────────────────────────────
     def move_tile(self, NonagaTile tile, tuple position):
         cdef tuple prev = tile.get_position()
+        self.movable_tiles.discard(tile)
+        self.unmovable_tiles.discard(tile)
+        self.border_tiles.discard(tile)
         self.all_tiles.discard(tile)
         tile.set_position(position)
         self.all_tiles.add(tile)
@@ -171,9 +174,12 @@ cdef class NonagaIsland:
 
     def move_piece(self, NonagaPiece piece, tuple position):
         cdef tuple prev = piece.get_position()
+        self.unmovable_tiles.discard(piece)
+        self.border_tiles.discard(piece)
         self.pieces.discard(piece)
         piece.set_position(position)
         self.pieces.add(piece)
+        self.unmovable_tiles.add(piece)
         self.update_tiles([prev, position])
 
     # ── accessors ────────────────────────────────────────
