@@ -16,4 +16,6 @@ cdef class AI:
     cdef int pieces_aligned(self, NonagaLogic game_state, list pieces, list pieces_pos, int color)
     cdef int pieces_distance(self, NonagaLogic game_state, list pieces, int color)
     cdef tuple missing_tiles_and_enemy_pieces(self, NonagaLogic game_state, list pieces, list pieces_pos, int color)
+    cdef dict piece_move_ordering(self, bint maximizing_player,dict moves, NonagaLogic game_state)
+    cdef dict tile_move_ordering(self, bint maximizing_player,dict moves,NonagaLogic game_state)
     cpdef tuple get_best_move(self, NonagaLogic game_state)

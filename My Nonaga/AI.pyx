@@ -33,9 +33,7 @@ cdef class AI:
         cdef NonagaLogic child
 
         # end of the loop
-        if depth == 0: 
-            return (self.cost_function(game_state, maximizingPlayer, self.parameter[0], self.parameter[1], self.parameter[2], self.parameter[3], self.parameter[4]), None, None)
-        elif game_state.check_win_condition(RED) or game_state.check_win_condition(BLACK):
+        if game_state.check_win_condition(RED) or game_state.check_win_condition(BLACK):
             # the last player to play won
             if maximizingPlayer:
                 return (-99999999, None, None)
@@ -49,8 +47,10 @@ cdef class AI:
         if maximizingPlayer:
             value = NEG_INF
             all_possible_piece_moves = game_state.get_all_valid_piece_moves_ai()
+            # move ordering
+            all_possible_piece_moves = self.piece_move_ordering(maximizingPlayer, all_possible_piece_moves, game_state)
             for piece in all_possible_piece_moves:
-                original_position = piece.get_position()
+                original_position = (piece.q, piece.r, piece.s)
                 for move in all_possible_piece_moves[piece]:
                     child = game_state.move_piece_ai(piece, move)
 
@@ -71,13 +71,15 @@ cdef class AI:
         else:
             value = POS_INF
             all_possible_piece_moves = game_state.get_all_valid_piece_moves_ai()
+            # move ordering
+            all_possible_piece_moves = self.piece_move_ordering(maximizingPlayer, all_possible_piece_moves, game_state)
             for piece in all_possible_piece_moves:
-                original_position = piece.get_position()
+                original_position = (piece.q, piece.r, piece.s)
                 for move in all_possible_piece_moves[piece]:
                     child = game_state.move_piece_ai(piece, move)
 
                     tmp, candidate_tile_move = self.minimax_tile(
-                        child, depth, maximizingPlayer, color,alpha, beta)
+                        child, depth, maximizingPlayer, color, alpha, beta)
                     if tmp < value:
                         value = tmp
                         best_piece_move = (original_position, move)
@@ -105,12 +107,14 @@ cdef class AI:
 
         # tile moves are independant of the current player
         all_possible_tile_moves = game_state.get_all_valid_tile_moves_ai()
+        # move ordering
+        all_possible_tile_moves = self.tile_move_ordering(maximizingPlayer, all_possible_tile_moves, game_state)
 
         # AI's turn
         if maximizingPlayer:
             value = NEG_INF
             for tile in all_possible_tile_moves:
-                original_position = tile.get_position()
+                original_position = (tile.q, tile.r, tile.s)
                 for move in all_possible_tile_moves[tile]:
                     child = game_state.move_tile_ai(tile, move)
 
@@ -131,7 +135,7 @@ cdef class AI:
         else:
             value = POS_INF
             for tile in all_possible_tile_moves:
-                original_position = tile.get_position()
+                original_position = (tile.q, tile.r, tile.s)
                 for move in all_possible_tile_moves[tile]:
                     child = game_state.move_tile_ai(tile, move)
 
@@ -150,6 +154,37 @@ cdef class AI:
 
         return (value, best_tile_move)
 
+    cdef dict piece_move_ordering(self, bint maximizing_player,dict moves,NonagaLogic game_state):
+        move_dict = {}
+        for piece in moves:
+            move_dict[piece] = {}
+            initial_pos = piece.get_position()
+            for dest in moves[piece]:
+                game_state.board.move_piece(piece, dest)
+                cost = self.cost_function(game_state, maximizing_player, self.max_color, self.parameter)
+                game_state.board.move_piece(piece, initial_pos)
+                move_dict[piece][dest] = cost
+            move_dict[piece] = [k for k in sorted(move_dict[piece], key=move_dict[piece].get, reverse=maximizing_player)]
+        move_dict = {k for k in sorted(move_dict, key=lambda x : move_dict[x][0], reverse=maximizing_player)}
+        
+
+        return moves
+
+    cdef dict tile_move_ordering(self,bint maximizing_player,dict moves,NonagaLogic game_state):
+        move_dict = {}
+        for tile in moves:
+            move_dict[tile] = {}
+            initial_pos = tile.get_position()
+            for dest in moves[tile]:
+                game_state.board.move_tile(tile, dest)
+                cost = self.cost_function(game_state, maximizing_player, self.max_color, self.parameter)
+                game_state.board.move_tile(tile, initial_pos)
+                move_dict[tile][dest] = cost
+            move_dict[tile] = [k for k in sorted(move_dict[tile], key=move_dict[tile].get, reverse=maximizing_player)]
+        move_dict = {k for k in sorted(move_dict, key=lambda x : move_dict[x][0], reverse=maximizing_player)}
+        
+
+        return moves
 
     cdef int cost_function(self, NonagaLogic game_state, bint maximizingPlayer, int max_color, list params):
         # for the AI, bigger better for the player lower better
