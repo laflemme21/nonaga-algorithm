@@ -83,7 +83,7 @@ def tournament():
     print(f"Running {len(matchups)} total matches...\n")
 
     for idx1, idx2 in matchups:
-        print(f"Match: AI {matchups[idx1]} vs AI {matchups[idx2]} ...")
+        print(f"Match: AI {idx1} vs AI {idx2} ...")
         score1, score2 = run_match(genomes[idx1], genomes[idx2], max_moves=150)
 
         if score1 > 0:
