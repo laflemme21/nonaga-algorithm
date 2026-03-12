@@ -1,6 +1,14 @@
+import os
+import sys
+
+# Move this OUTSIDE __main__ so child worker processes also get the correct path
+current_dir = os.path.dirname(os.path.abspath(__file__))
+project_root = os.path.dirname(current_dir)
+my_nonaga_path = os.path.join(project_root, "NonagaGame")
+if my_nonaga_path not in sys.path:
+    sys.path.append(my_nonaga_path)
+
 if __name__ == '__main__':
-    import os
-    import sys
     import argparse
 
     parser = argparse.ArgumentParser(
@@ -9,11 +17,7 @@ if __name__ == '__main__':
                         help="Execution mode: 'local' (fixed cores) or 'slurm' (dynamic cores)")
     args = parser.parse_args()
 
-    # Add NonagaGame to path and compile Cython files before importing GA logic
-    my_nonaga_path = os.path.abspath("NonagaGame")
-    if my_nonaga_path not in sys.path:
-        sys.path.append(my_nonaga_path)
-
+    # Compile Cython files before importing GA logic
     from compiler import compile_cython_files
     print("Ensuring Cython core components are compiled...")
     compile_cython_files()
@@ -42,7 +46,8 @@ if __name__ == '__main__':
             num_cores = len(os.sched_getaffinity(0))
         else:
             # raise error
-            raise EnvironmentError("Unable to determine number of CPU cores for Slurm mode. Please set SLURM_CPUS_PER_TASK or ensure os.sched_getaffinity is available.")
+            raise EnvironmentError(
+                "Unable to determine number of CPU cores for Slurm mode. Please set SLURM_CPUS_PER_TASK or ensure os.sched_getaffinity is available.")
 
         print(
             f"[{args.mode.upper()}] Running parallel backend with {num_cores} workers.")
