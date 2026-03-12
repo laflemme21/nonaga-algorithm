@@ -14,11 +14,11 @@ def compile_cython_files():
         [sys.executable, "setup.py", "build_ext", "--inplace"],
         cwd=project_root,
     )
-    # Move .pyd files from project root into NonagaGame/
-    for pyd_file in glob.glob(os.path.join(project_root, "*.pyd")):
-        dest = os.path.join(nonaga_dir, os.path.basename(pyd_file))
+    # Move compiled extension files (.pyd on Windows, .so on Linux/macOS) from project root into NonagaGame/
+    for ext_file in glob.glob(os.path.join(project_root, "*.pyd")) + glob.glob(os.path.join(project_root, "*.so")):
+        dest = os.path.join(nonaga_dir, os.path.basename(ext_file))
         if os.path.exists(dest):
             os.remove(dest)
-        shutil.move(pyd_file, dest)
-        print(f"Moved {os.path.basename(pyd_file)} -> NonagaGame/")
+        shutil.move(ext_file, dest)
+        print(f"Moved {os.path.basename(ext_file)} -> NonagaGame/")
     print("Cython files compiled successfully.")
