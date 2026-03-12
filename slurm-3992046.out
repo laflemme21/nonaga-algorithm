@@ -1,0 +1,17 @@
+running build_ext
+building 'nonaga_board' extension
+gcc -Wno-unused-result -Wsign-compare -DDYNAMIC_ANNOTATIONS_ENABLED=1 -DNDEBUG -O2 -fexceptions -g -grecord-gcc-switches -pipe -Wall -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -Wp,-D_GLIBCXX_ASSERTIONS -fstack-protector-strong -m64 -march=x86-64-v2 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -D_GNU_SOURCE -fPIC -fwrapv -O2 -fexceptions -g -grecord-gcc-switches -pipe -Wall -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -Wp,-D_GLIBCXX_ASSERTIONS -fstack-protector-strong -m64 -march=x86-64-v2 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -D_GNU_SOURCE -fPIC -fwrapv -O2 -fexceptions -g -grecord-gcc-switches -pipe -Wall -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -Wp,-D_GLIBCXX_ASSERTIONS -fstack-protector-strong -m64 -march=x86-64-v2 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection -D_GNU_SOURCE -fPIC -fwrapv -fPIC -I/users/sc23ksk/nonaga-algorithm/.venv/include -I/usr/include/python3.9 -c NonagaGame/nonaga_board.c -o build/temp.linux-x86_64-cpython-39/NonagaGame/nonaga_board.o
+NonagaGame/nonaga_board.c:31:10: fatal error: Python.h: No such file or directory
+   31 | #include "Python.h"
+      |          ^~~~~~~~~~
+compilation terminated.
+error: command '/usr/bin/gcc' failed with exit code 1
+Ensuring Cython core components are compiled...
+Traceback (most recent call last):
+  File "/users/sc23ksk/nonaga-algorithm/ga_framework/main.py", line 19, in <module>
+    compile_cython_files()
+  File "/users/sc23ksk/nonaga-algorithm/NonagaGame/compiler.py", line 13, in compile_cython_files
+    subprocess.check_call(
+  File "/usr/lib64/python3.9/subprocess.py", line 373, in check_call
+    raise CalledProcessError(retcode, cmd)
+subprocess.CalledProcessError: Command '['/users/sc23ksk/nonaga-algorithm/.venv/bin/python', 'setup.py', 'build_ext', '--inplace']' returned non-zero exit status 1.

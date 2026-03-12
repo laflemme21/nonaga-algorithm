@@ -1,0 +1,11 @@
+prefix=/users/sc23ksk/nonaga-algorithm/conda_env
+exec_prefix=/users/sc23ksk/nonaga-algorithm/conda_env
+libdir=/users/sc23ksk/nonaga-algorithm/conda_env/lib
+includedir=/users/sc23ksk/nonaga-algorithm/conda_env/include
+
+Name: uuid
+Description: Universally unique id library
+Version: 2.41.3
+Cflags: -I${includedir}/uuid
+Libs.private:  -lpthread
+Libs: -L${libdir} -luuid

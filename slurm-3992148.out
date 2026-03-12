@@ -1,0 +1,566 @@
+Channels:
+ - conda-forge
+Platform: linux-64
+Collecting package metadata (repodata.json): ...working... done
+Solving environment: ...working... done
+
+
+==> WARNING: A newer version of conda exists. <==
+    current version: 24.7.1
+    latest version: 26.1.1
+
+Please update conda by running
+
+    $ conda update -n base -c conda-forge conda
+
+
+
+## Package Plan ##
+
+  environment location: /users/sc23ksk/nonaga-algorithm/conda_env
+
+  added / updated specs:
+    - cython
+    - python=3.11
+
+
+The following packages will be downloaded:
+
+    package                    |            build
+    ---------------------------|-----------------
+    _openmp_mutex-4.5          |           20_gnu          28 KB  conda-forge
+    bzip2-1.0.8                |       hda65f42_9         254 KB  conda-forge
+    ca-certificates-2026.2.25  |       hbd8a1cb_0         144 KB  conda-forge
+    cython-3.2.4               |  py311h0daaf2c_0         3.6 MB  conda-forge
+    icu-78.2                   |       h33c6efd_0        12.1 MB  conda-forge
+    ld_impl_linux-64-2.45.1    |default_hbd61a6d_101         709 KB  conda-forge
+    libexpat-2.7.4             |       hecca717_0          75 KB  conda-forge
+    libffi-3.5.2               |       h3435931_0          57 KB  conda-forge
+    libgcc-15.2.0              |      he0feb66_18        1017 KB  conda-forge
+    libgcc-ng-15.2.0           |      h69a702a_18          27 KB  conda-forge
+    libgomp-15.2.0             |      he0feb66_18         589 KB  conda-forge
+    liblzma-5.8.2              |       hb03c661_0         111 KB  conda-forge
+    libnsl-2.0.1               |       hb9d3cd8_1          33 KB  conda-forge
+    libsqlite-3.52.0           |       hf4e2dac_0         929 KB  conda-forge
+    libstdcxx-15.2.0           |      h934c35e_18         5.6 MB  conda-forge
+    libuuid-2.41.3             |       h5347b49_0          39 KB  conda-forge
+    ncurses-6.5                |       h2d0b736_3         871 KB  conda-forge
+    openssl-3.6.1              |       h35e630c_1         3.0 MB  conda-forge
+    packaging-26.0             |     pyhcf101f3_0          70 KB  conda-forge
+    pip-26.0.1                 |     pyh8b19718_0         1.1 MB  conda-forge
+    python-3.11.15             |hd63d673_0_cpython        29.5 MB  conda-forge
+    python_abi-3.11            |          8_cp311           7 KB  conda-forge
+    readline-8.3               |       h853b02a_0         337 KB  conda-forge
+    setuptools-82.0.1          |     pyh332efcf_0         625 KB  conda-forge
+    tk-8.6.13                  |noxft_h366c992_103         3.1 MB  conda-forge
+    tzdata-2025c               |       hc9c84f9_1         116 KB  conda-forge
+    wheel-0.46.3               |     pyhd8ed1ab_0          31 KB  conda-forge
+    zstd-1.5.7                 |       hb78ec9c_6         587 KB  conda-forge
+    ------------------------------------------------------------
+                                           Total:        64.6 MB
+
+The following NEW packages will be INSTALLED:
+
+  _openmp_mutex      conda-forge/linux-64::_openmp_mutex-4.5-20_gnu 
+  bzip2              conda-forge/linux-64::bzip2-1.0.8-hda65f42_9 
+  ca-certificates    conda-forge/noarch::ca-certificates-2026.2.25-hbd8a1cb_0 
+  cython             conda-forge/linux-64::cython-3.2.4-py311h0daaf2c_0 
+  icu                conda-forge/linux-64::icu-78.2-h33c6efd_0 
+  ld_impl_linux-64   conda-forge/linux-64::ld_impl_linux-64-2.45.1-default_hbd61a6d_101 
+  libexpat           conda-forge/linux-64::libexpat-2.7.4-hecca717_0 
+  libffi             conda-forge/linux-64::libffi-3.5.2-h3435931_0 
+  libgcc             conda-forge/linux-64::libgcc-15.2.0-he0feb66_18 
+  libgcc-ng          conda-forge/linux-64::libgcc-ng-15.2.0-h69a702a_18 
+  libgomp            conda-forge/linux-64::libgomp-15.2.0-he0feb66_18 
+  liblzma            conda-forge/linux-64::liblzma-5.8.2-hb03c661_0 
+  libnsl             conda-forge/linux-64::libnsl-2.0.1-hb9d3cd8_1 
+  libsqlite          conda-forge/linux-64::libsqlite-3.52.0-hf4e2dac_0 
+  libstdcxx          conda-forge/linux-64::libstdcxx-15.2.0-h934c35e_18 
+  libuuid            conda-forge/linux-64::libuuid-2.41.3-h5347b49_0 
+  libxcrypt          conda-forge/linux-64::libxcrypt-4.4.36-hd590300_1 
+  libzlib            conda-forge/linux-64::libzlib-1.3.1-hb9d3cd8_2 
+  ncurses            conda-forge/linux-64::ncurses-6.5-h2d0b736_3 
+  openssl            conda-forge/linux-64::openssl-3.6.1-h35e630c_1 
+  packaging          conda-forge/noarch::packaging-26.0-pyhcf101f3_0 
+  pip                conda-forge/noarch::pip-26.0.1-pyh8b19718_0 
+  python             conda-forge/linux-64::python-3.11.15-hd63d673_0_cpython 
+  python_abi         conda-forge/noarch::python_abi-3.11-8_cp311 
+  readline           conda-forge/linux-64::readline-8.3-h853b02a_0 
+  setuptools         conda-forge/noarch::setuptools-82.0.1-pyh332efcf_0 
+  tk                 conda-forge/linux-64::tk-8.6.13-noxft_h366c992_103 
+  tzdata             conda-forge/noarch::tzdata-2025c-hc9c84f9_1 
+  wheel              conda-forge/noarch::wheel-0.46.3-pyhd8ed1ab_0 
+  zstd               conda-forge/linux-64::zstd-1.5.7-hb78ec9c_6 
+
+
+
+Downloading and Extracting Packages: ...working... done
+Preparing transaction: ...working... done
+Verifying transaction: ...working... done
+Executing transaction: ...working... done
+#
+# To activate this environment, use
+#
+#     $ conda activate /users/sc23ksk/nonaga-algorithm/conda_env
+#
+# To deactivate an active environment, use
+#
+#     $ conda deactivate
+
+Requirement already satisfied: Cython==3.2.4 in ./conda_env/lib/python3.11/site-packages (from -r requirements.txt (line 1)) (3.2.4)
+Collecting pygame==2.6.1 (from -r requirements.txt (line 2))
+  Downloading pygame-2.6.1-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (12 kB)
+Requirement already satisfied: setuptools==82.0.1 in ./conda_env/lib/python3.11/site-packages (from -r requirements.txt (line 3)) (82.0.1)
+Collecting snakeviz==2.2.2 (from -r requirements.txt (line 4))
+  Downloading snakeviz-2.2.2-py3-none-any.whl.metadata (3.6 kB)
+Collecting tornado==6.5.4 (from -r requirements.txt (line 5))
+  Downloading tornado-6.5.4-cp39-abi3-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (2.8 kB)
+Downloading pygame-2.6.1-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (14.0 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 14.0/14.0 MB 51.1 MB/s  0:00:00
+Downloading snakeviz-2.2.2-py3-none-any.whl (183 kB)
+Downloading tornado-6.5.4-cp39-abi3-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl (445 kB)
+Installing collected packages: tornado, pygame, snakeviz
+
+Successfully installed pygame-2.6.1 snakeviz-2.2.2 tornado-6.5.4
+Ensuring Cython core components are compiled...
+running build_ext
+building 'nonaga_board' extension
+creating build/temp.linux-x86_64-cpython-311/NonagaGame
+gcc -pthread -B /users/sc23ksk/nonaga-algorithm/conda_env/compiler_compat -DNDEBUG -fwrapv -O2 -Wall -fPIC -O2 -isystem /users/sc23ksk/nonaga-algorithm/conda_env/include -fPIC -O2 -isystem /users/sc23ksk/nonaga-algorithm/conda_env/include -fPIC -I/users/sc23ksk/nonaga-algorithm/conda_env/include/python3.11 -c NonagaGame/nonaga_board.c -o build/temp.linux-x86_64-cpython-311/NonagaGame/nonaga_board.o
+creating build/lib.linux-x86_64-cpython-311
+gcc -pthread -B /users/sc23ksk/nonaga-algorithm/conda_env/compiler_compat -shared -Wl,--allow-shlib-undefined -Wl,-rpath,/users/sc23ksk/nonaga-algorithm/conda_env/lib -Wl,-rpath-link,/users/sc23ksk/nonaga-algorithm/conda_env/lib -L/users/sc23ksk/nonaga-algorithm/conda_env/lib -Wl,--allow-shlib-undefined -Wl,-rpath,/users/sc23ksk/nonaga-algorithm/conda_env/lib -Wl,-rpath-link,/users/sc23ksk/nonaga-algorithm/conda_env/lib -L/users/sc23ksk/nonaga-algorithm/conda_env/lib build/temp.linux-x86_64-cpython-311/NonagaGame/nonaga_board.o -o build/lib.linux-x86_64-cpython-311/nonaga_board.cpython-311-x86_64-linux-gnu.so
+building 'nonaga_logic' extension
+gcc -pthread -B /users/sc23ksk/nonaga-algorithm/conda_env/compiler_compat -DNDEBUG -fwrapv -O2 -Wall -fPIC -O2 -isystem /users/sc23ksk/nonaga-algorithm/conda_env/include -fPIC -O2 -isystem /users/sc23ksk/nonaga-algorithm/conda_env/include -fPIC -I/users/sc23ksk/nonaga-algorithm/conda_env/include/python3.11 -c NonagaGame/nonaga_logic.c -o build/temp.linux-x86_64-cpython-311/NonagaGame/nonaga_logic.o
+gcc -pthread -B /users/sc23ksk/nonaga-algorithm/conda_env/compiler_compat -shared -Wl,--allow-shlib-undefined -Wl,-rpath,/users/sc23ksk/nonaga-algorithm/conda_env/lib -Wl,-rpath-link,/users/sc23ksk/nonaga-algorithm/conda_env/lib -L/users/sc23ksk/nonaga-algorithm/conda_env/lib -Wl,--allow-shlib-undefined -Wl,-rpath,/users/sc23ksk/nonaga-algorithm/conda_env/lib -Wl,-rpath-link,/users/sc23ksk/nonaga-algorithm/conda_env/lib -L/users/sc23ksk/nonaga-algorithm/conda_env/lib build/temp.linux-x86_64-cpython-311/NonagaGame/nonaga_logic.o -o build/lib.linux-x86_64-cpython-311/nonaga_logic.cpython-311-x86_64-linux-gnu.so
+building 'AI' extension
+gcc -pthread -B /users/sc23ksk/nonaga-algorithm/conda_env/compiler_compat -DNDEBUG -fwrapv -O2 -Wall -fPIC -O2 -isystem /users/sc23ksk/nonaga-algorithm/conda_env/include -fPIC -O2 -isystem /users/sc23ksk/nonaga-algorithm/conda_env/include -fPIC -I/users/sc23ksk/nonaga-algorithm/conda_env/include/python3.11 -c NonagaGame/AI.c -o build/temp.linux-x86_64-cpython-311/NonagaGame/AI.o
+gcc -pthread -B /users/sc23ksk/nonaga-algorithm/conda_env/compiler_compat -shared -Wl,--allow-shlib-undefined -Wl,-rpath,/users/sc23ksk/nonaga-algorithm/conda_env/lib -Wl,-rpath-link,/users/sc23ksk/nonaga-algorithm/conda_env/lib -L/users/sc23ksk/nonaga-algorithm/conda_env/lib -Wl,--allow-shlib-undefined -Wl,-rpath,/users/sc23ksk/nonaga-algorithm/conda_env/lib -Wl,-rpath-link,/users/sc23ksk/nonaga-algorithm/conda_env/lib -L/users/sc23ksk/nonaga-algorithm/conda_env/lib build/temp.linux-x86_64-cpython-311/NonagaGame/AI.o -o build/lib.linux-x86_64-cpython-311/AI.cpython-311-x86_64-linux-gnu.so
+copying build/lib.linux-x86_64-cpython-311/nonaga_board.cpython-311-x86_64-linux-gnu.so -> 
+copying build/lib.linux-x86_64-cpython-311/nonaga_logic.cpython-311-x86_64-linux-gnu.so -> 
+copying build/lib.linux-x86_64-cpython-311/AI.cpython-311-x86_64-linux-gnu.so -> 
+Cython files compiled successfully.
+Initializing Modular GA...
+[SLURM] Running parallel backend with 16 workers.
+Running GA optimization...
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'Error importing Nonaga modules: No module named 'AI'
+
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Gen 0 | Best: 0.00 | Avg: 0.00 | Worst: 0.00
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'Error importing Nonaga modules: No module named 'AI'
+
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Gen 1 | Best: 0.00 | Avg: 0.00 | Worst: 0.00
+Error importing Nonaga modules: No module named 'AI'Error importing Nonaga modules: No module named 'AI'
+
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'Error importing Nonaga modules: No module named 'AI'
+
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'Error importing Nonaga modules: No module named 'AI'Error importing Nonaga modules: No module named 'AI'
+
+
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Gen 2 | Best: 0.00 | Avg: 0.00 | Worst: 0.00
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'Error importing Nonaga modules: No module named 'AI'
+
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'Error importing Nonaga modules: No module named 'AI'
+
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Gen 3 | Best: 0.00 | Avg: 0.00 | Worst: 0.00
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Gen 4 | Best: 0.00 | Avg: 0.00 | Worst: 0.00
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'Error importing Nonaga modules: No module named 'AI'
+
+Error importing Nonaga modules: No module named 'AI'Error importing Nonaga modules: No module named 'AI'
+
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Gen 5 | Best: 0.00 | Avg: 0.00 | Worst: 0.00
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'Error importing Nonaga modules: No module named 'AI'
+
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Gen 6 | Best: 0.00 | Avg: 0.00 | Worst: 0.00
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'Error importing Nonaga modules: No module named 'AI'
+
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'Error importing Nonaga modules: No module named 'AI'Error importing Nonaga modules: No module named 'AI'
+
+
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Gen 7 | Best: 0.00 | Avg: 0.00 | Worst: 0.00
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'Error importing Nonaga modules: No module named 'AI'
+
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Gen 8 | Best: 0.00 | Avg: 0.00 | Worst: 0.00
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Gen 9 | Best: 0.00 | Avg: 0.00 | Worst: 0.00
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'Error importing Nonaga modules: No module named 'AI'
+
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'Error importing Nonaga modules: No module named 'AI'
+
+Error importing Nonaga modules: No module named 'AI'Error importing Nonaga modules: No module named 'AI'
+
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'Error importing Nonaga modules: No module named 'AI'
+
+Gen 10 | Best: 0.00 | Avg: 0.00 | Worst: 0.00
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'Error importing Nonaga modules: No module named 'AI'
+
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'Error importing Nonaga modules: No module named 'AI'
+
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Gen 11 | Best: 0.00 | Avg: 0.00 | Worst: 0.00
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'Error importing Nonaga modules: No module named 'AI'
+
+Error importing Nonaga modules: No module named 'AI'
+Gen 12 | Best: 0.00 | Avg: 0.00 | Worst: 0.00
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Gen 13 | Best: 0.00 | Avg: 0.00 | Worst: 0.00
+Error importing Nonaga modules: No module named 'AI'Error importing Nonaga modules: No module named 'AI'
+
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'Error importing Nonaga modules: No module named 'AI'
+
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Gen 14 | Best: 0.00 | Avg: 0.00 | Worst: 0.00
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'Error importing Nonaga modules: No module named 'AI'
+
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Gen 15 | Best: 0.00 | Avg: 0.00 | Worst: 0.00
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Gen 16 | Best: 0.00 | Avg: 0.00 | Worst: 0.00
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'Error importing Nonaga modules: No module named 'AI'
+
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Gen 17 | Best: 0.00 | Avg: 0.00 | Worst: 0.00
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'Error importing Nonaga modules: No module named 'AI'
+
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Gen 18 | Best: 0.00 | Avg: 0.00 | Worst: 0.00
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Error importing Nonaga modules: No module named 'AI'
+Gen 19 | Best: 0.00 | Avg: 0.00 | Worst: 0.00
+
+Optimization Complete. View ga_metrics.csv for generation logs.

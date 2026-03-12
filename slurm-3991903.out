@@ -1,0 +1,18 @@
+
+EnvironmentNameNotFound: Could not find conda environment: .venv
+You can list all discoverable environments with `conda info --envs`.
+
+
+Traceback (most recent call last):
+  File "/users/sc23ksk/nonaga-algorithm/setup.py", line 2, in <module>
+    from Cython.Build import cythonize
+ModuleNotFoundError: No module named 'Cython'
+Ensuring Cython core components are compiled...
+Traceback (most recent call last):
+  File "/users/sc23ksk/nonaga-algorithm/ga_framework/main.py", line 19, in <module>
+    compile_cython_files()
+  File "/users/sc23ksk/nonaga-algorithm/NonagaGame/compiler.py", line 13, in compile_cython_files
+    subprocess.check_call(
+  File "/opt/apps/pkg/interpreters/miniforge/24.7.1/bin/lib/python3.12/subprocess.py", line 413, in check_call
+    raise CalledProcessError(retcode, cmd)
+subprocess.CalledProcessError: Command '['/opt/apps/pkg/interpreters/miniforge/24.7.1/bin/bin/python', 'setup.py', 'build_ext', '--inplace']' returned non-zero exit status 1.
