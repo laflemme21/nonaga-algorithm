@@ -61,7 +61,7 @@ def run_match(ai_1_params: List[int], ai_2_params: List[int], max_moves: int = 1
 def tournament():
     print("Starting tournament setup...")
 
-    param_file = os.path.join("NonagaGame", "parameters.json")
+    param_file = os.path.abspath("parameters.json")
     if not os.path.exists(param_file):
         print(f"Error: {param_file} does not exist.")
         return
