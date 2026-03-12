@@ -1,12 +1,19 @@
 if __name__ == '__main__':
     import os
     import sys
-    
+    import argparse
+
+    parser = argparse.ArgumentParser(
+        description="Run Nonaga Genetic Algorithm")
+    parser.add_argument("--mode", type=str, choices=["local", "slurm"], default="local",
+                        help="Execution mode: 'local' (fixed cores) or 'slurm' (dynamic cores)")
+    args = parser.parse_args()
+
     # Add NonagaGame to path and compile Cython files before importing GA logic
     my_nonaga_path = os.path.abspath("NonagaGame")
     if my_nonaga_path not in sys.path:
         sys.path.append(my_nonaga_path)
-    
+
     from compiler import compile_cython_files
     print("Ensuring Cython core components are compiled...")
     compile_cython_files()
@@ -25,8 +32,25 @@ if __name__ == '__main__':
     fitness = strategies.NonagaTournamentFitness(k_opponents=10, max_moves=30)
 
     # 2. Initialize parallel backend
-    # Note: On Windows multiprocessing, testing within __main__ is required
-    backend = MasterSlaveBackend(max_workers=4)
+    if args.mode == "slurm":
+        # Try to read from Slurm environment variable first
+        slurm_cpus = os.environ.get('SLURM_CPUS_PER_TASK')
+        if slurm_cpus:
+            num_cores = int(slurm_cpus)
+        elif hasattr(os, 'sched_getaffinity'):
+            # Use sched_getaffinity if available (most reliable on Linux clusters)
+            num_cores = len(os.sched_getaffinity(0))
+        else:
+            # raise error
+            raise EnvironmentError("Unable to determine number of CPU cores for Slurm mode. Please set SLURM_CPUS_PER_TASK or ensure os.sched_getaffinity is available.")
+
+        print(
+            f"[{args.mode.upper()}] Running parallel backend with {num_cores} workers.")
+        backend = MasterSlaveBackend(max_workers=num_cores)
+    else:
+        # Default local mode with a fixed number of workers
+        print(f"[{args.mode.upper()}] Running parallel backend with fixed 4 workers.")
+        backend = MasterSlaveBackend(max_workers=4)
 
     # 3. Inject dependencies into GA orchestrator
     ga = ModularGA(
