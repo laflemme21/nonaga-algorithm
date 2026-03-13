@@ -158,8 +158,8 @@ cdef class NonagaBitBoard:
         return self._check_bit_flat(self.movable_tiles, flat_index) or \
             self._check_bit_flat(self.unmovable_tiles, flat_index)
 
-    cdef get_pieces(self, color=None):
-        cdef set pieces = set()
+    cdef int** get_pieces(self, color=None):
+        cdef int** pieces = NULL
         cdef int i, j
         cdef int q, r, s
         cdef unsigned long long val
@@ -175,14 +175,23 @@ cdef class NonagaBitBoard:
             for j in range(BITS_PER_LONG):
                 if (val & (1ULL << j)):
                     self._recover_coords(i * 64 + j, &q, &r, &s)
-                    pieces.add((q, r, s)) 
+                    pieces.add([q, r, s]) 
+        return pieces
+    
+    cpdef set get_pieces_py(self, color=None):
+        cdef set pieces = set()
+        cdef int** piece_positions = self.get_pieces(color)
+        cdef int i = 0
+        while piece_positions[i] is not NULL:
+            pieces.add((piece_positions[i][0], piece_positions[i][1], piece_positions[i][2]))
+            i += 1
         return pieces
 
     cdef update_tiles(self):
         cdef int i, j, k
         cdef unsigned long long all_tiles_mask
         cdef int flat_index
-        cdef int[6] neighbors_presence
+        cdef int neighbor_mask
         cdef int neighbor_count
         cdef int n_idx
         cdef bint is_piece
@@ -208,21 +217,20 @@ cdef class NonagaBitBoard:
                         continue
                     
                     neighbor_count = 0
+                    neighbor_mask = 0
                     for k in range(6):
                         n_idx = flat_index + NEIGHBOR_FLAT_OFFSETS[k]
                         if self._check_bit_flat(self.movable_tiles, n_idx) or \
                            self._check_bit_flat(self.unmovable_tiles, n_idx):
-                            neighbors_presence[k] = 1
+                            neighbor_mask |= (1 << k)
                             neighbor_count += 1
-                        else:
-                            neighbors_presence[k] = 0
 
                     if neighbor_count >= 5:
                         self._set_bit_flat(new_unmovable, flat_index)
                     elif neighbor_count <= 2:
                         self._set_bit_flat(new_movable, flat_index)
                     else:
-                        if self._neighbors_are_connected(neighbors_presence, neighbor_count):
+                        if self._check_neighbor_constraints(neighbor_mask, neighbor_count):
                              self._set_bit_flat(new_movable, flat_index)
                         else:
                              self._set_bit_flat(new_unmovable, flat_index)
@@ -231,24 +239,33 @@ cdef class NonagaBitBoard:
             self.movable_tiles[i] = new_movable[i]
             self.unmovable_tiles[i] = new_unmovable[i]
 
-    cdef bint _neighbors_are_connected(self, int[6] p, int count):
-        if count == 0: return True
-        cdef int start = -1
+    cdef bint _check_neighbor_constraints(self, int mask, int count):
+        # We counts the number of 0->1 transitions in the circular bitmask of neighbors.
+        # 1 transition means all neighbors form a single connected component (arc).
+        # >1 transitions means multiple disconnected components.
+        
+        cdef int transitions = 0
         cdef int k
+        cdef int prev = (mask >> 5) & 1
+        cdef int curr
+        
         for k in range(6):
-            if p[k]:
-                start = k
-                break
-        
-        cdef int visited_count = 0
-        cdef int curr = start
-        
-        while p[curr]:
-             visited_count += 1
-             curr = (curr + 1) % 6
-             if curr == start: break
-        
-        return visited_count == count
+            curr = (mask >> k) & 1
+            if curr and not prev:
+                transitions += 1
+            prev = curr
+            
+        # Single connected component (e.g. 111000 or 001110)
+        if transitions == 1:
+            return True
+
+        # Legacy rule replication:
+        # If there are exactly 3 neighbors forming 2 components (transitions=2),
+        # the tile is still considered movable (e.g. 110100).
+        if count == 3 and transitions == 2:
+            return True
+            
+        return False
 
     cpdef void move_tile(self, tuple current_pos, tuple new_pos):
         self._clear_bit(self.movable_tiles, current_pos[0], current_pos[1])

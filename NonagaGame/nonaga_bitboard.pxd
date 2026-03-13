@@ -23,9 +23,10 @@ cdef class NonagaBitBoard:
     cdef bint has_tile(self, int q, int r)
     cdef bint is_there_piece(self, position)
     cdef int get_color(self, int q, int r)
-    cdef get_pieces(self, color=*)
+    cdef int** get_pieces(self, color=*)
+    cpdef set get_pieces_py(self, color)
 
-    cdef bint _neighbors_are_connected(self, int[6] p, int count)
+    cdef bint _check_neighbor_constraints(self, int mask, int count)
 
     cpdef void move_tile(self, tuple current_pos, tuple new_pos)
     cpdef void move_piece(self, tuple current_pos, tuple new_pos)
