@@ -1,6 +1,10 @@
+# cython: language_level=3
+
 # RED and BLACK are constants representing the two players.
 RED = 0
 BLACK = 1
+
+AI_PARAM = [-11, 56, -15, 31, -23, -32, -15, -15]
 
 PIECE_TO_MOVE = 0
 TILE_TO_MOVE = 1

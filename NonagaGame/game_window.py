@@ -5,7 +5,7 @@ import math
 from nonaga_constants import *
 from nonaga_board import NonagaBoard, NonagaPiece, NonagaTile
 from nonaga_logic import NonagaLogic
-from AI import AI, load_parameters
+from AI import AI
 import cProfile
 
 class Game:
@@ -14,7 +14,7 @@ class Game:
     def __init__(self, ai:bool=False, screen_width=800, screen_height=500):
         """Initialize the game."""
         self.ai_playing: bool = ai
-        self.ai = AI(load_parameters())
+        self.ai = AI(AI_PARAM)
         self.screen_width = screen_width
         self.screen_height = screen_height
         self.screen = None

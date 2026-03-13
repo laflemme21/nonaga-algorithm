@@ -13,7 +13,5 @@ cdef class AI:
     cdef tuple minimax_piece(self, NonagaLogic game_state, int depth, bint maximizingPlayer, int color, double alpha, double beta)
     cdef tuple minimax_tile(self, NonagaLogic game_state, int depth, bint maximizingPlayer, int color, double alpha, double beta)
     cdef int cost_function(self, NonagaLogic game_state, bint maximizingPlayer, int color, list params)
-    cdef int pieces_aligned(self, NonagaLogic game_state, list pieces, list pieces_pos, int color)
-    cdef int pieces_distance(self, NonagaLogic game_state, list pieces, int color)
-    cdef tuple missing_tiles_and_enemy_pieces(self, NonagaLogic game_state, list pieces, list pieces_pos, int color)
+    cdef tuple missing_tiles_and_enemy_pieces(self, NonagaBoard board, NonagaPiece p0, NonagaPiece p1, NonagaPiece p2, int color)
     cpdef tuple get_best_move(self, NonagaLogic game_state)

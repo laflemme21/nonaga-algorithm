@@ -8,7 +8,6 @@ cdef class NonagaLogic:
     cdef public int current_player
     cdef public int turn_phase
 
-    cpdef NonagaLogic clone(self)
     cpdef object get_board_state(self)
     cdef dict get_all_valid_tile_moves_ai(self)
     cpdef dict get_all_valid_tile_moves(self)
@@ -22,10 +21,11 @@ cdef class NonagaLogic:
 
     cpdef void move_tile(self, NonagaTile tile, tuple destination)
     cpdef void move_piece(self, NonagaPiece piece, tuple destination)
-    cdef NonagaLogic move_tile_ai(self, NonagaTile tile, tuple destination)
-    cdef NonagaLogic move_piece_ai(self, NonagaPiece piece, tuple destination)
+    cdef void undo_tile_move(self, NonagaTile tile, tuple destination)
+    cdef void undo_piece_move(self, NonagaPiece piece, tuple destination)
 
     cdef void _next_turn_phase(self)
+    cdef void _last_turn_phase(self)
     cpdef int get_current_turn_phase(self)
 
     cpdef bint check_win_condition(self, int color)

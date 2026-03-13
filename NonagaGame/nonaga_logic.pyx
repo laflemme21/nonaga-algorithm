@@ -33,16 +33,6 @@ cdef class NonagaLogic:
         self.current_player = RED
         self.turn_phase = PIECE_TO_MOVE
 
-    # ── clone ────────────────────────────────────────────
-    cpdef NonagaLogic clone(self):
-        cdef NonagaLogic c = NonagaLogic.__new__(NonagaLogic)
-        c.player_red = self.player_red
-        c.player_black = self.player_black
-        c.board = self.board.clone()
-        c.current_player = self.current_player
-        c.turn_phase = self.turn_phase
-        return c
-
     # ── board state ──────────────────────────────────────
     cpdef object get_board_state(self):
         return self.board.get_state()
@@ -208,30 +198,22 @@ cdef class NonagaLogic:
             self._next_turn_phase()
         else:
             raise ValueError(
-                "Invalid move: It's either not the piece move phase "
-                "or the piece does not belong to the current player.")
+                "Invalid move: the piece does not belong to the current player.")
 
-    cdef NonagaLogic move_tile_ai(self, NonagaTile tile, tuple destination):
-        cdef NonagaLogic new_self = self.clone()
-        cdef NonagaTile new_tile = new_self.board.get_tile((tile.q, tile.r, tile.s))
-        if new_self.turn_phase == TILE_TO_MOVE:
-            new_self.board.move_tile(new_tile, destination)
-            new_self._next_turn_phase()
-        else:
-            raise ValueError("Invalid move: It's not the tile move phase.")
-        return new_self
+    cdef void undo_tile_move(self, NonagaTile tile, tuple destination):
+        
+        try:
+            self.board.move_tile(tile, destination)
+            self._last_turn_phase()
+        except ValueError as e:
+            raise ValueError("Invalid move: the tile doesnt exist")
 
-    cdef NonagaLogic move_piece_ai(self, NonagaPiece piece, tuple destination):
-        cdef NonagaLogic new_self = self.clone()
-        cdef NonagaPiece new_piece = new_self.board.get_piece((piece.q, piece.r, piece.s))
-        if new_self.turn_phase == PIECE_TO_MOVE and new_self.current_player == new_piece.color:
-            new_self.board.move_piece(new_piece, destination)
-            new_self._next_turn_phase()
-        else:
-            raise ValueError(
-                "Invalid move: It's either not the piece move phase "
-                "or the piece does not belong to the current player.")
-        return new_self
+    cdef void undo_piece_move(self, NonagaPiece piece, tuple destination):
+        try:
+            self.board.move_piece(piece, destination)
+            self._last_turn_phase()
+        except ValueError as e:
+            raise ValueError("Invalid move: the piece doesnt exist")
 
     # ── turn management ──────────────────────────────────
     cdef void _next_turn_phase(self):
@@ -240,6 +222,13 @@ cdef class NonagaLogic:
         else:
             self.turn_phase = PIECE_TO_MOVE
             self.switch_player()
+
+    cdef void _last_turn_phase(self):
+        if self.turn_phase == PIECE_TO_MOVE:
+            self.turn_phase = TILE_TO_MOVE
+            self.switch_player()
+        else:
+            self.turn_phase = PIECE_TO_MOVE
 
     cpdef int get_current_turn_phase(self):
         return self.turn_phase

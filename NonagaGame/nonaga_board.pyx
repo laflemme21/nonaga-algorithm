@@ -57,13 +57,6 @@ cdef class NonagaTilesCoordinates:
         if ds < 0: ds = -ds
         return (dq + dr + ds) // 2
 
-    cpdef NonagaTilesCoordinates clone(self):
-        cdef NonagaTilesCoordinates c = NonagaTilesCoordinates.__new__(NonagaTilesCoordinates)
-        c.q = self.q
-        c.r = self.r
-        c.s = self.s
-        c.island_id = self.island_id
-        return c
 
 
 #  NonagaTile
@@ -86,13 +79,6 @@ cdef class NonagaTile(NonagaTilesCoordinates):
     def __str__(self):
         return f"Tile({self.q}, {self.r}, {self.s})"
 
-    cpdef NonagaTile clone(self):
-        cdef NonagaTile c = NonagaTile.__new__(NonagaTile)
-        c.q = self.q
-        c.r = self.r
-        c.s = self.s
-        c.island_id = self.island_id
-        return c
 
 
 #  NonagaPiece
@@ -109,14 +95,6 @@ cdef class NonagaPiece(NonagaTile):
     cpdef void set_color(self, int color):
         self.color = color
 
-    cpdef NonagaPiece clone(self):
-        cdef NonagaPiece c = NonagaPiece.__new__(NonagaPiece)
-        c.q = self.q
-        c.r = self.r
-        c.s = self.s
-        c.island_id = self.island_id
-        c.color = self.color
-        return c
 
     def __str__(self):
         return f"Piece({self.q}, {self.r}, {self.s}, {self.color})"
@@ -141,25 +119,6 @@ cdef class NonagaIsland:
             self.add_tiles(tiles)
             self.add_pieces(pieces)
 
-    # ── clone ────────────────────────────────────────────
-    cpdef NonagaIsland clone(self):
-        cdef NonagaIsland c = NonagaIsland.__new__(NonagaIsland)
-        c.id = self.id
-        c.all_tiles = {(<NonagaTile>t).clone() for t in self.all_tiles} 
-        c.movable_tiles = set()
-        c.unmovable_tiles = set()
-        c.border_tiles = set()
-        c.pieces = set()
-        for tile in c.all_tiles:
-            if tile in self.movable_tiles:
-                c.movable_tiles.add(tile)
-            elif tile in self.unmovable_tiles:
-                c.unmovable_tiles.add(tile)
-            if tile in self.border_tiles:
-                c.border_tiles.add(tile)
-            if tile in self.pieces:
-                c.pieces.add(tile)
-        return c
 
     # ── move operations ─────────────────────────────────
     def move_tile(self, NonagaTile tile, tuple position):
@@ -413,13 +372,6 @@ cdef class NonagaBoard:
     # Keep the public name expected by the rest of the codebase
     def initialize_board(self):
         return self._initialize_board()
-
-    cpdef NonagaBoard clone(self):
-        cdef NonagaBoard c = NonagaBoard.__new__(NonagaBoard, False)
-        c.islands = {iid: (<NonagaIsland>isl).clone() for iid, isl in self.islands.items()}
-        c.pieces = [(<NonagaPiece>p).clone() for p in self.pieces]
-        c.tiles = [(<NonagaTile>t).clone() for t in self.tiles]
-        return c
 
     cpdef NonagaPiece get_piece(self, tuple position):
         cdef NonagaPiece p
