@@ -10,8 +10,8 @@ import faulthandler
 faulthandler.enable()
 
 # Module-level constants for alpha-beta bounds
-cdef double NEG_INF = float('-inf')
-cdef double POS_INF = float('inf')
+cdef int NEG_INF = -99999999
+cdef int POS_INF = 99999999
 
 cdef class AI:
     """Minimax AI with alpha-beta pruning for Nonaga."""
@@ -27,16 +27,16 @@ cdef class AI:
     cdef Move minimax_piece(self, game_state, int depth, bint maximizingPlayer, int color, double alpha, double beta):
         """Moves a piece in the minimax algorithm then calls minimax_tile."""
 
-        cdef double value = 0
-        cdef double tmp = 0
-        cdef int* best_piece_move = NULL
-        cdef int* best_tile_move = NULL
-        cdef int* candidate_tile_move = NULL
+        cdef int value = 0
+        cdef int tmp = 0
+        cdef int** best_piece_move = NULL
+        cdef int** best_tile_move = NULL
+        cdef int** candidate_tile_move = NULL
         cdef dict all_possible_piece_moves = {}
         cdef int piece_pos_index
         cdef int* dest_pos = NULL
         cdef bint break_ai_loops = 0
-        cdef Move return_obj
+        cdef Move result
 
         # end of the loop
         if depth == 0: 
@@ -45,9 +45,9 @@ cdef class AI:
         elif game_state.check_win_condition(RED) or game_state.check_win_condition(BLACK):
             # the last player to play won
             if maximizingPlayer:
-                return [-99999999, NULL, NULL]
+                return [NEG_INF, NULL, NULL]
             else:
-                return [99999999, NULL, NULL]
+                return [POS_INF, NULL, NULL]
         
         # Get pieces for the loop
         pieces = game_state.board.get_pieces(game_state.current_player)
@@ -79,12 +79,12 @@ cdef class AI:
                         game_state.move_piece(pieces[piece_pos_index], dest_pos)
 
                         # We don't change the depth and current player because one player moves a piece and tile per turn
-                        Move result = self.minimax_tile(
+                        result = self.minimax_tile(
                             game_state, depth, maximizingPlayer, color, alpha, beta)
                         
                         # Unpack result
                         tmp = result.cost
-                        candidate_tile_move = result.dest
+                        candidate_tile_move = result.tile_m
                         
                         game_state.undo_piece_move(dest_pos, pieces[piece_pos_index])
                         
@@ -121,16 +121,16 @@ cdef class AI:
 
                         game_state.move_piece(pieces[piece_pos_index], dest_pos)
 
-                        Move result = self.minimax_tile(
+                        result = self.minimax_tile(
                             game_state, depth, maximizingPlayer, color,alpha, beta)
                         
                         tmp = result.cost
-                        candidate_tile_move = result.dest
+                        candidate_tile_move = result.tile_m
                         game_state.undo_piece_move(dest_pos, pieces[piece_pos_index])
                         
                         if tmp < value:
                             value = tmp
-                            best_piece_move = (pieces[piece_pos_index], dest_pos)
+                            best_piece_move = [pieces[piece_pos_index], dest_pos]
                             best_tile_move = candidate_tile_move
                         beta = min(beta, value)
                         if alpha >= beta:
@@ -138,48 +138,51 @@ cdef class AI:
             
 
         if best_piece_move == NULL or best_tile_move == NULL:
-            return_obj.cost = self.cost_function(game_state, maximizingPlayer, self.max_color, self.parameter)    
-            return_obj.pos = NULL
-            return_obj.dest = NULL
-            return return_obj
+            result.cost = self.cost_function(game_state, maximizingPlayer, self.max_color, self.parameter)    
+            result.piece_m = NULL
+            result.tile_m = NULL
+            return result
 
-        return_obj.cost = value
-        return_obj.pos = best_piece_move[0]
-        return_obj.dest = best_piece_move[1]
-        return return_obj
+        result.cost = value
+        result.piece_m = best_piece_move
+        result.tile_m = best_tile_move
+        return result
 
-    cdef void* minimax_tile(self, game_state, int depth, bint maximizingPlayer, int color, double alpha, double beta):
+    cdef Move minimax_tile(self, game_state, int depth, bint maximizingPlayer, int color, double alpha, double beta):
         """Moves a tile in the minimax algorithm then calls minimax_piece."""
         # We don't evaluate the game state after a piece move because the depth is only decreased after a tile move, which is the end of a turn.
         # So we only evaluate the game state at the end of a turn, which is more efficient.
 
-        cdef double value = 0
-        cdef double tmp = 0
-        cdef int* best_tile_move = [0, 0, 0]
-        cdef int* result = [0, 0, 0]
+        cdef int value = 0
+        cdef int tmp = 0
+        cdef int** best_tile_move = NULL
+        cdef Move result
         cdef dict all_possible_tile_moves = {}
-        cdef int* tile_pos
-        cdef int* dest_pos = [0, 0, 0]
+        cdef int tile_pos = 0
+        cdef int dest_pos = 0
 
         # tile moves are independant of the current player
         all_possible_tile_moves = game_state.get_all_valid_tile_moves_ai()
         if not all_possible_tile_moves:
-            return (self.cost_function(game_state, maximizingPlayer, self.max_color, self.parameter), None)
+            result.cost = self.cost_function(game_state, maximizingPlayer, self.max_color, self.parameter)
+            result.piece_m = NULL
+            result.tile_m = NULL
+            return result
 
         # AI's turn
         if maximizingPlayer:
             value = NEG_INF
-            for tile_pos in all_possible_tile_moves:
-                for dest_pos in all_possible_tile_moves[tile_pos]:
-                    game_state.move_tile(tile_pos, dest_pos)
+            for tile_pos in range(len(all_possible_tile_moves)):
+                for dest_pos in range(len(all_possible_tile_moves[tile_pos])):
+                    game_state.move_tile(tile_pos, all_possible_tile_moves[tile_pos][dest_pos])
 
                     result = self.minimax_piece(
                         game_state, depth - 1, False, (color+1)%2, alpha, beta)
-                    game_state.undo_tile_move(dest_pos, tile_pos) # undo the tile move
-                    tmp = result[0]
+                    game_state.undo_tile_move( all_possible_tile_moves[tile_pos][dest_pos], tile_pos) # undo the tile move
+                    tmp = result.cost
                     if tmp > value:
                         value = tmp
-                        best_tile_move = (tile_pos, dest_pos)
+                        best_tile_move = (tile_pos,  all_possible_tile_moves[tile_pos][dest_pos])
                     alpha = max(alpha, value)
                     if alpha >= beta:
                         break
@@ -190,17 +193,17 @@ cdef class AI:
         # Player's turn
         else:
             value = POS_INF
-            for tile_pos in all_possible_tile_moves:
-                for dest_pos in all_possible_tile_moves[tile_pos]:
-                    game_state.move_tile(tile_pos, dest_pos)
+            for tile_pos in range(len(all_possible_tile_moves)):
+                for dest_pos in range(len(all_possible_tile_moves[tile_pos])):
+                    game_state.move_tile(tile_pos, all_possible_tile_moves[tile_pos][dest_pos])
 
                     result = self.minimax_piece(
                         game_state, depth - 1, True, (color+1)%2, alpha, beta)
-                    game_state.undo_tile_move(dest_pos, tile_pos) # undo the tile move
-                    tmp = result[0]
+                    game_state.undo_tile_move( all_possible_tile_moves[tile_pos][dest_pos], tile_pos) # undo the tile move
+                    tmp = result.cost
                     if tmp < value:
                         value = tmp
-                        best_tile_move = (tile_pos, dest_pos)
+                        best_tile_move = (tile_pos,  all_possible_tile_moves[tile_pos][dest_pos])
                     beta = min(beta, value)
                     if alpha >= beta:
                         break
@@ -208,10 +211,15 @@ cdef class AI:
                     continue
                 break
 
-        if best_tile_move is None:
-            return (self.cost_function(game_state, maximizingPlayer, self.max_color, self.parameter), None)
-
-        return (value, best_tile_move)
+        if best_tile_move == NULL:
+            result.cost = self.cost_function(game_state, maximizingPlayer, self.max_color, self.parameter)
+            result.piece_m = NULL
+            result.tile_m = NULL
+            return result
+        result.cost = value
+        result.piece_m = NULL
+        result.tile_m = best_tile_move
+        return result
 
 
     cdef int cost_function(self, game_state, bint maximizingPlayer, int max_color, int[8] params):
@@ -343,15 +351,17 @@ cdef class AI:
         Returns:
             A tuple containing the best piece move and the best tile move combination.
         """
-        cdef void* result
-        cdef tuple best_piece_move, best_tile_move
+        cdef Move result
+        cdef tuple[2][3] best_piece_move, best_tile_move 
         cdef double score
         result = self.minimax_piece(
             game_state, self.depth, True, game_state.get_current_player(), NEG_INF, POS_INF)
       
-        score = <double> result[0]
-        best_piece_move = result[1]
-        best_tile_move = result[2]
+        score = <double> result.cost
+        for i in range(2):
+            for j in range(3):
+                best_piece_move[i][j] = result.piece_m[i][j]
+                best_tile_move[i][j] = result.tile_m[i][j]
 
         return (best_piece_move, best_tile_move)
 
