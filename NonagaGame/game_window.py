@@ -3,15 +3,15 @@ from turtle import color
 import pygame
 import math
 from nonaga_constants import *
-from nonaga_board import NonagaBoard, NonagaPiece, NonagaTile
 from nonaga_logic import NonagaLogic
 from AI import AI
 import cProfile
 
+
 class Game:
     """Manages the PyGame game loop and rendering."""
 
-    def __init__(self, ai:bool=False, screen_width=800, screen_height=500):
+    def __init__(self, ai: bool = False, screen_width=800, screen_height=500):
         """Initialize the game."""
         self.ai_playing: bool = ai
         self.ai = AI(AI_PARAM)
@@ -23,18 +23,18 @@ class Game:
         self.fps = 60
 
         self.title = "Red to play"
-        self.game_logic = NonagaLogic(None,self.ai_playing)
+        self.game_logic = NonagaLogic(None, self.ai_playing)
 
-        self.hovered_piece: NonagaPiece = None
-        self.hovered_tile: NonagaTile = None
+        self.hovered_piece: tuple = None
+        self.hovered_tile: tuple = None
         self.hovered_tile_move_pos: tuple[int, int, int] = None
 
-        self.last_clicked_piece: NonagaPiece = None
-        self.last_clicked_tile: NonagaTile = None
+        self.last_clicked_piece: tuple = None
+        self.last_clicked_tile: tuple = None
         self.tile_move_to: tuple[int, int, int] = None
 
-        self.piece_moving: NonagaPiece = None
-        self.tile_moving: NonagaTile = None
+        self.piece_moving: tuple = None
+        self.tile_moving: tuple = None
 
         self.last_clicked_piece_moves = []
         self.last_clicked_tile_moves = []
@@ -59,21 +59,10 @@ class Game:
             self.render_frame()
             self.ai_plays()
             self.update_game_state()
-            # debug
-            # last = ( list(self.game_logic.board.islands[0].pieces))
-            # if last != ( list(self.game_logic.board.islands[0].pieces)):
-            #     print(list(self.game_logic.board.islands[0].pieces)[0], '1')
             self.update_moves()
-            # if last != ( list(self.game_logic.board.islands[0].pieces)):
-            #     print(list(self.game_logic.board.islands[0].pieces)[0],'2')
             self.handle_events()
-            # if last != ( list(self.game_logic.board.islands[0].pieces)):
-            #     print(list(self.game_logic.board.islands[0].pieces)[0],'3')
 
             self.handle_moves()
-            # if last != ( list(self.game_logic.board.islands[0].pieces)):
-            #     print(list(self.game_logic.board.islands[0].pieces)[0], '4')
-            # print('-----')
         self.running = True
 
         while self.running and (self.game_logic.check_win_condition(RED) or self.game_logic.check_win_condition(BLACK)):
@@ -116,36 +105,36 @@ class Game:
             elif event.type == pygame.MOUSEMOTION:
                 # Update hovered piece/tile based on mouse position
                 self._handle_mouse_motion(event.pos)
-                hovered_piece_pos = self.hovered_piece.get_position() if self.hovered_piece else None
+                hovered_piece_pos = self.hovered_piece if self.hovered_piece else None
                 if self.hovered_piece:
                     hovered_tile_pos = None
                 else:
-                    hovered_tile_pos = self.hovered_tile.get_position() if self.hovered_tile else None
+                    hovered_tile_pos = self.hovered_tile if self.hovered_tile else None
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:  # Left mouse button click
                     self.last_clicked_piece = self.hovered_piece
                     self.last_clicked_tile = self.hovered_tile
                     self.tile_move_to = self.hovered_tile_move_pos
-                    
 
     def ai_plays(self):
 
         if self.ai_playing and self.game_logic.get_current_player() == BLACK:
             self.title = "AI is thinking..."
             self.render_frame()
-            
-            best_piece_move, best_tile_move = self.ai.get_best_move(self.game_logic)
-            
+
+            best_piece_move, best_tile_move = self.ai.get_best_move(
+                self.game_logic)
+
             # Debug output for AI move ===================================
             print("Best piece move:", best_piece_move)
             print("Best tile move:", best_tile_move)
             # end debug
-            
+
             if best_piece_move is not None and best_tile_move is not None:
                 self.game_logic.move_piece(
                     best_piece_move[0], best_piece_move[1])
                 self.game_logic.move_tile(best_tile_move[0], best_tile_move[1])
-                
+
             # Debug output for board state after AI move ==================
             pieces = self.game_logic.board.get_pieces(BLACK)
             d1 = pieces[0].distance_to(pieces[1])
@@ -159,9 +148,9 @@ class Game:
                 print("Distance sum:", d1+d2)
             missing_count = 0
 
-            p1 = pieces[0].get_position()
-            p2 = pieces[1].get_position()
-            p3 = pieces[2].get_position()
+            p1 = pieces[0]
+            p2 = pieces[1]
+            p3 = pieces[2]
 
             q_min = min(p1[0], p2[0], p3[0])
             q_max = max(p1[0], p2[0], p3[0])
@@ -178,11 +167,11 @@ class Game:
                     if self.game_logic.board.get_tile((q, r, s)) is None:
                         missing_count += 1
 
-                    elif self.game_logic.board.get_piece((q, r, s)) is not None and self.game_logic.board.get_piece((q, r, s)).get_color() != BLACK:
-                            enemy_count += 1
+                    elif self.game_logic.board.get_piece((q, r, s)) is not None and self.game_logic.board.get_piece((q, r, s))[3] != BLACK:
+                        enemy_count += 1
             print("Missing pieces black:", missing_count)
             print("Enemy pieces:", enemy_count)
-            pieces = [piece.get_position() for piece in pieces]
+            pieces = [piece for piece in pieces]
             aligned_count = 0
             for i in range(3):
                 if pieces[0][i] == pieces[1][i]:
@@ -193,7 +182,7 @@ class Game:
                     aligned_count += 1
             print("Black Aligned pieces:", aligned_count)
             pieces = self.game_logic.board.get_pieces(RED)
-            pieces = [piece.get_position() for piece in pieces]
+            pieces = [piece for piece in pieces]
             aligned_count = 0
             for i in range(3):
                 if pieces[0][i] == pieces[1][i]:
@@ -206,20 +195,18 @@ class Game:
             # end debug
         self.update_game_state()
 
-    
     def update_moves(self):
         """Update game state."""
-        
-        if self.last_clicked_piece is not None and self.last_clicked_piece.get_color() == self.game_logic.get_current_player() and self.game_logic.get_current_turn_phase() == PIECE_TO_MOVE:
+        if self.last_clicked_piece is not None and self.last_clicked_piece[3] == self.game_logic.get_current_player() and self.game_logic.get_current_turn_phase() == PIECE_TO_MOVE:
             self.last_clicked_piece_moves = self.game_logic.get_all_valid_piece_moves().get(
-                self.last_clicked_piece.get_position(), [])
+                (self.last_clicked_piece[0], self.last_clicked_piece[1], self.last_clicked_piece[2]), ["problem"])
             self.piece_moving = self.last_clicked_piece
         else:
             self.last_clicked_piece_moves = []
             self.piece_moving = None
         if self.last_clicked_tile is not None and self.game_logic.get_current_turn_phase() == TILE_TO_MOVE:
             self.last_clicked_tile_moves = self.game_logic.get_all_valid_tile_moves().get(
-                self.last_clicked_tile.get_position(), [])
+                self.last_clicked_tile, ["problem"])
             self.tile_moving = self.last_clicked_tile
         else:
             self.last_clicked_tile_moves = []
@@ -227,10 +214,10 @@ class Game:
     def handle_moves(self):
         """Handle move execution based on last clicked piece/tile and valid moves."""
 
-        if self.last_clicked_piece_moves is not [] and self.piece_moving is not None and self.last_clicked_tile is not None and self.last_clicked_tile.get_position() in self.last_clicked_piece_moves:
+        if self.last_clicked_piece_moves is not [] and self.piece_moving is not None and self.last_clicked_tile is not None and self.last_clicked_tile in self.last_clicked_piece_moves:
 
             self.game_logic.move_piece(
-                self.piece_moving, self.last_clicked_tile.get_position())
+                self.piece_moving, self.last_clicked_tile)
             # to prevent highlighting possibe tile moves
             self.last_clicked_tile = None
         if self.tile_move_to is not None and self.tile_moving is not None and self.tile_move_to in self.last_clicked_tile_moves:
@@ -243,8 +230,8 @@ class Game:
 
         Args:
             screen: pygame surface to render to
-            tiles: list of NonagaTile objects to render as hexagons
-            pieces: list of NonagaPiece objects to render as circles
+            tiles: list of tuple objects to render as hexagons
+            pieces: list of tuple objects to render as circles
             hex_size: size of hexagons and circles (distance from center to vertex)
             center_x: x-coordinate of board center (defaults to screen center)
             center_y: y-coordinate of board center (defaults to screen center)
@@ -257,21 +244,19 @@ class Game:
 
         # Render hexagons first (tiles)
         for tile in tiles:
-            q, r, s = tile.get_position()
+            q, r = tile[0], tile[1]
             self._draw_hexagon(screen, q, r, HEX_COLOR, center_x, center_y)
 
         # Render circles on top (pieces)
         for piece in pieces:
-            q, r, s = piece.get_position()
+            q, r = piece[0], piece[1]
             # Determine circle color
-            piece_color = RED_PIECE_COLOR if piece.get_color(
-            ) == RED else BLACK_PIECE_COLOR  # Red or Black
+            piece_color = RED_PIECE_COLOR if piece[3]== RED else BLACK_PIECE_COLOR  # Red or Black
             self._draw_circle(screen, q, r,
                               piece_color, center_x, center_y)
 
         # Render possible moves for last clicked piece
-        color = RED_PIECE_MOVE_COLOR if self.last_clicked_piece is not None and self.last_clicked_piece.get_color(
-        ) == RED else BLACK_PIECE_MOVE_COLOR
+        color = RED_PIECE_MOVE_COLOR if self.last_clicked_piece is not None and self.last_clicked_piece[3] == RED else BLACK_PIECE_MOVE_COLOR
         for move in piece_moves:
             q, r, s = move
             self._draw_circle(screen, q, r,
@@ -362,16 +347,20 @@ class Game:
 
         # Check each tile for collision with mouse position
         for tile in state["tiles"]:
-            q, r, s = tile.get_position()
             # Convert axial coordinates to pixel coordinates
             x, y = self._axial_to_pixel(
-                q, r, self.board_center_x, self.board_center_y)
+                tile[0], tile[1], self.board_center_x, self.board_center_y)
             # Check if mouse is over this hexagon
             if self._point_in_hexagon(mx, my, x, y, HEX_SIZE):
                 # If there's a piece on this tile, prioritize the piece
-                if tile in state["pieces"]:
+                tile_red = (tile[0],tile[1],tile[2],RED)
+                tile_black = (tile[0],tile[1],tile[2],BLACK)
+                if tile_red in state["pieces"]:
                     self.hovered_piece = state["pieces"][state["pieces"].index(
-                        tile)]
+                        tile_red)]
+                elif tile_black in state["pieces"]:
+                    self.hovered_piece = state["pieces"][state["pieces"].index(
+                        tile_black)]
                 else:
                     self.hovered_tile = tile
                 return
@@ -383,7 +372,6 @@ class Game:
                 if self._point_in_hexagon(mx, my, x, y, HEX_SIZE):
                     self.hovered_tile_move_pos = (q, r, s)
                     return
-
 
     def _draw_title(self, screen, color=(0, 0, 0)):
         """Draw the title centered at the top of the window."""

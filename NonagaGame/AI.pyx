@@ -1,7 +1,7 @@
 # cython: language_level=3, boundscheck=False, wraparound=False, profile=True
 from nonaga_constants import RED, BLACK
-from nonaga_logic cimport NonagaLogic
-from nonaga_board cimport NonagaBoard, NonagaIsland, NonagaPiece, NonagaTile
+
+from nonaga_bitboard cimport NonagaBitBoard
 import json
 import os
 
@@ -15,7 +15,7 @@ cdef double POS_INF = float('inf')
 
 cdef class AI:
     """Minimax AI with alpha-beta pruning for Nonaga."""
-    def __init__(self, parameter, int depth=2, int color=BLACK):
+    def __init__(self, parameter, int depth=1, int color=BLACK):
         self.parameter = parameter
         self.depth = depth
         self.max_color = color
@@ -34,7 +34,7 @@ cdef class AI:
         cdef tuple best_tile_move = None
         cdef tuple candidate_tile_move = None
         cdef dict all_possible_piece_moves = {}
-        cdef NonagaPiece piece
+        cdef tuple piece
         cdef tuple move = None
 
         # end of the loop
@@ -55,7 +55,7 @@ cdef class AI:
             if not all_possible_piece_moves:
                 return (self.cost_function(game_state, maximizingPlayer, self.max_color, self.parameter), None, None)
             for piece in all_possible_piece_moves:
-                original_position = piece.get_position()
+                original_position = piece
                 for move in all_possible_piece_moves[piece]:
                     game_state.move_piece(piece, move)
 
@@ -80,7 +80,7 @@ cdef class AI:
             if not all_possible_piece_moves:
                 return (self.cost_function(game_state, maximizingPlayer, self.max_color, self.parameter), None, None)
             for piece in all_possible_piece_moves:
-                original_position = piece.get_position()
+                original_position = piece
                 for move in all_possible_piece_moves[piece]:
                     game_state.move_piece(piece, move)
 
@@ -114,7 +114,7 @@ cdef class AI:
         cdef tuple best_tile_move = None
         cdef tuple result = None
         cdef dict all_possible_tile_moves = {}
-        cdef NonagaTile tile
+        cdef tuple tile
         cdef tuple move = None
 
         # tile moves are independant of the current player
@@ -126,7 +126,7 @@ cdef class AI:
         if maximizingPlayer:
             value = NEG_INF
             for tile in all_possible_tile_moves:
-                original_position = tile.get_position()
+                original_position = tile
                 for move in all_possible_tile_moves[tile]:
                     game_state.move_tile(tile, move)
 
@@ -148,7 +148,7 @@ cdef class AI:
         else:
             value = POS_INF
             for tile in all_possible_tile_moves:
-                original_position = tile.get_position()
+                original_position = tile
                 for move in all_possible_tile_moves[tile]:
                     game_state.move_tile(tile, move)
 
@@ -175,21 +175,21 @@ cdef class AI:
     cdef int cost_function(self, NonagaLogic game_state, bint maximizingPlayer, int max_color, list params):
         # for the AI, bigger better for the player lower better
         cdef int min_color = (max_color + 1) % 2
-        cdef NonagaBoard board = game_state.board
+        cdef NonagaBitBoard board = game_state.board
         
         # Get both piece sets at once to reduce board access
-        cdef list max_pieces = board.get_pieces(max_color)
-        cdef list min_pieces = board.get_pieces(min_color)
+        cdef list max_pieces = list(board.get_pieces(max_color))
+        cdef list min_pieces = list(board.get_pieces(min_color))
         
         # Extract pieces and positions for max_color (AI)
-        cdef NonagaPiece p0 = <NonagaPiece>max_pieces[0]
-        cdef NonagaPiece p1 = <NonagaPiece>max_pieces[1]
-        cdef NonagaPiece p2 = <NonagaPiece>max_pieces[2]
+        cdef tuple p0 = <tuple>max_pieces[0]
+        cdef tuple p1 = <tuple>max_pieces[1]
+        cdef tuple p2 = <tuple>max_pieces[2]
         
         # Extract pieces and positions for min_color (opponent)  
-        cdef NonagaPiece mp0 = <NonagaPiece>min_pieces[0]
-        cdef NonagaPiece mp1 = <NonagaPiece>min_pieces[1]
-        cdef NonagaPiece mp2 = <NonagaPiece>min_pieces[2]
+        cdef tuple mp0 = <tuple>min_pieces[0]
+        cdef tuple mp1 = <tuple>min_pieces[1]
+        cdef tuple mp2 = <tuple>min_pieces[2]
         
         # Calculate costs inline to avoid function call overhead and temporary list creation
         # Max cost (AI pieces)
@@ -197,17 +197,17 @@ cdef class AI:
         cdef int i
         # Inline pieces_aligned calculation for max pieces
         for i in range(3):
-            if (p0.q if i == 0 else (p0.r if i == 1 else p0.s)) == (p1.q if i == 0 else (p1.r if i == 1 else p1.s)):
+            if p0[i] == p1[i]:
                 max_aligned += 1
-            if (p1.q if i == 0 else (p1.r if i == 1 else p1.s)) == (p2.q if i == 0 else (p2.r if i == 1 else p2.s)):
+            if p1[i] == p2[i]:
                 max_aligned += 1
-            if (p2.q if i == 0 else (p2.r if i == 1 else p2.s)) == (p0.q if i == 0 else (p0.r if i == 1 else p0.s)):
+            if p2[i] == p0[i]:
                 max_aligned += 1
         
         # Inline pieces_distance calculation for max pieces
-        cdef int d1 = p0.distance_to(p1)
-        cdef int d2 = p1.distance_to(p2)  
-        cdef int d3 = p2.distance_to(p0)
+        cdef int d1 = self.distance_to(p0, p1)
+        cdef int d2 = self.distance_to(p1, p2)  
+        cdef int d3 = self.distance_to(p2, p0)
         cdef int max_distance = d2 + d3 if d1 > d2 and d1 > d3 else (d3 + d1 if d2 > d1 and d2 > d3 else d1 + d2)
         
         # Calculate missing tiles and enemy pieces for max pieces
@@ -220,17 +220,17 @@ cdef class AI:
         cdef int min_aligned = 0
         # Inline pieces_aligned calculation for min pieces
         for i in range(3):
-            if (mp0.q if i == 0 else (mp0.r if i == 1 else mp0.s)) == (mp1.q if i == 0 else (mp1.r if i == 1 else mp1.s)):
+            if mp0[i] == mp1[i]:
                 min_aligned += 1
-            if (mp1.q if i == 0 else (mp1.r if i == 1 else mp1.s)) == (mp2.q if i == 0 else (mp2.r if i == 1 else mp2.s)):
+            if mp1[i] == mp2[i]:
                 min_aligned += 1
-            if (mp2.q if i == 0 else (mp2.r if i == 1 else mp2.s)) == (mp0.q if i == 0 else (mp0.r if i == 1 else mp0.s)):
+            if mp2[i] == mp0[i]:
                 min_aligned += 1
         
         # Inline pieces_distance calculation for min pieces
-        d1 = mp0.distance_to(mp1)
-        d2 = mp1.distance_to(mp2)
-        d3 = mp2.distance_to(mp0)
+        d1 = self.distance_to(mp0, mp1)
+        d2 = self.distance_to(mp1, mp2)
+        d3 = self.distance_to(mp2, mp0)
         cdef int min_distance = d2 + d3 if d1 > d2 and d1 > d3 else (d3 + d1 if d2 > d1 and d2 > d3 else d1 + d2)
         
         # Calculate missing tiles and enemy pieces for min pieces
@@ -244,33 +244,41 @@ cdef class AI:
         #     min_cost = -min_cost
         
         return max_cost + min_cost
+
+    cdef int distance_to(self, tuple c1, tuple c2):
+        cdef int dq = c1[0] - c2[0]
+        cdef int dr = c1[1] - c2[1]
+        cdef int ds = c1[2] - c2[2]
+        if dq < 0: dq = -dq
+        if dr < 0: dr = -dr
+        if ds < 0: ds = -ds
+        return (dq + dr + ds) // 2
     
-    cdef tuple missing_tiles_and_enemy_pieces(self, NonagaBoard board, NonagaPiece p0, NonagaPiece p1, NonagaPiece p2, int color):
+    cdef tuple missing_tiles_and_enemy_pieces(self, NonagaBitBoard board, tuple p0, tuple p1, tuple p2, int color):
         
         cdef int missing_count = 0
         cdef int enemy_count = 0
 
-        cdef int q_min = min(p0.q, p1.q, p2.q)
-        cdef int q_max = max(p0.q, p1.q, p2.q)
-        cdef int r_min = min(p0.r, p1.r, p2.r)
-        cdef int r_max = max(p0.r, p1.r, p2.r)
-        cdef int s_min = min(p0.s, p1.s, p2.s)
-        cdef int s_max = max(p0.s, p1.s, p2.s)
+        cdef int q_min = min(p0[0], p1[0], p2[0])
+        cdef int q_max = max(p0[0], p1[0], p2[0])
+        cdef int r_min = min(p0[1], p1[1], p2[1])
+        cdef int r_max = max(p0[1], p1[1], p2[1])
+        cdef int s_min = min(p0[2], p1[2], p2[2])
+        cdef int s_max = max(p0[2], p1[2], p2[2])
 
         cdef int q, r, s
-        cdef tuple pos
-        cdef NonagaPiece found_piece
+        cdef int found_piece_color
         for q in range(q_min, q_max + 1):
             for r in range(r_min, r_max + 1):
                 s = -q - r
                 if s < s_min or s > s_max:
                     continue
-                pos = (q, r, s)
-                if board.is_there_tile(pos) is False:
+                
+                if not board.has_tile(q, r):
                     missing_count += 1
                 else:
-                    found_piece = board.get_piece(pos)
-                    if found_piece is not None and found_piece.color != color:
+                    found_piece_color = board.get_color(q, r)
+                    if found_piece_color != -1 and found_piece_color != color:
                         enemy_count += 1
 
         return (missing_count, enemy_count)
@@ -286,8 +294,6 @@ cdef class AI:
             A tuple containing the best piece move and the best tile move combination.
         """
         cdef tuple result
-        cdef NonagaPiece actual_piece
-        cdef NonagaTile actual_tile
         cdef tuple best_piece_move, best_tile_move
         cdef double score
         result = self.minimax_piece(
@@ -297,7 +303,7 @@ cdef class AI:
         best_piece_move = result[1]
         best_tile_move = result[2]
 
-        # Find the actual piece object in the current game state
+        return (best_piece_move, best_tile_move)
         actual_piece = game_state.board.get_piece(best_piece_move[0])
 
         # Find the actual tile object in the current game state
