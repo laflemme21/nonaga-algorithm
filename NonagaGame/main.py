@@ -10,7 +10,6 @@ from compiler import compile_cython_files
 def game_loop():
     """Main entry point for the game."""
     # Import game modules here, after Cython compilation is done
-    from nonaga_board import NonagaBoard, NonagaIsland, NonagaPiece, NonagaTile
     from nonaga_logic import NonagaLogic
     from nonaga_constants import SCREEN_HEIGHT, SCREEN_WIDTH
     from menu_window import Menu
