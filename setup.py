@@ -12,6 +12,7 @@ setup(
             "boundscheck": False,
             "wraparound": False,
         },
+        annotate=True,
     ),
     zip_safe=False,
 )

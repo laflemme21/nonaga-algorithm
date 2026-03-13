@@ -36,7 +36,7 @@ cdef class NonagaLogic:
         cdef list tiles = []
         cdef list pieces = []
         cdef int q, r, s
-        cdef tuple pos
+        cdef int* pos
         
         for pos in self.board.get_all_tiles():
             tiles.append(pos)
@@ -57,19 +57,19 @@ cdef class NonagaLogic:
 
     cdef dict get_all_valid_tile_moves_ai(self):
         cdef dict move = {}
-        cdef tuple pos
+        cdef int* pos
         for pos in self.board.get_movable_tiles():
             move[pos] = self._get_valid_tile_positions(pos)
         return move
 
     cpdef dict get_all_valid_tile_moves(self):
         cdef dict move = {}
-        cdef tuple pos
+        cdef int* pos
         for pos in self.board.get_movable_tiles():
             move[pos] = self._get_valid_tile_positions(pos)
         return move
 
-    cdef set _get_valid_tile_positions(self, tuple tile_position):
+    cdef set _get_valid_tile_positions(self, int* tile_position):
         cdef set tile_coords_set = self.board.get_all_tiles()
         
         if tile_position not in tile_coords_set:
@@ -77,9 +77,9 @@ cdef class NonagaLogic:
         
         tile_coords_set.remove(tile_position)
 
-        cdef tuple neighbor_offsets = _PY_NEIGHBOR_OFFSETS
+        cdef int* neighbor_offsets = _PY_NEIGHBOR_OFFSETS
         cdef set candidate_positions = set()
-        cdef tuple existing_pos, offset, candidate, neighbor_pos
+        cdef int* existing_pos, offset, candidate, neighbor_pos
         cdef list neighbor_positions
         cdef int neighbor_count
         cdef set valid_positions = set()
@@ -116,15 +116,15 @@ cdef class NonagaLogic:
     cdef bint _neighbors_restrain_piece(self, list neighbors):
         if not neighbors: return False
         cdef set neighbor_set = set(neighbors)
-        cdef tuple start = <tuple>neighbors[0]
+        cdef int* start = <int*>neighbors[0]
         cdef set visited = {start}
         cdef list queue = [start]
-        cdef tuple curr, adj_pos
+        cdef int* curr, adj_pos
         cdef int cq, cr, cs, i
         cdef int n_neighbors = len(neighbors)
 
         while queue:
-            curr = <tuple>queue.pop(0)
+            curr = <int*>queue.pop(0)
             cq = curr[0]; cr = curr[1]; cs = curr[2]
             for i in range(6):
                 adj_pos = (cq + _WIN_OFFSETS[i][0],
@@ -140,8 +140,8 @@ cdef class NonagaLogic:
         cdef dict moves = {}
         cdef int cur = self.current_player
         cdef int dimension, direction
-        cdef tuple valid_move
-        cdef tuple pos
+        cdef int* valid_move
+        cdef int* pos
         
         for pos in self.board.get_pieces(cur):
             moves[pos] = []
@@ -157,8 +157,8 @@ cdef class NonagaLogic:
         cdef dict moves = {}
         cdef int cur = self.current_player
         cdef int dimension, direction
-        cdef tuple valid_move
-        cdef tuple pos
+        cdef int* valid_move
+        cdef int* pos
 
         for pos in self.board.get_pieces(cur):
             moves[pos] = []
@@ -170,15 +170,15 @@ cdef class NonagaLogic:
                         moves[pos].append(valid_move)
         return moves
 
-    cdef tuple _get_valid_piece_moves_in_direction(self, tuple piece_pos,
+    cdef int* _get_valid_piece_moves_in_direction(self, int* piece_pos,
                                                      int dimension, int direction):
         cdef int pq = piece_pos[0], pr = piece_pos[1], ps = piece_pos[2]
-        cdef tuple destination = None
+        cdef int* destination = NULL
         cdef int i
         cdef int fixed_index = (dimension + 1) % 3
         cdef int dependent_index = (dimension + 2) % 3
         cdef int[3] coords
-        cdef tuple tile
+        cdef int* tile
         
         coords[0] = pq
         coords[1] = pr
@@ -205,21 +205,27 @@ cdef class NonagaLogic:
             
         return destination
 
-    cdef void move_tile(self, tuple tile_pos, tuple destination):
+    cdef void move_tile(self, int* tile_pos, int* destination):
         # Assumes valid turn phase and ownership
         self.board.move_tile(tile_pos, destination)
         self._next_turn_phase()
 
-    cdef void move_piece(self, tuple piece_pos, tuple destination):
+    cdef void move_piece(self, int* piece_pos, int* destination):
         # Assumes valid turn phase and ownership
         self.board.move_piece(piece_pos, destination)
         self._next_turn_phase()
 
-    cdef void undo_tile_move(self, tuple tile_pos, tuple destination):
+    cdef void undo_tile_move(self, int* tile_pos, int* destination):
         self.board.move_tile(tile_pos, destination)
         self._last_turn_phase()
+    
+    cpdef void move_piece_py(self, int* from_pos, int* to_pos):
+        self.move_piece(from_pos, to_pos)
 
-    cdef void undo_piece_move(self, tuple piece_pos, tuple destination):
+    cpdef void move_tile_py(self, int* from_pos, int* to_pos):
+        self.move_tile(from_pos, to_pos)
+
+    cdef void undo_piece_move(self, int* piece_pos, int* destination):
         self.board.move_piece(piece_pos, destination)
         self._last_turn_phase()
 
@@ -247,14 +253,14 @@ cdef class NonagaLogic:
         cdef set piece_set = set(pieces)
         if not pieces: return False
         
-        cdef tuple start = <tuple>pieces[0]
+        cdef int* start = <int*>pieces[0]
         cdef set visited = {start}
         cdef list queue = [start]
-        cdef tuple curr, adj_pos
+        cdef int* curr, adj_pos
         cdef int cq, cr, cs, i
 
         while queue:
-            curr = <tuple>queue.pop(0)
+            curr = <int*>queue.pop(0)
             cq = curr[0]; cr = curr[1]; cs = curr[2]
             for i in range(6):
                 adj_pos = (cq + _WIN_OFFSETS[i][0],

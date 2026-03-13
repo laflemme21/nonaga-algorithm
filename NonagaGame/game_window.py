@@ -23,7 +23,7 @@ class Game:
         self.fps = 60
 
         self.title = "Red to play"
-        self.game_logic = NonagaLogic(None, self.ai_playing)
+        self.game_logic: NonagaLogic = NonagaLogic(None, self.ai_playing)
 
         self.hovered_piece: tuple = None
         self.hovered_tile: tuple = None
@@ -131,67 +131,67 @@ class Game:
             # end debug
 
             if best_piece_move is not None and best_tile_move is not None:
-                self.game_logic.move_piece(
+                self.game_logic.move_piece_py(
                     best_piece_move[0], best_piece_move[1])
-                self.game_logic.move_tile(best_tile_move[0], best_tile_move[1])
+                self.game_logic.move_tile_py(best_tile_move[0], best_tile_move[1])
 
             # Debug output for board state after AI move ==================
-            pieces = self.game_logic.board.get_pieces(BLACK)
-            d1 = pieces[0].distance_to(pieces[1])
-            d2 = pieces[1].distance_to(pieces[2])
-            d3 = pieces[2].distance_to(pieces[0])
-            if d1 > d2 and d1 > d3:
-                print("Distance sum:", d2+d3)
-            elif d2 > d1 and d2 > d3:
-                print("Distance sum:", d3+d1)
-            else:
-                print("Distance sum:", d1+d2)
-            missing_count = 0
+            # pieces = self.game_logic.board.get_pieces(BLACK)
+            # d1 = pieces[0].distance_to(pieces[1])
+            # d2 = pieces[1].distance_to(pieces[2])
+            # d3 = pieces[2].distance_to(pieces[0])
+            # if d1 > d2 and d1 > d3:
+            #     print("Distance sum:", d2+d3)
+            # elif d2 > d1 and d2 > d3:
+            #     print("Distance sum:", d3+d1)
+            # else:
+            #     print("Distance sum:", d1+d2)
+            # missing_count = 0
 
-            p1 = pieces[0]
-            p2 = pieces[1]
-            p3 = pieces[2]
+            # p1 = pieces[0]
+            # p2 = pieces[1]
+            # p3 = pieces[2]
 
-            q_min = min(p1[0], p2[0], p3[0])
-            q_max = max(p1[0], p2[0], p3[0])
-            r_min = min(p1[1], p2[1], p3[1])
-            r_max = max(p1[1], p2[1], p3[1])
-            s_min = min(p1[2], p2[2], p3[2])
-            s_max = max(p1[2], p2[2], p3[2])
-            enemy_count = 0
-            for q in range(q_min, q_max + 1):
-                for r in range(r_min, r_max + 1):
-                    s = -q - r
-                    if s < s_min or s > s_max:
-                        continue
-                    if self.game_logic.board.get_tile((q, r, s)) is None:
-                        missing_count += 1
+            # q_min = min(p1[0], p2[0], p3[0])
+            # q_max = max(p1[0], p2[0], p3[0])
+            # r_min = min(p1[1], p2[1], p3[1])
+            # r_max = max(p1[1], p2[1], p3[1])
+            # s_min = min(p1[2], p2[2], p3[2])
+            # s_max = max(p1[2], p2[2], p3[2])
+            # enemy_count = 0
+            # for q in range(q_min, q_max + 1):
+            #     for r in range(r_min, r_max + 1):
+            #         s = -q - r
+            #         if s < s_min or s > s_max:
+            #             continue
+            #         if self.game_logic.board.get_tile((q, r, s)) is None:
+            #             missing_count += 1
 
-                    elif self.game_logic.board.get_piece((q, r, s)) is not None and self.game_logic.board.get_piece((q, r, s))[3] != BLACK:
-                        enemy_count += 1
-            print("Missing pieces black:", missing_count)
-            print("Enemy pieces:", enemy_count)
-            pieces = [piece for piece in pieces]
-            aligned_count = 0
-            for i in range(3):
-                if pieces[0][i] == pieces[1][i]:
-                    aligned_count += 1
-                if pieces[1][i] == pieces[2][i]:
-                    aligned_count += 1
-                if pieces[2][i] == pieces[0][i]:
-                    aligned_count += 1
-            print("Black Aligned pieces:", aligned_count)
-            pieces = self.game_logic.board.get_pieces(RED)
-            pieces = [piece for piece in pieces]
-            aligned_count = 0
-            for i in range(3):
-                if pieces[0][i] == pieces[1][i]:
-                    aligned_count += 1
-                if pieces[1][i] == pieces[2][i]:
-                    aligned_count += 1
-                if pieces[2][i] == pieces[0][i]:
-                    aligned_count += 1
-            print("Red Aligned pieces:", aligned_count)
+            #         elif self.game_logic.board.get_piece((q, r, s)) is not None and self.game_logic.board.get_piece((q, r, s))[3] != BLACK:
+            #             enemy_count += 1
+            # print("Missing pieces black:", missing_count)
+            # print("Enemy pieces:", enemy_count)
+            # pieces = [piece for piece in pieces]
+            # aligned_count = 0
+            # for i in range(3):
+            #     if pieces[0][i] == pieces[1][i]:
+            #         aligned_count += 1
+            #     if pieces[1][i] == pieces[2][i]:
+            #         aligned_count += 1
+            #     if pieces[2][i] == pieces[0][i]:
+            #         aligned_count += 1
+            # print("Black Aligned pieces:", aligned_count)
+            # pieces = self.game_logic.board.get_pieces(RED)
+            # pieces = [piece for piece in pieces]
+            # aligned_count = 0
+            # for i in range(3):
+            #     if pieces[0][i] == pieces[1][i]:
+            #         aligned_count += 1
+            #     if pieces[1][i] == pieces[2][i]:
+            #         aligned_count += 1
+            #     if pieces[2][i] == pieces[0][i]:
+            #         aligned_count += 1
+            # print("Red Aligned pieces:", aligned_count)
             # end debug
         self.update_game_state()
 
@@ -199,14 +199,14 @@ class Game:
         """Update game state."""
         if self.last_clicked_piece is not None and self.last_clicked_piece[3] == self.game_logic.get_current_player() and self.game_logic.get_current_turn_phase() == PIECE_TO_MOVE:
             self.last_clicked_piece_moves = self.game_logic.get_all_valid_piece_moves().get(
-                (self.last_clicked_piece[0], self.last_clicked_piece[1], self.last_clicked_piece[2]), ["problem"])
+                (self.last_clicked_piece[0], self.last_clicked_piece[1], self.last_clicked_piece[2]), [])
             self.piece_moving = self.last_clicked_piece
         else:
             self.last_clicked_piece_moves = []
             self.piece_moving = None
         if self.last_clicked_tile is not None and self.game_logic.get_current_turn_phase() == TILE_TO_MOVE:
             self.last_clicked_tile_moves = self.game_logic.get_all_valid_tile_moves().get(
-                self.last_clicked_tile, ["problem"])
+                self.last_clicked_tile, [])
             self.tile_moving = self.last_clicked_tile
         else:
             self.last_clicked_tile_moves = []
@@ -216,13 +216,13 @@ class Game:
 
         if self.last_clicked_piece_moves is not [] and self.piece_moving is not None and self.last_clicked_tile is not None and self.last_clicked_tile in self.last_clicked_piece_moves:
 
-            self.game_logic.move_piece(
+            self.game_logic.move_piece_py(
                 self.piece_moving, self.last_clicked_tile)
             # to prevent highlighting possibe tile moves
             self.last_clicked_tile = None
         if self.tile_move_to is not None and self.tile_moving is not None and self.tile_move_to in self.last_clicked_tile_moves:
 
-            self.game_logic.move_tile(self.tile_moving, self.tile_move_to)
+            self.game_logic.move_tile_py(self.tile_moving, self.tile_move_to)
 
     def render(self, screen, tiles, pieces, tile_moves, piece_moves,
                center_x=None, center_y=None):
