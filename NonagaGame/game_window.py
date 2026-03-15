@@ -65,17 +65,17 @@ class Game:
             self.handle_moves()
         self.running = True
 
-        while self.running and (self.game_logic.check_win_condition(RED) or self.game_logic.check_win_condition(BLACK)):
+        while self.running and (self.game_logic.check_win_condition_py(RED) or self.game_logic.check_win_condition_py(BLACK)):
             self.render_frame()
             self.handle_events()
             self.clock.tick(self.fps)
 
     def update_game_state(self):
         """Check if there's a winner, update the title and stop the game if so."""
-        if self.game_logic.check_win_condition(RED):
+        if self.game_logic.check_win_condition_py(RED):
             self.title = "Red won!"
             self.running = False
-        elif self.game_logic.check_win_condition(BLACK):
+        elif self.game_logic.check_win_condition_py(BLACK):
             self.title = "Black won!"
             self.running = False
         else:
@@ -133,7 +133,8 @@ class Game:
             if best_piece_move is not None and best_tile_move is not None:
                 self.game_logic.move_piece_py(
                     best_piece_move[0], best_piece_move[1])
-                self.game_logic.move_tile_py(best_tile_move[0], best_tile_move[1])
+                self.game_logic.move_tile_py(
+                    best_tile_move[0], best_tile_move[1])
 
             # Debug output for board state after AI move ==================
             # pieces = self.game_logic.board.get_pieces(BLACK)
@@ -251,12 +252,14 @@ class Game:
         for piece in pieces:
             q, r = piece[0], piece[1]
             # Determine circle color
-            piece_color = RED_PIECE_COLOR if piece[3]== RED else BLACK_PIECE_COLOR  # Red or Black
+            # Red or Black
+            piece_color = RED_PIECE_COLOR if piece[3] == RED else BLACK_PIECE_COLOR
             self._draw_circle(screen, q, r,
                               piece_color, center_x, center_y)
 
         # Render possible moves for last clicked piece
-        color = RED_PIECE_MOVE_COLOR if self.last_clicked_piece is not None and self.last_clicked_piece[3] == RED else BLACK_PIECE_MOVE_COLOR
+        color = RED_PIECE_MOVE_COLOR if self.last_clicked_piece is not None and self.last_clicked_piece[
+            3] == RED else BLACK_PIECE_MOVE_COLOR
         for move in piece_moves:
             q, r, s = move
             self._draw_circle(screen, q, r,
@@ -353,8 +356,8 @@ class Game:
             # Check if mouse is over this hexagon
             if self._point_in_hexagon(mx, my, x, y, HEX_SIZE):
                 # If there's a piece on this tile, prioritize the piece
-                tile_red = (tile[0],tile[1],tile[2],RED)
-                tile_black = (tile[0],tile[1],tile[2],BLACK)
+                tile_red = (tile[0], tile[1], tile[2], RED)
+                tile_black = (tile[0], tile[1], tile[2], BLACK)
                 if tile_red in state["pieces"]:
                     self.hovered_piece = state["pieces"][state["pieces"].index(
                         tile_red)]

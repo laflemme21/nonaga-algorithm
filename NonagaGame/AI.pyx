@@ -3,373 +3,108 @@ from nonaga_constants import RED, BLACK
 
 from nonaga_bitboard cimport NonagaBitBoard
 from nonaga_logic cimport NonagaLogic
-import json
-import os
 
-import faulthandler
-faulthandler.enable()
+cdef extern from "AI_core.h":
+    ctypedef struct Move2D:
+        int from_q
+        int from_r
+        int to_q
+        int to_r
+        int is_set
 
-# Module-level constants for alpha-beta bounds
+    ctypedef struct MissingInfo:
+        int missing_count
+        int enemy_count
+
+    ctypedef struct MinimaxResult:
+        int cost
+        Move2D piece_move
+        Move2D tile_move
+
+    Move2D ai_empty_move()
+    MinimaxResult ai_new_result(int cost)
+    MinimaxResult ai_minimax_piece(NonagaBitBoard* board, int* current_player, int* turn_phase, int depth, int maximizing_player, int color, int alpha, int beta, int max_color, const int* params)
+    MinimaxResult ai_minimax_tile(NonagaBitBoard* board, int* current_player, int* turn_phase, int depth, int maximizing_player, int color, int alpha, int beta, int max_color, const int* params)
+    int ai_cost_function(NonagaBitBoard* board, int maximizing_player, int max_color, const int* params)
+    int ai_distance_to(int q1, int r1, int s1, int q2, int r2, int s2)
+    MissingInfo ai_missing_tiles_and_enemy_pieces_from_board(NonagaBitBoard* board, int p0q, int p0r, int p0s, int p1q, int p1r, int p1s, int p2q, int p2r, int p2s, int color)
+
+
 cdef int NEG_INF = -99999999
 cdef int POS_INF = 99999999
 
+
 cdef class AI:
     """Minimax AI with alpha-beta pruning for Nonaga."""
-    def __init__(self, parameter, int depth=2, int color=BLACK):
-        self.parameter = parameter
+
+    def __init__(self, parameter, int depth=3, int color=BLACK):
+        cdef int i
         self.depth = depth
         self.max_color = color
         self.min_color = (color + 1) % 2
         self.depth_0_color = (color + depth) % 2
+        for i in range(8):
+            self.parameter[i] = <int>parameter[i]
 
-    # Inspired from https://papers-100-lines.medium.com/the-minimax-algorithm-and-alpha-beta-pruning-tutorial-in-30-lines-of-python-code-e4a3d97fa144
+    cdef MinimaxResult minimax_piece(self, NonagaLogic game_state, int depth, bint maximizingPlayer, int color, int alpha, int beta):
+        return ai_minimax_piece(&game_state.board, &game_state.current_player, &game_state.turn_phase, depth, 1 if maximizingPlayer else 0, color, alpha, beta, self.max_color, &self.parameter[0])
 
-    cdef Move minimax_piece(self, game_state, int depth, bint maximizingPlayer, int color, double alpha, double beta):
-        """Moves a piece in the minimax algorithm then calls minimax_tile."""
+    cdef MinimaxResult minimax_tile(self, NonagaLogic game_state, int depth, bint maximizingPlayer, int color, int alpha, int beta):
+        return ai_minimax_tile(&game_state.board, &game_state.current_player, &game_state.turn_phase, depth, 1 if maximizingPlayer else 0, color, alpha, beta, self.max_color, &self.parameter[0])
 
-        cdef int value = 0
-        cdef int tmp = 0
-        cdef int** best_piece_move = NULL
-        cdef int** best_tile_move = NULL
-        cdef int** candidate_tile_move = NULL
-        cdef dict all_possible_piece_moves = {}
-        cdef int piece_pos_index
-        cdef int* dest_pos = NULL
-        cdef bint break_ai_loops = 0
-        cdef Move result
+    cdef int cost_function(self, NonagaLogic game_state, bint maximizingPlayer, int color, int[8] params):
+        return ai_cost_function(&game_state.board, 1 if maximizingPlayer else 0, color, &params[0])
 
-        # end of the loop
-        if depth == 0: 
-            # evaluate and return without moves
-            return [self.cost_function(game_state, maximizingPlayer, self.max_color, self.parameter), NULL, NULL]
-        elif game_state.check_win_condition(RED) or game_state.check_win_condition(BLACK):
-            # the last player to play won
-            if maximizingPlayer:
-                return [NEG_INF, NULL, NULL]
-            else:
-                return [POS_INF, NULL, NULL]
-        
-        # Get pieces for the loop
-        pieces = game_state.board.get_pieces(game_state.current_player)
-        
-        # AI's turn
-        if maximizingPlayer:
-            value = NEG_INF
-            
-            # C-style nested loops to generate moves on the fly
-            for piece_pos_index in range(len(pieces)):
-                if break_ai_loops:
-                    break
-                for dimension in range(3):
-                    if break_ai_loops:
-                        break
-                    for direction in range(2):
-                        if break_ai_loops:
-                            break
+    cdef int distance_to(self, int q1, int r1, int s1, int q2, int r2, int s2):
+        return ai_distance_to(q1, r1, s1, q2, r2, s2)
 
-                        # Map 0 -> -1, 1 -> 1
-                        direction_val = -1 if direction == 0 else 1
-                        
-                        dest_pos = game_state._get_valid_piece_moves_in_direction(
-                            pieces[piece_pos_index], dimension, direction_val)
-                        
-                        if dest_pos == NULL:
-                            continue
-
-                        game_state.move_piece(pieces[piece_pos_index], dest_pos)
-
-                        # We don't change the depth and current player because one player moves a piece and tile per turn
-                        result = self.minimax_tile(
-                            game_state, depth, maximizingPlayer, color, alpha, beta)
-                        
-                        # Unpack result
-                        tmp = result.cost
-                        candidate_tile_move = result.tile_m
-                        
-                        game_state.undo_piece_move(dest_pos, pieces[piece_pos_index])
-                        
-                        if tmp > value:
-                            value = tmp
-                            best_piece_move = (pieces[piece_pos_index], dest_pos)
-                            best_tile_move = candidate_tile_move
-                        alpha = max(alpha, value)
-                        if alpha >= beta:
-                            # Break out of all loops
-                            break_ai_loops=1
-
-
-        # player's turn
-        else:
-            value = POS_INF
-            
-            for piece_pos_index in range(len(pieces)):
-                if break_ai_loops:
-                    break
-                for dimension in range(3):
-                    if break_ai_loops:
-                        break
-                    for direction in range(2):
-                        if break_ai_loops:
-                            break
-                        direction_val = -1 if direction == 0 else 1
-                        
-                        dest_pos = game_state._get_valid_piece_moves_in_direction(
-                            pieces[piece_pos_index], dimension, direction_val)
-
-                        if dest_pos == NULL:
-                            continue
-
-                        game_state.move_piece(pieces[piece_pos_index], dest_pos)
-
-                        result = self.minimax_tile(
-                            game_state, depth, maximizingPlayer, color,alpha, beta)
-                        
-                        tmp = result.cost
-                        candidate_tile_move = result.tile_m
-                        game_state.undo_piece_move(dest_pos, pieces[piece_pos_index])
-                        
-                        if tmp < value:
-                            value = tmp
-                            best_piece_move = [pieces[piece_pos_index], dest_pos]
-                            best_tile_move = candidate_tile_move
-                        beta = min(beta, value)
-                        if alpha >= beta:
-                           break_ai_loops=1 
-            
-
-        if best_piece_move == NULL or best_tile_move == NULL:
-            result.cost = self.cost_function(game_state, maximizingPlayer, self.max_color, self.parameter)    
-            result.piece_m = NULL
-            result.tile_m = NULL
-            return result
-
-        result.cost = value
-        result.piece_m = best_piece_move
-        result.tile_m = best_tile_move
-        return result
-
-    cdef Move minimax_tile(self, game_state, int depth, bint maximizingPlayer, int color, double alpha, double beta):
-        """Moves a tile in the minimax algorithm then calls minimax_piece."""
-        # We don't evaluate the game state after a piece move because the depth is only decreased after a tile move, which is the end of a turn.
-        # So we only evaluate the game state at the end of a turn, which is more efficient.
-
-        cdef int value = 0
-        cdef int tmp = 0
-        cdef int** best_tile_move = NULL
-        cdef Move result
-        cdef dict all_possible_tile_moves = {}
-        cdef int tile_pos = 0
-        cdef int dest_pos = 0
-
-        # tile moves are independant of the current player
-        all_possible_tile_moves = game_state.get_all_valid_tile_moves_ai()
-        if not all_possible_tile_moves:
-            result.cost = self.cost_function(game_state, maximizingPlayer, self.max_color, self.parameter)
-            result.piece_m = NULL
-            result.tile_m = NULL
-            return result
-
-        # AI's turn
-        if maximizingPlayer:
-            value = NEG_INF
-            for tile_pos in range(len(all_possible_tile_moves)):
-                for dest_pos in range(len(all_possible_tile_moves[tile_pos])):
-                    game_state.move_tile(tile_pos, all_possible_tile_moves[tile_pos][dest_pos])
-
-                    result = self.minimax_piece(
-                        game_state, depth - 1, False, (color+1)%2, alpha, beta)
-                    game_state.undo_tile_move( all_possible_tile_moves[tile_pos][dest_pos], tile_pos) # undo the tile move
-                    tmp = result.cost
-                    if tmp > value:
-                        value = tmp
-                        best_tile_move = (tile_pos,  all_possible_tile_moves[tile_pos][dest_pos])
-                    alpha = max(alpha, value)
-                    if alpha >= beta:
-                        break
-                else:
-                    continue
-                break
-
-        # Player's turn
-        else:
-            value = POS_INF
-            for tile_pos in range(len(all_possible_tile_moves)):
-                for dest_pos in range(len(all_possible_tile_moves[tile_pos])):
-                    game_state.move_tile(tile_pos, all_possible_tile_moves[tile_pos][dest_pos])
-
-                    result = self.minimax_piece(
-                        game_state, depth - 1, True, (color+1)%2, alpha, beta)
-                    game_state.undo_tile_move( all_possible_tile_moves[tile_pos][dest_pos], tile_pos) # undo the tile move
-                    tmp = result.cost
-                    if tmp < value:
-                        value = tmp
-                        best_tile_move = (tile_pos,  all_possible_tile_moves[tile_pos][dest_pos])
-                    beta = min(beta, value)
-                    if alpha >= beta:
-                        break
-                else:
-                    continue
-                break
-
-        if best_tile_move == NULL:
-            result.cost = self.cost_function(game_state, maximizingPlayer, self.max_color, self.parameter)
-            result.piece_m = NULL
-            result.tile_m = NULL
-            return result
-        result.cost = value
-        result.piece_m = NULL
-        result.tile_m = best_tile_move
-        return result
-
-
-    cdef int cost_function(self, game_state, bint maximizingPlayer, int max_color, int[8] params):
-        # for the AI, bigger better for the player lower better
-        cdef int min_color = (max_color + 1) % 2
-        cdef NonagaBitBoard board = game_state.board
-        
-        # Get both piece sets at once to reduce board access
-        cdef list max_pieces = list(board.get_pieces(max_color))
-        cdef list min_pieces = list(board.get_pieces(min_color))
-        
-        # Extract pieces
-        cdef int* p0 = NULL
-        cdef int* p1 = NULL
-        cdef int* p2 = NULL
-
-        cdef int* mp0 = NULL
-        cdef int* mp1 = NULL
-        cdef int* mp2 = NULL
-        cdef int i = 0
-        for i in range(3):
-            # Extract pieces and positions for max_color (AI)
-            p0[i] = max_pieces[0][i]
-            p1[i] = max_pieces[1][i]
-            p2[i] = max_pieces[2][i]
-            
-            # Extract pieces and positions for min_color (opponent)  
-            mp0[i] = min_pieces[0][i]
-            mp1[i] = min_pieces[1][i]
-            mp2[i] = min_pieces[2][i]
-        
-        # Calculate costs inline to avoid function call overhead and temporary list creation
-        # Max cost (AI pieces)
-        cdef int max_aligned = 0
-
-        # Inline pieces_aligned calculation for max pieces
-        for i in range(3):
-            if p0[i] == p1[i]:
-                max_aligned += 1
-            if p1[i] == p2[i]:
-                max_aligned += 1
-            if p2[i] == p0[i]:
-                max_aligned += 1
-        
-        # Inline pieces_distance calculation for max pieces
-        cdef int d1 = self.distance_to(p0, p1)
-        cdef int d2 = self.distance_to(p1, p2)  
-        cdef int d3 = self.distance_to(p2, p0)
-        cdef int max_distance = d2 + d3 if d1 > d2 and d1 > d3 else (d3 + d1 if d2 > d1 and d2 > d3 else d1 + d2)
-        
-        # Calculate missing tiles and enemy pieces for max pieces
-        cdef int* max_missing = self.missing_tiles_and_enemy_pieces(board, p0, p1, p2, max_color)
-        
-        cdef int max_cost = params[0] * max_aligned - params[1] * max_distance - params[2] * max_missing[0] - params[3] * max_missing[1]
-
-        # Min cost (opponent pieces)
-        cdef int min_aligned = 0
-        # Inline pieces_aligned calculation for min pieces
-        for i in range(3):
-            if mp0[i] == mp1[i]:
-                min_aligned += 1
-            if mp1[i] == mp2[i]:
-                min_aligned += 1
-            if mp2[i] == mp0[i]:
-                min_aligned += 1
-        
-        # Inline pieces_distance calculation for min pieces
-        d1 = self.distance_to(mp0, mp1)
-        d2 = self.distance_to(mp1, mp2)
-        d3 = self.distance_to(mp2, mp0)
-        cdef int min_distance = d2 + d3 if d1 > d2 and d1 > d3 else (d3 + d1 if d2 > d1 and d2 > d3 else d1 + d2)
-        
-        # Calculate missing tiles and enemy pieces for min pieces, indexe 0 is tile 1 is enemies
-        cdef int* min_missing = self.missing_tiles_and_enemy_pieces(board, mp0, mp1, mp2, min_color)
-        
-        cdef int min_cost = -params[4] * min_aligned + params[5] * min_distance + params[6] * min_missing[0] + params[7] * min_missing[1]
-
-        # if not maximizingPlayer:
-        #     max_cost = -max_cost
-        #     min_cost = -min_cost
-        
-        return max_cost + min_cost
-
-    cdef int distance_to(self, int* c1, int* c2):
-        cdef int dq = c1[0] - c2[0]
-        cdef int dr = c1[1] - c2[1]
-        cdef int ds = c1[2] - c2[2]
-        if dq < 0: dq = -dq
-        if dr < 0: dr = -dr
-        if ds < 0: ds = -ds
-        return (dq + dr + ds) // 2
-    
-    cdef int* missing_tiles_and_enemy_pieces(self, NonagaBitBoard board, int* p0, int* p1, int* p2, int color):
-        
-        cdef int missing_count = 0
-        cdef int enemy_count = 0
-
-        cdef int q_min = min(p0[0], p1[0], p2[0])
-        cdef int q_max = max(p0[0], p1[0], p2[0])
-        cdef int r_min = min(p0[1], p1[1], p2[1])
-        cdef int r_max = max(p0[1], p1[1], p2[1])
-        cdef int s_min = min(p0[2], p1[2], p2[2])
-        cdef int s_max = max(p0[2], p1[2], p2[2])
-
-        cdef int q, r, s
-        cdef int found_piece_color
-        for q in range(q_min, q_max + 1):
-            for r in range(r_min, r_max + 1):
-                s = -q - r
-                if s < s_min or s > s_max:
-                    continue
-                
-                if not board.has_tile(q, r):
-                    missing_count += 1
-                else:
-                    found_piece_color = board.get_color(q, r)
-                    if found_piece_color != -1 and found_piece_color != color:
-                        enemy_count += 1
-
-        return [missing_count, enemy_count]
-
-    # is there a tile on our dream position? is it movable? is it reachable?
+    cdef MissingInfo missing_tiles_and_enemy_pieces(
+        self,
+        NonagaBitBoard* board,
+        int p0q,
+        int p0r,
+        int p0s,
+        int p1q,
+        int p1r,
+        int p1s,
+        int p2q,
+        int p2r,
+        int p2s,
+        int color,
+    ):
+        return ai_missing_tiles_and_enemy_pieces_from_board(board, p0q, p0r, p0s, p1q, p1r, p1s, p2q, p2r, p2s, color)
 
     cpdef tuple get_best_move(self, game_state):
-        """Returns the best move for the AI player.
+        cdef MinimaxResult result
+        cdef object best_piece_move = None
+        cdef object best_tile_move = None
 
-        Args:
-            game_state: current game state
-        Returns:
-            A tuple containing the best piece move and the best tile move combination.
-        """
-        cdef Move result
-        cdef tuple[2][3] best_piece_move, best_tile_move 
-        cdef double score
         result = self.minimax_piece(
-            game_state, self.depth, True, game_state.get_current_player(), NEG_INF, POS_INF)
-      
-        score = <double> result.cost
-        for i in range(2):
-            for j in range(3):
-                best_piece_move[i][j] = result.piece_m[i][j]
-                best_tile_move[i][j] = result.tile_m[i][j]
+            game_state,
+            self.depth,
+            True,
+            game_state.get_current_player(),
+            NEG_INF,
+            POS_INF,
+        )
+
+        if result.piece_move.is_set:
+            best_piece_move = (
+                (result.piece_move.from_q, result.piece_move.from_r),
+                (result.piece_move.to_q, result.piece_move.to_r),
+            )
+        if result.tile_move.is_set:
+            best_tile_move = (
+                (result.tile_move.from_q, result.tile_move.from_r),
+                (result.tile_move.to_q, result.tile_move.to_r),
+            )
 
         return (best_piece_move, best_tile_move)
 
-def execute_best_move(self, game_state: object):
-        """Executes the best move for the AI player.
-        Args:
-            game_state: current game state
-        """
+    def execute_best_move(self, game_state: object):
+        cdef object best_piece_move
+        cdef object best_tile_move
         best_piece_move, best_tile_move = self.get_best_move(game_state)
-        game_state.undo_piece_move(best_piece_move[0], best_piece_move[1])
-        game_state.undo_tile_move(best_tile_move[0], best_tile_move[1])
+        if best_piece_move is not None and best_tile_move is not None:
+            game_state.move_piece_py(best_piece_move[0], best_piece_move[1])
+            game_state.move_tile_py(best_tile_move[0], best_tile_move[1])

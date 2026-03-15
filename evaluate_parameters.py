@@ -1,4 +1,8 @@
 
+from compiler import compile_cython_files
+from AI import AI
+from nonaga_logic import NonagaLogic
+from nonaga_constants import RED, BLACK
 import json
 import csv
 import sys
@@ -11,11 +15,7 @@ from typing import List
 my_nonaga_path = os.path.abspath("NonagaGame")
 if my_nonaga_path not in sys.path:
     sys.path.append(my_nonaga_path)
-    
-from nonaga_constants import RED, BLACK
-from nonaga_logic import NonagaLogic
-from AI import AI
-from compiler import compile_cython_files
+
 
 def load_parameters(filepath: str) -> List[List[int]]:
     with open(filepath, "r") as f:
@@ -47,9 +47,9 @@ def run_match(ai_1_params: List[int], ai_2_params: List[int], max_moves: int = 1
             print(f"Match error: {e}")
             break
 
-        if game.check_win_condition(RED):
+        if game.check_win_condition_py(RED):
             return 1, 0  # AI 1 wins
-        elif game.check_win_condition(BLACK):
+        elif game.check_win_condition_py(BLACK):
             return 0, 1  # AI 2 wins
 
         moves += 1
@@ -89,7 +89,8 @@ def tournament():
     matchups = list(itertools.permutations(range(num_genomes), 2))
     print(f"Running {len(matchups)} total matches...\n")
 
-    max_workers = int(os.environ.get("SLURM_CPUS_PER_TASK", os.cpu_count() or 1))
+    max_workers = int(os.environ.get(
+        "SLURM_CPUS_PER_TASK", os.cpu_count() or 1))
     tasks = [
         (idx1, idx2, genomes[idx1], genomes[idx2], max_moves)
         for idx1, idx2 in matchups
