@@ -1,8 +1,0 @@
-{
-    "chat.tools.terminal.autoApprove": {
-        "/^C:/Users/carlk/Documents/GitHub/nonaga-online/\\.venv/Scripts/python\\.exe setup\\.py build_ext --inplace$/": {
-            "approve": true,
-            "matchCommandLine": true
-        }
-    }
-}
