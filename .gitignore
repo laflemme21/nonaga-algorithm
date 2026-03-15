@@ -7,3 +7,9 @@ __pycache__/
 *.so
 build/
 conda_env/
+*.db*
+v17/
+*.sqlite
+FileContentIndex/
+.vscode/
+.vs/
