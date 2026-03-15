@@ -1,32 +1,20 @@
 # cython: language_level=3
 
-cdef class NonagaBitBoard:
-    cdef unsigned long long[7] red_pieces, black_pieces, movable_tiles, unmovable_tiles
+cdef extern from "nonaga_bitboard.h":
+    ctypedef struct NonagaBitBoard:
+        unsigned long long red_pieces[7]
+        unsigned long long black_pieces[7]
+        unsigned long long movable_tiles[7]
+        unsigned long long unmovable_tiles[7]
 
-    cdef tuple _initialize_board(self)
-
-    cdef inline void _set_bit(self, unsigned long long *board, int q, int r)
-    cdef inline void _clear_bit(self, unsigned long long *board, int q, int r)
-    cdef inline void _set_bit_flat(self, unsigned long long *board, int flat_index)
-    cdef inline bint _check_bit_flat(self, unsigned long long *board, int flat_index)
-    cdef inline void _recover_coords(self, int flat_index, int* q, int* r, int* s)
-    cdef inline bint _check_bit(self, unsigned long long *board, int q, int r)
-
-    cdef int get_number_of_tiles(self)
-    cdef set get_all_tiles(self)
-    cdef set get_movable_tiles(self)
-    cdef int distance_to(self, c1,c2)
-
-    cdef update_tiles(self)
-
-    cdef bint is_there_tile(self, position)
-    cdef bint has_tile(self, int q, int r)
-    cdef bint is_there_piece(self, position)
-    cdef int get_color(self, int q, int r)
-    cdef int** get_pieces(self, color=*)
-    cpdef set get_pieces_py(self, color)
-
-    cdef bint _check_neighbor_constraints(self, int mask, int count)
-
-    cpdef void move_tile(self, tuple current_pos, tuple new_pos)
-    cpdef void move_piece(self, tuple current_pos, tuple new_pos)
+    void bitboard_initialize(NonagaBitBoard* board)
+    int bitboard_get_number_of_tiles(NonagaBitBoard* board)
+    int bitboard_get_all_tiles(NonagaBitBoard* board, int* out_q, int* out_r, int* out_s, int max_count)
+    int bitboard_get_movable_tiles(NonagaBitBoard* board, int* out_q, int* out_r, int* out_s, int max_count)
+    bint bitboard_is_there_tile(NonagaBitBoard* board, int q, int r)
+    bint bitboard_has_tile(NonagaBitBoard* board, int q, int r)
+    bint bitboard_is_there_piece(NonagaBitBoard* board, int q, int r)
+    int bitboard_get_color(NonagaBitBoard* board, int q, int r)
+    int bitboard_get_pieces(NonagaBitBoard* board, int color, int* out_q, int* out_r, int* out_s)
+    void bitboard_move_tile(NonagaBitBoard* board, int current_q, int current_r, int new_q, int new_r)
+    void bitboard_move_piece(NonagaBitBoard* board, int current_q, int current_r, int new_q, int new_r)

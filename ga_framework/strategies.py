@@ -176,10 +176,10 @@ class NonagaTournamentFitness(FitnessFunction):
                     # Invalid move or AI crashed, break and count as a loss/draw
                     break
 
-                if game.check_win_condition(color_ind):
+                if game.check_win_condition_py(color_ind):
                     score += 1.0
                     break
-                elif game.check_win_condition(color_opp):
+                elif game.check_win_condition_py(color_opp):
                     score -= 1.0  # Penalize for losing
                     break
 
