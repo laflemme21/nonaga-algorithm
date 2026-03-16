@@ -168,17 +168,25 @@ static void ai_next_turn_phase(int *current_player, int *turn_phase)
     }
 }
 
-static void ai_last_turn_phase(int *current_player, int *turn_phase)
+typedef struct AiSearchState
 {
-    if (*turn_phase == PIECE_TO_MOVE)
-    {
-        *turn_phase = TILE_TO_MOVE;
-        ai_switch_player(current_player);
-    }
-    else
-    {
-        *turn_phase = PIECE_TO_MOVE;
-    }
+    NonagaBitBoard board;
+    int current_player;
+    int turn_phase;
+} AiSearchState;
+
+static void ai_save_state(AiSearchState *snapshot, const NonagaBitBoard *board, int current_player, int turn_phase)
+{
+    snapshot->board = *board;
+    snapshot->current_player = current_player;
+    snapshot->turn_phase = turn_phase;
+}
+
+static void ai_restore_state(NonagaBitBoard *board, int *current_player, int *turn_phase, const AiSearchState *snapshot)
+{
+    *board = snapshot->board;
+    *current_player = snapshot->current_player;
+    *turn_phase = snapshot->turn_phase;
 }
 
 static void ai_move_piece_state(NonagaBitBoard *board, int *current_player, int *turn_phase, int from_q, int from_r, int to_q, int to_r)
@@ -191,18 +199,6 @@ static void ai_move_tile_state(NonagaBitBoard *board, int *current_player, int *
 {
     bitboard_move_tile(board, from_q, from_r, to_q, to_r);
     ai_next_turn_phase(current_player, turn_phase);
-}
-
-static void ai_undo_piece_state(NonagaBitBoard *board, int *current_player, int *turn_phase, int from_q, int from_r, int to_q, int to_r)
-{
-    bitboard_move_piece(board, from_q, from_r, to_q, to_r);
-    ai_last_turn_phase(current_player, turn_phase);
-}
-
-static void ai_undo_tile_state(NonagaBitBoard *board, int *current_player, int *turn_phase, int from_q, int from_r, int to_q, int to_r)
-{
-    bitboard_move_tile(board, from_q, from_r, to_q, to_r);
-    ai_last_turn_phase(current_player, turn_phase);
 }
 
 Move2D ai_empty_move(void)
@@ -486,144 +482,6 @@ static int ai_neighbors_restrain_piece(const int *nq, const int *nr, int neighbo
     return visited_count == neighbor_count;
 }
 
-static int ai_get_valid_tile_positions_for_tile(
-    NonagaBitBoard *board,
-    int tile_q,
-    int tile_r,
-    int tile_s,
-    int *out_q,
-    int *out_r,
-    int *out_s,
-    int max_out)
-{
-    int all_q[MAX_TILES];
-    int all_r[MAX_TILES];
-    int all_s[MAX_TILES];
-    int base_q[MAX_TILES];
-    int base_r[MAX_TILES];
-    int base_s[MAX_TILES];
-    int candidate_q[MAX_TILE_CANDIDATES];
-    int candidate_r[MAX_TILE_CANDIDATES];
-    int candidate_s[MAX_TILE_CANDIDATES];
-    int tile_count;
-    int base_count = 0;
-    int candidate_count = 0;
-    int valid_count = 0;
-    AiCoordSet all_set;
-    AiCoordSet base_set;
-    AiCoordSet candidate_set;
-    int i;
-
-    /* Early out if the requested tile is not actually on the board. */
-    ai_coordset_clear(&all_set);
-    ai_coordset_clear(&base_set);
-    ai_coordset_clear(&candidate_set);
-
-    tile_count = bitboard_get_all_tiles(board, &all_q[0], &all_r[0], &all_s[0], MAX_TILES);
-    for (i = 0; i < tile_count; ++i)
-    {
-        ai_coordset_add(&all_set, all_q[i], all_r[i]);
-    }
-    if (!ai_contains_coord2_set(&all_set, all_q, all_r, tile_count, tile_q, tile_r))
-    {
-        return 0;
-    }
-
-    for (i = 0; i < tile_count; ++i)
-    {
-        if (!ai_same_coord2(all_q[i], all_r[i], tile_q, tile_r))
-        {
-            base_q[base_count] = all_q[i];
-            base_r[base_count] = all_r[i];
-            base_s[base_count] = all_s[i];
-            ai_coordset_add(&base_set, all_q[i], all_r[i]);
-            base_count += 1;
-        }
-    }
-
-    /* Generate empty neighbors around the remaining tile set. */
-    for (i = 0; i < base_count; ++i)
-    {
-        int offset_idx;
-        for (offset_idx = 0; offset_idx < 6; ++offset_idx)
-        {
-            int cq = base_q[i] + WIN_OFFSETS[offset_idx][0];
-            int cr = base_r[i] + WIN_OFFSETS[offset_idx][1];
-            int cs = base_s[i] + WIN_OFFSETS[offset_idx][2];
-            int flat = ai_flat_index(cq, cr);
-
-            if (flat < 0 || flat >= AI_BOARD_BITS)
-            {
-                continue;
-            }
-
-            if (ai_contains_coord2_set(&base_set, base_q, base_r, base_count, cq, cr))
-            {
-                continue;
-            }
-            if (ai_contains_coord2_set(&candidate_set, candidate_q, candidate_r, candidate_count, cq, cr))
-            {
-                continue;
-            }
-            if (candidate_count < MAX_TILE_CANDIDATES)
-            {
-                candidate_q[candidate_count] = cq;
-                candidate_r[candidate_count] = cr;
-                candidate_s[candidate_count] = cs;
-                ai_coordset_add(&candidate_set, cq, cr);
-                candidate_count += 1;
-            }
-        }
-    }
-
-    /* Keep candidates with legal neighbor counts and connected support. */
-    for (i = 0; i < candidate_count; ++i)
-    {
-        int neighbor_q[6];
-        int neighbor_r[6];
-        int neighbor_count = 0;
-        int offset_idx;
-
-        for (offset_idx = 0; offset_idx < 6; ++offset_idx)
-        {
-            int nq = candidate_q[i] + WIN_OFFSETS[offset_idx][0];
-            int nr = candidate_r[i] + WIN_OFFSETS[offset_idx][1];
-            if (ai_contains_coord2_set(&base_set, base_q, base_r, base_count, nq, nr))
-            {
-                neighbor_q[neighbor_count] = nq;
-                neighbor_r[neighbor_count] = nr;
-                neighbor_count += 1;
-            }
-        }
-
-        if (neighbor_count >= 2 && neighbor_count <= 4)
-        {
-            int ok = 0;
-            if (neighbor_count <= 2)
-            {
-                ok = 1;
-            }
-            else
-            {
-                ok = ai_neighbors_restrain_piece(neighbor_q, neighbor_r, neighbor_count);
-            }
-
-            if (ok && !ai_same_coord2(candidate_q[i], candidate_r[i], tile_q, tile_r))
-            {
-                if (valid_count < max_out)
-                {
-                    out_q[valid_count] = candidate_q[i];
-                    out_r[valid_count] = candidate_r[i];
-                    out_s[valid_count] = candidate_s[i];
-                    valid_count += 1;
-                }
-            }
-        }
-    }
-
-    return valid_count;
-}
-
 int ai_cost_function(NonagaBitBoard *board, int maximizing_player, int max_color, const int *params)
 {
     int min_color = (max_color + 1) % 2;
@@ -716,6 +574,7 @@ MinimaxResult ai_minimax_piece(
     int piece_s[3];
     int piece_count;
     int piece_idx;
+    AiSearchState snapshot;
 
     (void)color;
 
@@ -764,6 +623,8 @@ MinimaxResult ai_minimax_piece(
                     continue;
                 }
 
+                ai_save_state(&snapshot, board, *current_player, *turn_phase);
+
                 ai_move_piece_state(
                     board,
                     current_player,
@@ -785,14 +646,7 @@ MinimaxResult ai_minimax_piece(
                     max_color,
                     params);
 
-                ai_undo_piece_state(
-                    board,
-                    current_player,
-                    turn_phase,
-                    dest_q,
-                    dest_r,
-                    piece_q[piece_idx],
-                    piece_r[piece_idx]);
+                ai_restore_state(board, current_player, turn_phase, &snapshot);
 
                 if (maximizing_player)
                 {
@@ -878,6 +732,7 @@ MinimaxResult ai_minimax_tile(
     int tile_s[MAX_TILES];
     int tile_count;
     int tile_idx;
+    AiSearchState snapshot;
 
     tile_count = bitboard_get_movable_tiles(board, &tile_q[0], &tile_r[0], &tile_s[0], MAX_TILES);
     if (tile_count <= 0)
@@ -896,7 +751,7 @@ MinimaxResult ai_minimax_tile(
         int valid_count;
         int d_idx;
 
-        valid_count = ai_get_valid_tile_positions_for_tile(
+        valid_count = bitboard_get_valid_tile_positions_for_tile(
             board,
             tile_q[tile_idx],
             tile_r[tile_idx],
@@ -908,6 +763,8 @@ MinimaxResult ai_minimax_tile(
 
         for (d_idx = 0; d_idx < valid_count; ++d_idx)
         {
+            ai_save_state(&snapshot, board, *current_player, *turn_phase);
+
             ai_move_tile_state(
                 board,
                 current_player,
@@ -929,14 +786,7 @@ MinimaxResult ai_minimax_tile(
                 max_color,
                 params);
 
-            ai_undo_tile_state(
-                board,
-                current_player,
-                turn_phase,
-                valid_q[d_idx],
-                valid_r[d_idx],
-                tile_q[tile_idx],
-                tile_r[tile_idx]);
+            ai_restore_state(board, current_player, turn_phase, &snapshot);
 
             if (maximizing_player)
             {

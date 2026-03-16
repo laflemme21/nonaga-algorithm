@@ -7,11 +7,13 @@ cdef extern from "nonaga_bitboard.h":
         unsigned long long movable_tiles[7]
         unsigned long long unmovable_tiles[7]
         unsigned long long all_tiles[7]
+        unsigned long long tile_dest_candidates[7]
 
     void bitboard_initialize(NonagaBitBoard* board)
     int bitboard_get_number_of_tiles(NonagaBitBoard* board)
     int bitboard_get_all_tiles(NonagaBitBoard* board, int* out_q, int* out_r, int* out_s, int max_count)
     int bitboard_get_movable_tiles(NonagaBitBoard* board, int* out_q, int* out_r, int* out_s, int max_count)
+    int bitboard_get_valid_tile_positions_for_tile(NonagaBitBoard* board, int tile_q, int tile_r, int tile_s, int* out_q, int* out_r, int* out_s, int max_count)
     bint bitboard_is_there_tile(NonagaBitBoard* board, int q, int r)
     bint bitboard_has_tile(NonagaBitBoard* board, int q, int r)
     bint bitboard_is_there_piece(NonagaBitBoard* board, int q, int r)
