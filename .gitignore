@@ -16,4 +16,4 @@ FileContentIndex/
 PythonSettings.json
 CppProperties.json
 *.diagsession
-
+*.pdb
