@@ -1,4 +1,4 @@
-# cython: language_level=3
+# cython: language_level=3, profile = True
 
 # RED and BLACK are constants representing the two players.
 RED = 0

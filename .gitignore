@@ -15,3 +15,5 @@ FileContentIndex/
 .vs/
 PythonSettings.json
 CppProperties.json
+*.diagsession
+

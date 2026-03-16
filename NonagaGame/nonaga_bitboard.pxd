@@ -6,6 +6,7 @@ cdef extern from "nonaga_bitboard.h":
         unsigned long long black_pieces[7]
         unsigned long long movable_tiles[7]
         unsigned long long unmovable_tiles[7]
+        unsigned long long all_tiles[7]
 
     void bitboard_initialize(NonagaBitBoard* board)
     int bitboard_get_number_of_tiles(NonagaBitBoard* board)
