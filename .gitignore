@@ -13,3 +13,5 @@ v17/
 FileContentIndex/
 .vscode/
 .vs/
+PythonSettings.json
+CppProperties.json
