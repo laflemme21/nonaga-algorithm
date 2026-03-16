@@ -20,11 +20,11 @@
 static const int NEIGHBOR_FLAT_OFFSETS[6] = {-20, 1, 21, 20, -1, -21};
 static const int FORBIDDEN_PATTERN_LEN[FORBIDDEN_PATTERN_COUNT] = {3, 3, 4, 4, 4};
 static const int FORBIDDEN_PATTERN_DIRS[FORBIDDEN_PATTERN_COUNT][4] = {
-    {0, 2, 4, -1},    /* 1+1+1 */
-    {1, 3, 5, -1},    /* 1+1+1 (rotated) */
-    {0, 1, 3, 4},     /* 2+2 */
-    {1, 2, 4, 5},     /* 2+2 (rotated) */
-    {0, 2, 3, 5},     /* 2+2 (rotated) */
+    {0, 2, 4, -1}, /* 1+1+1 */
+    {1, 3, 5, -1}, /* 1+1+1 (rotated) */
+    {0, 1, 3, 4},  /* 2+2 */
+    {1, 2, 4, 5},  /* 2+2 (rotated) */
+    {0, 2, 3, 5},  /* 2+2 (rotated) */
 };
 
 static unsigned long long FORBIDDEN_MASKS[BOARD_BITS][FORBIDDEN_PATTERN_COUNT][ARRAY_SIZE];
@@ -207,31 +207,26 @@ static void classify_tile(NonagaBitBoard *board, int flat)
 
     for (k = 0; k < 6; ++k)
     {
-    set_tile_class(board, flat, !has_forbidden_subset(board->all_tiles, flat));
-}
+        set_tile_class(board, flat, !has_forbidden_subset(board->all_tiles, flat));
+    }
 
-static void recompute_all_tiles(NonagaBitBoard *board)
-{
-    int i;
-    int flat;
-    int bit;
-    int has_piece;
-    unsigned long long all_tiles_mask;
-
-    unsigned long long new_movable[ARRAY_SIZE];
-    unsigned long long new_unmovable[ARRAY_SIZE];
-    memset(new_movable, 0, sizeof(new_movable));
-    memset(new_unmovable, 0, sizeof(new_unmovable));
-
-    refresh_all_tiles_cache(board);
-
-    for (i = 0; i < ARRAY_SIZE; ++i)
+    static void recompute_all_tiles(NonagaBitBoard * board)
     {
+        int i;
+        int flat;
+        int bit;
+        int has_piece;
+        unsigned long long all_tiles_mask;
 
+        unsigned long long new_movable[ARRAY_SIZE];
+        unsigned long long new_unmovable[ARRAY_SIZE];
+        memset(new_movable, 0, sizeof(new_movable));
+        memset(new_unmovable, 0, sizeof(new_unmovable));
 
+        refresh_all_tiles_cache(board);
 
-
-
+        for (i = 0; i < ARRAY_SIZE; ++i)
+        {
 
             if (has_forbidden_subset(board->all_tiles, flat))
             {
