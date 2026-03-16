@@ -8,6 +8,13 @@
 #define POS_INF 99999999
 #define MAX_TILES 448
 #define MAX_TILE_CANDIDATES 2688
+#define AI_BOARD_OFFSET 10
+#define AI_BOARD_WIDTH 21
+#define AI_BOARD_BITS 448
+#define AI_BITS_PER_LONG 64
+#define AI_BITS_PER_LONG_SHIFT 6
+#define AI_BITS_PER_LONG_MASK (AI_BITS_PER_LONG - 1)
+#define AI_COORDSET_WORDS 7
 
 static const int WIN_OFFSETS[6][3] = {
     {1, -1, 0},
@@ -23,22 +30,124 @@ static int ai_abs(int v)
     return (v < 0) ? -v : v;
 }
 
-static int ai_same_coord3(int q1, int r1, int s1, int q2, int r2, int s2)
+static int ai_has_tile_flat(const NonagaBitBoard *board, int flat)
 {
-    return q1 == q2 && r1 == r2 && s1 == s2;
+    if ((unsigned int)flat >= AI_BOARD_BITS)
+    {
+        return 0;
+    }
+    return (board->all_tiles[(unsigned int)flat >> AI_BITS_PER_LONG_SHIFT] >> (flat & AI_BITS_PER_LONG_MASK)) & 1ULL;
 }
 
-static int ai_contains_coord3(const int *q, const int *r, const int *s, int count, int cq, int cr, int cs)
+static int ai_enemy_piece_flat(const unsigned long long *enemy_bits, int flat)
+{
+    if (flat < 0 || flat >= AI_BOARD_BITS)
+    {
+        return 0;
+    }
+    return enemy_bits[(unsigned int)flat >> AI_BITS_PER_LONG_SHIFT] & (1ULL << (flat & AI_BITS_PER_LONG_MASK));
+}
+
+static int ai_axis_pair_matches(const int *axis)
+{
+    return (axis[0] == axis[1]) + (axis[1] == axis[2]) + (axis[2] == axis[0]);
+}
+
+static int ai_alignment_score(const int *q, const int *r, const int *s)
+{
+    return ai_axis_pair_matches(q) + ai_axis_pair_matches(r) + ai_axis_pair_matches(s);
+}
+
+static int ai_piece_compactness_distance(const int *q, const int *r, const int *s)
+{
+    int d1 = ai_distance_to(q[0], r[0], s[0], q[1], r[1], s[1]);
+    int d2 = ai_distance_to(q[1], r[1], s[1], q[2], r[2], s[2]);
+    int d3 = ai_distance_to(q[2], r[2], s[2], q[0], r[0], s[0]);
+    int max_d = d1;
+
+    if (d2 > max_d)
+    {
+        max_d = d2;
+    }
+    if (d3 > max_d)
+    {
+        max_d = d3;
+    }
+
+    return d1 + d2 + d3 - max_d;
+}
+
+static int ai_same_coord2(int q1, int r1, int q2, int r2)
+{
+    return q1 == q2 && r1 == r2;
+}
+
+typedef struct AiCoordSet
+{
+    unsigned long long bits[AI_COORDSET_WORDS];
+} AiCoordSet;
+
+static int ai_flat_index(int q, int r)
+{
+    return (q + AI_BOARD_OFFSET) + (r + AI_BOARD_OFFSET) * AI_BOARD_WIDTH;
+}
+
+static void ai_coordset_clear(AiCoordSet *set)
+{
+    int i;
+    for (i = 0; i < AI_COORDSET_WORDS; ++i)
+    {
+        set->bits[i] = 0ULL;
+    }
+}
+
+static void ai_coordset_add(AiCoordSet *set, int q, int r)
+{
+    int flat = ai_flat_index(q, r);
+    if (flat < 0 || flat >= AI_BOARD_BITS)
+    {
+        return;
+    }
+    set->bits[(unsigned int)flat >> AI_BITS_PER_LONG_SHIFT] |= (1ULL << (flat & AI_BITS_PER_LONG_MASK));
+}
+
+static int ai_coordset_contains(const AiCoordSet *set, int q, int r)
+{
+    int flat = ai_flat_index(q, r);
+    if (flat < 0 || flat >= AI_BOARD_BITS)
+    {
+        return 0;
+    }
+    return (set->bits[(unsigned int)flat >> AI_BITS_PER_LONG_SHIFT] & (1ULL << (flat & AI_BITS_PER_LONG_MASK))) != 0;
+}
+
+static int ai_contains_coord2_fallback(const int *q, const int *r, int count, int cq, int cr)
 {
     int i;
     for (i = 0; i < count; ++i)
     {
-        if (ai_same_coord3(q[i], r[i], s[i], cq, cr, cs))
+        if (ai_same_coord2(q[i], r[i], cq, cr))
         {
             return 1;
         }
     }
     return 0;
+}
+
+static int ai_contains_coord2_set(
+    const AiCoordSet *set,
+    const int *q,
+    const int *r,
+    int count,
+    int cq,
+    int cr)
+{
+    int flat = ai_flat_index(cq, cr);
+    if (flat < 0 || flat >= AI_BOARD_BITS)
+    {
+        return ai_contains_coord2_fallback(q, r, count, cq, cr);
+    }
+    return ai_coordset_contains(set, cq, cr);
 }
 
 static void ai_switch_player(int *current_player)
@@ -118,6 +227,7 @@ MinimaxResult ai_new_result(int cost)
 
 int ai_distance_to(int q1, int r1, int s1, int q2, int r2, int s2)
 {
+    /* Cube-coordinate hex distance. */
     int dq = ai_abs(q1 - q2);
     int dr = ai_abs(r1 - r2);
     int ds = ai_abs(s1 - s2);
@@ -138,6 +248,7 @@ MissingInfo ai_missing_tiles_and_enemy_pieces_from_board(
     int color)
 {
     MissingInfo info;
+    const unsigned long long *enemy_bits = (color == RED) ? board->black_pieces : board->red_pieces;
     int q_min = p0q;
     int q_max = p0q;
     int r_min = p0r;
@@ -182,21 +293,20 @@ MissingInfo ai_missing_tiles_and_enemy_pieces_from_board(
         for (r = r_min; r <= r_max; ++r)
         {
             int s = -q - r;
+            int flat;
             if (s < s_min || s > s_max)
             {
                 continue;
             }
-            if (!bitboard_has_tile(board, q, r))
+
+            flat = ai_flat_index(q, r);
+            if (!ai_has_tile_flat(board, flat))
             {
                 info.missing_count += 1;
             }
-            else
+            else if (ai_enemy_piece_flat(enemy_bits, flat))
             {
-                int found = bitboard_get_color(board, q, r);
-                if (found != -1 && found != color)
-                {
-                    info.enemy_count += 1;
-                }
+                info.enemy_count += 1;
             }
         }
     }
@@ -226,19 +336,18 @@ static int ai_check_win_condition(NonagaBitBoard *board, int color)
     queue[tail++] = 0;
     visited_count = 1;
 
+    /* BFS over adjacent friendly pieces to test full connectivity. */
     while (head < tail)
     {
         int idx = queue[head++];
         int cq = q[idx];
         int cr = r[idx];
-        int cs = s[idx];
         int i;
 
         for (i = 0; i < 6; ++i)
         {
             int adj_q = cq + WIN_OFFSETS[i][0];
             int adj_r = cr + WIN_OFFSETS[i][1];
-            int adj_s = cs + WIN_OFFSETS[i][2];
             int j;
             for (j = 0; j < piece_count; ++j)
             {
@@ -246,7 +355,7 @@ static int ai_check_win_condition(NonagaBitBoard *board, int color)
                 {
                     continue;
                 }
-                if (q[j] == adj_q && r[j] == adj_r && s[j] == adj_s)
+                if (q[j] == adj_q && r[j] == adj_r)
                 {
                     visited[j] = 1;
                     queue[tail++] = j;
@@ -322,7 +431,7 @@ static int ai_piece_destination_in_direction(
     return found;
 }
 
-static int ai_neighbors_restrain_piece(const int *nq, const int *nr, const int *ns, int neighbor_count)
+static int ai_neighbors_restrain_piece(const int *nq, const int *nr, int neighbor_count)
 {
     int visited[6];
     int queue[6];
@@ -350,14 +459,12 @@ static int ai_neighbors_restrain_piece(const int *nq, const int *nr, const int *
         int idx = queue[head++];
         int cq = nq[idx];
         int cr = nr[idx];
-        int cs = ns[idx];
         int offset_idx;
 
         for (offset_idx = 0; offset_idx < 6; ++offset_idx)
         {
             int aq = cq + WIN_OFFSETS[offset_idx][0];
             int ar = cr + WIN_OFFSETS[offset_idx][1];
-            int as = cs + WIN_OFFSETS[offset_idx][2];
             int j;
             for (j = 0; j < neighbor_count; ++j)
             {
@@ -365,7 +472,7 @@ static int ai_neighbors_restrain_piece(const int *nq, const int *nr, const int *
                 {
                     continue;
                 }
-                if (nq[j] == aq && nr[j] == ar && ns[j] == as)
+                if (nq[j] == aq && nr[j] == ar)
                 {
                     visited[j] = 1;
                     queue[tail++] = j;
@@ -402,25 +509,39 @@ static int ai_get_valid_tile_positions_for_tile(
     int base_count = 0;
     int candidate_count = 0;
     int valid_count = 0;
+    AiCoordSet all_set;
+    AiCoordSet base_set;
+    AiCoordSet candidate_set;
     int i;
 
+    /* Early out if the requested tile is not actually on the board. */
+    ai_coordset_clear(&all_set);
+    ai_coordset_clear(&base_set);
+    ai_coordset_clear(&candidate_set);
+
     tile_count = bitboard_get_all_tiles(board, &all_q[0], &all_r[0], &all_s[0], MAX_TILES);
-    if (!ai_contains_coord3(all_q, all_r, all_s, tile_count, tile_q, tile_r, tile_s))
+    for (i = 0; i < tile_count; ++i)
+    {
+        ai_coordset_add(&all_set, all_q[i], all_r[i]);
+    }
+    if (!ai_contains_coord2_set(&all_set, all_q, all_r, tile_count, tile_q, tile_r))
     {
         return 0;
     }
 
     for (i = 0; i < tile_count; ++i)
     {
-        if (!ai_same_coord3(all_q[i], all_r[i], all_s[i], tile_q, tile_r, tile_s))
+        if (!ai_same_coord2(all_q[i], all_r[i], tile_q, tile_r))
         {
             base_q[base_count] = all_q[i];
             base_r[base_count] = all_r[i];
             base_s[base_count] = all_s[i];
+            ai_coordset_add(&base_set, all_q[i], all_r[i]);
             base_count += 1;
         }
     }
 
+    /* Generate empty neighbors around the remaining tile set. */
     for (i = 0; i < base_count; ++i)
     {
         int offset_idx;
@@ -429,11 +550,18 @@ static int ai_get_valid_tile_positions_for_tile(
             int cq = base_q[i] + WIN_OFFSETS[offset_idx][0];
             int cr = base_r[i] + WIN_OFFSETS[offset_idx][1];
             int cs = base_s[i] + WIN_OFFSETS[offset_idx][2];
-            if (ai_contains_coord3(base_q, base_r, base_s, base_count, cq, cr, cs))
+            int flat = ai_flat_index(cq, cr);
+
+            if (flat < 0 || flat >= AI_BOARD_BITS)
             {
                 continue;
             }
-            if (ai_contains_coord3(candidate_q, candidate_r, candidate_s, candidate_count, cq, cr, cs))
+
+            if (ai_contains_coord2_set(&base_set, base_q, base_r, base_count, cq, cr))
+            {
+                continue;
+            }
+            if (ai_contains_coord2_set(&candidate_set, candidate_q, candidate_r, candidate_count, cq, cr))
             {
                 continue;
             }
@@ -442,16 +570,17 @@ static int ai_get_valid_tile_positions_for_tile(
                 candidate_q[candidate_count] = cq;
                 candidate_r[candidate_count] = cr;
                 candidate_s[candidate_count] = cs;
+                ai_coordset_add(&candidate_set, cq, cr);
                 candidate_count += 1;
             }
         }
     }
 
+    /* Keep candidates with legal neighbor counts and connected support. */
     for (i = 0; i < candidate_count; ++i)
     {
         int neighbor_q[6];
         int neighbor_r[6];
-        int neighbor_s[6];
         int neighbor_count = 0;
         int offset_idx;
 
@@ -459,12 +588,10 @@ static int ai_get_valid_tile_positions_for_tile(
         {
             int nq = candidate_q[i] + WIN_OFFSETS[offset_idx][0];
             int nr = candidate_r[i] + WIN_OFFSETS[offset_idx][1];
-            int ns = candidate_s[i] + WIN_OFFSETS[offset_idx][2];
-            if (ai_contains_coord3(base_q, base_r, base_s, base_count, nq, nr, ns))
+            if (ai_contains_coord2_set(&base_set, base_q, base_r, base_count, nq, nr))
             {
                 neighbor_q[neighbor_count] = nq;
                 neighbor_r[neighbor_count] = nr;
-                neighbor_s[neighbor_count] = ns;
                 neighbor_count += 1;
             }
         }
@@ -478,10 +605,10 @@ static int ai_get_valid_tile_positions_for_tile(
             }
             else
             {
-                ok = ai_neighbors_restrain_piece(neighbor_q, neighbor_r, neighbor_s, neighbor_count);
+                ok = ai_neighbors_restrain_piece(neighbor_q, neighbor_r, neighbor_count);
             }
 
-            if (ok && !ai_same_coord3(candidate_q[i], candidate_r[i], candidate_s[i], tile_q, tile_r, tile_s))
+            if (ok && !ai_same_coord2(candidate_q[i], candidate_r[i], tile_q, tile_r))
             {
                 if (valid_count < max_out)
                 {
@@ -508,20 +635,18 @@ int ai_cost_function(NonagaBitBoard *board, int maximizing_player, int max_color
     int min_s[3];
     int max_count;
     int min_count;
-    int max_aligned = 0;
-    int min_aligned = 0;
+    int max_aligned;
+    int min_aligned;
     int max_distance;
     int min_distance;
     int max_cost;
     int min_cost;
     MissingInfo max_missing;
     MissingInfo min_missing;
-    int d1;
-    int d2;
-    int d3;
 
     (void)maximizing_player;
 
+    /* Evaluation combines alignment, compactness, missing tiles, and enemy blockers. */
     max_count = bitboard_get_pieces(board, max_color, &max_q[0], &max_r[0], &max_s[0]);
     min_count = bitboard_get_pieces(board, min_color, &min_q[0], &min_r[0], &min_s[0]);
 
@@ -530,29 +655,8 @@ int ai_cost_function(NonagaBitBoard *board, int maximizing_player, int max_color
         return 0;
     }
 
-    if (max_q[0] == max_q[1])
-        max_aligned += 1;
-    if (max_q[1] == max_q[2])
-        max_aligned += 1;
-    if (max_q[2] == max_q[0])
-        max_aligned += 1;
-    if (max_r[0] == max_r[1])
-        max_aligned += 1;
-    if (max_r[1] == max_r[2])
-        max_aligned += 1;
-    if (max_r[2] == max_r[0])
-        max_aligned += 1;
-    if (max_s[0] == max_s[1])
-        max_aligned += 1;
-    if (max_s[1] == max_s[2])
-        max_aligned += 1;
-    if (max_s[2] == max_s[0])
-        max_aligned += 1;
-
-    d1 = ai_distance_to(max_q[0], max_r[0], max_s[0], max_q[1], max_r[1], max_s[1]);
-    d2 = ai_distance_to(max_q[1], max_r[1], max_s[1], max_q[2], max_r[2], max_s[2]);
-    d3 = ai_distance_to(max_q[2], max_r[2], max_s[2], max_q[0], max_r[0], max_s[0]);
-    max_distance = (d1 > d2 && d1 > d3) ? (d2 + d3) : ((d2 > d1 && d2 > d3) ? (d3 + d1) : (d1 + d2));
+    max_aligned = ai_alignment_score(&max_q[0], &max_r[0], &max_s[0]);
+    max_distance = ai_piece_compactness_distance(&max_q[0], &max_r[0], &max_s[0]);
 
     max_missing = ai_missing_tiles_and_enemy_pieces_from_board(
         board,
@@ -563,29 +667,8 @@ int ai_cost_function(NonagaBitBoard *board, int maximizing_player, int max_color
 
     max_cost = params[0] * max_aligned - params[1] * max_distance - params[2] * max_missing.missing_count - params[3] * max_missing.enemy_count;
 
-    if (min_q[0] == min_q[1])
-        min_aligned += 1;
-    if (min_q[1] == min_q[2])
-        min_aligned += 1;
-    if (min_q[2] == min_q[0])
-        min_aligned += 1;
-    if (min_r[0] == min_r[1])
-        min_aligned += 1;
-    if (min_r[1] == min_r[2])
-        min_aligned += 1;
-    if (min_r[2] == min_r[0])
-        min_aligned += 1;
-    if (min_s[0] == min_s[1])
-        min_aligned += 1;
-    if (min_s[1] == min_s[2])
-        min_aligned += 1;
-    if (min_s[2] == min_s[0])
-        min_aligned += 1;
-
-    d1 = ai_distance_to(min_q[0], min_r[0], min_s[0], min_q[1], min_r[1], min_s[1]);
-    d2 = ai_distance_to(min_q[1], min_r[1], min_s[1], min_q[2], min_r[2], min_s[2]);
-    d3 = ai_distance_to(min_q[2], min_r[2], min_s[2], min_q[0], min_r[0], min_s[0]);
-    min_distance = (d1 > d2 && d1 > d3) ? (d2 + d3) : ((d2 > d1 && d2 > d3) ? (d3 + d1) : (d1 + d2));
+    min_aligned = ai_alignment_score(&min_q[0], &min_r[0], &min_s[0]);
+    min_distance = ai_piece_compactness_distance(&min_q[0], &min_r[0], &min_s[0]);
 
     min_missing = ai_missing_tiles_and_enemy_pieces_from_board(
         board,
@@ -652,6 +735,7 @@ MinimaxResult ai_minimax_piece(
         return ai_new_result(ai_cost_function(board, maximizing_player, max_color, params));
     }
 
+    /* Piece-move phase: choose the best slide, then defer to tile phase. */
     value = maximizing_player ? NEG_INF : POS_INF;
 
     for (piece_idx = 0; piece_idx < piece_count; ++piece_idx)
@@ -747,6 +831,7 @@ MinimaxResult ai_minimax_piece(
 
                 if (alpha >= beta)
                 {
+                    /* Alpha-beta pruning. */
                     break;
                 }
             }
@@ -800,6 +885,7 @@ MinimaxResult ai_minimax_tile(
         return ai_new_result(ai_cost_function(board, maximizing_player, max_color, params));
     }
 
+    /* Tile-move phase: place a movable tile, then recurse to piece phase. */
     value = maximizing_player ? NEG_INF : POS_INF;
 
     for (tile_idx = 0; tile_idx < tile_count; ++tile_idx)

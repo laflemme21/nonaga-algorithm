@@ -295,7 +295,7 @@ body.cython { font-family: courier; font-size: 12; }
     Click on a line that starts with a "<code>+</code>" to see the C code that Cython generated for it.
 </p>
 <p>Raw output: <a href="nonaga_constants.c">nonaga_constants.c</a></p>
-<div class="cython"><pre class="cython line score-8" onclick="(function(f,s,c){c=f.nodeValue=='+';s.display=c?'block':'none';f.nodeValue=c?'−':'+'})(this.firstChild,this.nextElementSibling.style)">+<span class="">01</span>: # cython: language_level=3</pre>
+<div class="cython"><pre class="cython line score-8" onclick="(function(f,s,c){c=f.nodeValue=='+';s.display=c?'block':'none';f.nodeValue=c?'−':'+'})(this.firstChild,this.nextElementSibling.style)">+<span class="">01</span>: # cython: language_level=3, profile = True</pre>
 <pre class='cython code score-8 '>  __pyx_t_4 = <span class='pyx_c_api'>__Pyx_PyDict_NewPresized</span>(0);<span class='error_goto'> if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 1, __pyx_L1_error)</span>
   <span class='refnanny'>__Pyx_GOTREF</span>(__pyx_t_4);
   if (<span class='py_c_api'>PyDict_SetItem</span>(__pyx_mstate_global-&gt;__pyx_d, __pyx_mstate_global-&gt;__pyx_n_u_test, __pyx_t_4) &lt; (0)) <span class='error_goto'>__PYX_ERR(0, 1, __pyx_L1_error)</span>
@@ -333,8 +333,8 @@ body.cython { font-family: courier; font-size: 12; }
   <span class='pyx_macro_api'>__Pyx_DECREF</span>(__pyx_t_4); __pyx_t_4 = 0;
   if (<span class='py_c_api'>PyDict_SetItem</span>(__pyx_mstate_global-&gt;__pyx_d, __pyx_mstate_global-&gt;__pyx_n_u_HEX_MOVE_COLOR, __pyx_t_2) &lt; (0)) <span class='error_goto'>__PYX_ERR(0, 15, __pyx_L1_error)</span>
   <span class='pyx_macro_api'>__Pyx_DECREF</span>(__pyx_t_2); __pyx_t_2 = 0;
-</pre><pre class="cython line score-152" onclick="(function(f,s,c){c=f.nodeValue=='+';s.display=c?'block':'none';f.nodeValue=c?'−':'+'})(this.firstChild,this.nextElementSibling.style)">+<span class="">16</span>:     (h + r) // 2 for h, r in zip(HEX_COLOR, (255,255,255)))</pre>
-<pre class='cython code score-152 '>static PyObject *__pyx_pf_16nonaga_constants_genexpr(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_genexpr_arg_0) {
+</pre><pre class="cython line score-154" onclick="(function(f,s,c){c=f.nodeValue=='+';s.display=c?'block':'none';f.nodeValue=c?'−':'+'})(this.firstChild,this.nextElementSibling.style)">+<span class="">16</span>:     (h + r) // 2 for h, r in zip(HEX_COLOR, (255,255,255)))</pre>
+<pre class='cython code score-154 '>static PyObject *__pyx_pf_16nonaga_constants_genexpr(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_genexpr_arg_0) {
   struct __pyx_obj_16nonaga_constants___pyx_scope_struct__genexpr *__pyx_cur_scope;
   PyObject *__pyx_r = NULL;
   __pyx_cur_scope = (struct __pyx_obj_16nonaga_constants___pyx_scope_struct__genexpr *)__pyx_tp_new_16nonaga_constants___pyx_scope_struct__genexpr(__pyx_mstate_global-&gt;__pyx_ptype_16nonaga_constants___pyx_scope_struct__genexpr, __pyx_mstate_global-&gt;__pyx_empty_tuple, NULL);
@@ -370,7 +370,9 @@ static PyObject *__pyx_gb_16nonaga_constants_2generator(__pyx_CoroutineObject *_
   PyObject *__pyx_r = NULL;
   <span class='refnanny'>__Pyx_RefNannyDeclarations</span>
   <span class='refnanny'>__Pyx_RefNannySetupContext</span>("genexpr", 0);
+  <span class='trace'>__Pyx_TraceDeclarationsGen</span>
   __pyx_L3_first_run:;
+  <span class='trace'>__Pyx_TraceStartGen</span>("genexpr", __pyx_f[0], 16, 0, 0, 0, <span class='error_goto'>__PYX_ERR(0, 16, __pyx_L1_error)</span>);
   if (unlikely(__pyx_sent_value != Py_None)) {
     if (unlikely(__pyx_sent_value)) <span class='py_c_api'>PyErr_SetString</span>(PyExc_TypeError, "can't send non-None value to a just-started generator");
     <span class='error_goto'>__PYX_ERR(0, 16, __pyx_L1_error)</span>
@@ -494,6 +496,7 @@ static PyObject *__pyx_gb_16nonaga_constants_2generator(__pyx_CoroutineObject *_
     __pyx_cur_scope-&gt;__pyx_t_0 = __pyx_t_1;
     __pyx_cur_scope-&gt;__pyx_t_1 = __pyx_t_2;
     __pyx_cur_scope-&gt;__pyx_t_2 = __pyx_t_3;
+    <span class='trace'>__Pyx_TraceYield</span>(__pyx_r, 0, <span class='error_goto'>__PYX_ERR(0, 16, __pyx_L1_error)</span>);
     <span class='refnanny'>__Pyx_XGIVEREF</span>(__pyx_r);
     <span class='refnanny'>__Pyx_RefNannyFinishContext</span>();
     <span class='pyx_c_api'>__Pyx_Coroutine_ResetAndClearException</span>(__pyx_generator);
@@ -501,6 +504,7 @@ static PyObject *__pyx_gb_16nonaga_constants_2generator(__pyx_CoroutineObject *_
     __pyx_generator-&gt;resume_label = 1;
     return __pyx_r;
     __pyx_L8_resume_from_yield:;
+    <span class='trace'>__Pyx_TraceResumeGen</span>("genexpr", __pyx_f[0], 16, 0, <span class='error_goto'>__PYX_ERR(0, 16, __pyx_L1_error)</span>);
     __pyx_t_1 = __pyx_cur_scope-&gt;__pyx_t_0;
     __pyx_cur_scope-&gt;__pyx_t_0 = 0;
     <span class='refnanny'>__Pyx_XGOTREF</span>(__pyx_t_1);
@@ -510,6 +514,7 @@ static PyObject *__pyx_gb_16nonaga_constants_2generator(__pyx_CoroutineObject *_
   }
   <span class='pyx_macro_api'>__Pyx_DECREF</span>(__pyx_t_1); __pyx_t_1 = 0;
   CYTHON_MAYBE_UNUSED_VAR(__pyx_cur_scope);
+  <span class='trace'>__Pyx_TraceReturnValue</span>(Py_None, 0, 0, <span class='error_goto'>__PYX_ERR(0, 16, __pyx_L1_error)</span>);
 
   /* function exit code */
   __pyx_r = Py_None; <span class='pyx_macro_api'>__Pyx_INCREF</span>(Py_None);
@@ -521,11 +526,14 @@ static PyObject *__pyx_gb_16nonaga_constants_2generator(__pyx_CoroutineObject *_
   <span class='pyx_macro_api'>__Pyx_XDECREF</span>(__pyx_t_6);
   <span class='pyx_macro_api'>__Pyx_XDECREF</span>(__pyx_t_7);
   if (<span class='pyx_c_api'>__Pyx_PyErr_Occurred</span>()) {
+    <span class='trace'>__Pyx_TraceException</span>(__pyx_lineno, 0, 0);
     <span class='pyx_c_api'>__Pyx_Generator_Replace_StopIteration</span>(0);
     <span class='pyx_c_api'>__Pyx_AddTraceback</span>("genexpr", __pyx_clineno, __pyx_lineno, __pyx_filename);
+    <span class='trace'>__Pyx_TraceExceptionUnwind</span>(0, 0);
   }
   __pyx_L0:;
   <span class='refnanny'>__Pyx_XGIVEREF</span>(__pyx_r);
+  <span class='pyx_c_api'>__Pyx_PyMonitoring_ExitScope</span>(0);
   #if !CYTHON_USE_EXC_INFO_STACK
   <span class='pyx_c_api'>__Pyx_Coroutine_ResetAndClearException</span>(__pyx_generator);
   #endif
@@ -583,8 +591,8 @@ struct __pyx_obj_16nonaga_constants___pyx_scope_struct__genexpr {
   __pyx_mstate_global-&gt;__pyx_tuple[2] = <span class='py_c_api'>PyTuple_Pack</span>(3, __pyx_mstate_global-&gt;__pyx_int_200, __pyx_mstate_global-&gt;__pyx_int_20, __pyx_mstate_global-&gt;__pyx_int_15); if (unlikely(!__pyx_mstate_global-&gt;__pyx_tuple[2])) <span class='error_goto'>__PYX_ERR(0, 21, __pyx_L1_error)</span>
   <span class='refnanny'>__Pyx_GOTREF</span>(__pyx_mstate_global-&gt;__pyx_tuple[2]);
   <span class='refnanny'>__Pyx_GIVEREF</span>(__pyx_mstate_global-&gt;__pyx_tuple[2]);
-</pre><pre class="cython line score-159" onclick="(function(f,s,c){c=f.nodeValue=='+';s.display=c?'block':'none';f.nodeValue=c?'−':'+'})(this.firstChild,this.nextElementSibling.style)">+<span class="">22</span>: RED_PIECE_MOVE_COLOR = tuple((h + r) // 2 for h, r in zip(HEX_COLOR, RED_PIECE_COLOR))  # Highlight color for RED pieces</pre>
-<pre class='cython code score-159 '>static PyObject *__pyx_pf_16nonaga_constants_3genexpr(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_genexpr_arg_0) {
+</pre><pre class="cython line score-161" onclick="(function(f,s,c){c=f.nodeValue=='+';s.display=c?'block':'none';f.nodeValue=c?'−':'+'})(this.firstChild,this.nextElementSibling.style)">+<span class="">22</span>: RED_PIECE_MOVE_COLOR = tuple((h + r) // 2 for h, r in zip(HEX_COLOR, RED_PIECE_COLOR))  # Highlight color for RED pieces</pre>
+<pre class='cython code score-161 '>static PyObject *__pyx_pf_16nonaga_constants_3genexpr(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_genexpr_arg_0) {
   struct __pyx_obj_16nonaga_constants___pyx_scope_struct_1_genexpr *__pyx_cur_scope;
   PyObject *__pyx_r = NULL;
   __pyx_cur_scope = (struct __pyx_obj_16nonaga_constants___pyx_scope_struct_1_genexpr *)__pyx_tp_new_16nonaga_constants___pyx_scope_struct_1_genexpr(__pyx_mstate_global-&gt;__pyx_ptype_16nonaga_constants___pyx_scope_struct_1_genexpr, __pyx_mstate_global-&gt;__pyx_empty_tuple, NULL);
@@ -620,7 +628,9 @@ static PyObject *__pyx_gb_16nonaga_constants_5generator1(__pyx_CoroutineObject *
   PyObject *__pyx_r = NULL;
   <span class='refnanny'>__Pyx_RefNannyDeclarations</span>
   <span class='refnanny'>__Pyx_RefNannySetupContext</span>("genexpr", 0);
+  <span class='trace'>__Pyx_TraceDeclarationsGen</span>
   __pyx_L3_first_run:;
+  <span class='trace'>__Pyx_TraceStartGen</span>("genexpr", __pyx_f[0], 22, 0, 0, 0, <span class='error_goto'>__PYX_ERR(0, 22, __pyx_L1_error)</span>);
   if (unlikely(__pyx_sent_value != Py_None)) {
     if (unlikely(__pyx_sent_value)) <span class='py_c_api'>PyErr_SetString</span>(PyExc_TypeError, "can't send non-None value to a just-started generator");
     <span class='error_goto'>__PYX_ERR(0, 22, __pyx_L1_error)</span>
@@ -744,6 +754,7 @@ static PyObject *__pyx_gb_16nonaga_constants_5generator1(__pyx_CoroutineObject *
     __pyx_cur_scope-&gt;__pyx_t_0 = __pyx_t_1;
     __pyx_cur_scope-&gt;__pyx_t_1 = __pyx_t_2;
     __pyx_cur_scope-&gt;__pyx_t_2 = __pyx_t_3;
+    <span class='trace'>__Pyx_TraceYield</span>(__pyx_r, 0, <span class='error_goto'>__PYX_ERR(0, 22, __pyx_L1_error)</span>);
     <span class='refnanny'>__Pyx_XGIVEREF</span>(__pyx_r);
     <span class='refnanny'>__Pyx_RefNannyFinishContext</span>();
     <span class='pyx_c_api'>__Pyx_Coroutine_ResetAndClearException</span>(__pyx_generator);
@@ -751,6 +762,7 @@ static PyObject *__pyx_gb_16nonaga_constants_5generator1(__pyx_CoroutineObject *
     __pyx_generator-&gt;resume_label = 1;
     return __pyx_r;
     __pyx_L8_resume_from_yield:;
+    <span class='trace'>__Pyx_TraceResumeGen</span>("genexpr", __pyx_f[0], 22, 0, <span class='error_goto'>__PYX_ERR(0, 22, __pyx_L1_error)</span>);
     __pyx_t_1 = __pyx_cur_scope-&gt;__pyx_t_0;
     __pyx_cur_scope-&gt;__pyx_t_0 = 0;
     <span class='refnanny'>__Pyx_XGOTREF</span>(__pyx_t_1);
@@ -760,6 +772,7 @@ static PyObject *__pyx_gb_16nonaga_constants_5generator1(__pyx_CoroutineObject *
   }
   <span class='pyx_macro_api'>__Pyx_DECREF</span>(__pyx_t_1); __pyx_t_1 = 0;
   CYTHON_MAYBE_UNUSED_VAR(__pyx_cur_scope);
+  <span class='trace'>__Pyx_TraceReturnValue</span>(Py_None, 0, 0, <span class='error_goto'>__PYX_ERR(0, 22, __pyx_L1_error)</span>);
 
   /* function exit code */
   __pyx_r = Py_None; <span class='pyx_macro_api'>__Pyx_INCREF</span>(Py_None);
@@ -771,11 +784,14 @@ static PyObject *__pyx_gb_16nonaga_constants_5generator1(__pyx_CoroutineObject *
   <span class='pyx_macro_api'>__Pyx_XDECREF</span>(__pyx_t_6);
   <span class='pyx_macro_api'>__Pyx_XDECREF</span>(__pyx_t_7);
   if (<span class='pyx_c_api'>__Pyx_PyErr_Occurred</span>()) {
+    <span class='trace'>__Pyx_TraceException</span>(__pyx_lineno, 0, 0);
     <span class='pyx_c_api'>__Pyx_Generator_Replace_StopIteration</span>(0);
     <span class='pyx_c_api'>__Pyx_AddTraceback</span>("genexpr", __pyx_clineno, __pyx_lineno, __pyx_filename);
+    <span class='trace'>__Pyx_TraceExceptionUnwind</span>(0, 0);
   }
   __pyx_L0:;
   <span class='refnanny'>__Pyx_XGIVEREF</span>(__pyx_r);
+  <span class='pyx_c_api'>__Pyx_PyMonitoring_ExitScope</span>(0);
   #if !CYTHON_USE_EXC_INFO_STACK
   <span class='pyx_c_api'>__Pyx_Coroutine_ResetAndClearException</span>(__pyx_generator);
   #endif
@@ -860,7 +876,9 @@ static PyObject *__pyx_gb_16nonaga_constants_8generator2(__pyx_CoroutineObject *
   PyObject *__pyx_r = NULL;
   <span class='refnanny'>__Pyx_RefNannyDeclarations</span>
   <span class='refnanny'>__Pyx_RefNannySetupContext</span>("genexpr", 0);
+  <span class='trace'>__Pyx_TraceDeclarationsGen</span>
   __pyx_L3_first_run:;
+  <span class='trace'>__Pyx_TraceStartGen</span>("genexpr", __pyx_f[0], 25, 0, 0, 0, <span class='error_goto'>__PYX_ERR(0, 25, __pyx_L1_error)</span>);
   if (unlikely(__pyx_sent_value != Py_None)) {
     if (unlikely(__pyx_sent_value)) <span class='py_c_api'>PyErr_SetString</span>(PyExc_TypeError, "can't send non-None value to a just-started generator");
     <span class='error_goto'>__PYX_ERR(0, 25, __pyx_L1_error)</span>
@@ -984,6 +1002,7 @@ static PyObject *__pyx_gb_16nonaga_constants_8generator2(__pyx_CoroutineObject *
     __pyx_cur_scope-&gt;__pyx_t_0 = __pyx_t_1;
     __pyx_cur_scope-&gt;__pyx_t_1 = __pyx_t_2;
     __pyx_cur_scope-&gt;__pyx_t_2 = __pyx_t_3;
+    <span class='trace'>__Pyx_TraceYield</span>(__pyx_r, 0, <span class='error_goto'>__PYX_ERR(0, 25, __pyx_L1_error)</span>);
     <span class='refnanny'>__Pyx_XGIVEREF</span>(__pyx_r);
     <span class='refnanny'>__Pyx_RefNannyFinishContext</span>();
     <span class='pyx_c_api'>__Pyx_Coroutine_ResetAndClearException</span>(__pyx_generator);
@@ -991,6 +1010,7 @@ static PyObject *__pyx_gb_16nonaga_constants_8generator2(__pyx_CoroutineObject *
     __pyx_generator-&gt;resume_label = 1;
     return __pyx_r;
     __pyx_L8_resume_from_yield:;
+    <span class='trace'>__Pyx_TraceResumeGen</span>("genexpr", __pyx_f[0], 25, 0, <span class='error_goto'>__PYX_ERR(0, 25, __pyx_L1_error)</span>);
     __pyx_t_1 = __pyx_cur_scope-&gt;__pyx_t_0;
     __pyx_cur_scope-&gt;__pyx_t_0 = 0;
     <span class='refnanny'>__Pyx_XGOTREF</span>(__pyx_t_1);
@@ -1000,6 +1020,7 @@ static PyObject *__pyx_gb_16nonaga_constants_8generator2(__pyx_CoroutineObject *
   }
   <span class='pyx_macro_api'>__Pyx_DECREF</span>(__pyx_t_1); __pyx_t_1 = 0;
   CYTHON_MAYBE_UNUSED_VAR(__pyx_cur_scope);
+  <span class='trace'>__Pyx_TraceReturnValue</span>(Py_None, 0, 0, <span class='error_goto'>__PYX_ERR(0, 25, __pyx_L1_error)</span>);
 /* … */
   __pyx_t_6 = NULL;
   <span class='pyx_c_api'>__Pyx_GetModuleGlobalName</span>(__pyx_t_3, __pyx_mstate_global-&gt;__pyx_n_u_HEX_COLOR);<span class='error_goto'> if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 25, __pyx_L1_error)</span>

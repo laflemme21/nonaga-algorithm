@@ -1,4 +1,4 @@
-# cython: language_level=3, boundscheck=False, wraparound=False
+# cython: language_level=3, boundscheck=False, wraparound=False, Profile = True
 from nonaga_bitboard cimport (
     NonagaBitBoard,
     bitboard_initialize,

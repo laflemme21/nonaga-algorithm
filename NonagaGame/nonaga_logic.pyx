@@ -105,13 +105,16 @@ cdef class NonagaLogic:
         cdef int i
         cdef int count = bitboard_get_all_tiles(&self.board, &q[0], &r[0], &s[0], 448)
         cdef set tile_coords_set = set()
+        cdef tuple tile_key
         for i in range(count):
-            tile_coords_set.add((q[i], r[i], s[i]))
+            tile_coords_set.add((q[i], r[i]))
+
+        tile_key = (tile_position[0], tile_position[1])
         
-        if tile_position not in tile_coords_set:
+        if tile_key not in tile_coords_set:
             return set()
-        
-        tile_coords_set.remove(tile_position)
+
+        tile_coords_set.remove(tile_key)
 
         cdef tuple neighbor_offsets = _PY_NEIGHBOR_OFFSETS
         cdef set candidate_positions = set()
@@ -125,7 +128,6 @@ cdef class NonagaLogic:
                 candidate = (
                     existing_pos[0] + offset[0],
                     existing_pos[1] + offset[1],
-                    existing_pos[2] + offset[2]
                 )
                 if candidate not in tile_coords_set:
                     candidate_positions.add(candidate)
@@ -136,7 +138,6 @@ cdef class NonagaLogic:
                 neighbor_pos = (
                     candidate[0] + offset[0],
                     candidate[1] + offset[1],
-                    candidate[2] + offset[2],
                 )
                 if neighbor_pos in tile_coords_set:
                     neighbor_positions.append(neighbor_pos)
@@ -144,7 +145,7 @@ cdef class NonagaLogic:
             neighbor_count = len(neighbor_positions)
             if 2 <= neighbor_count <= 4:
                 if neighbor_count <= 2 or self._neighbors_restrain_piece(neighbor_positions):
-                    valid_positions.add(candidate)
+                    valid_positions.add((candidate[0], candidate[1], -candidate[0] - candidate[1]))
 
         valid_positions.discard(tile_position)
         return valid_positions
@@ -156,16 +157,15 @@ cdef class NonagaLogic:
         cdef set visited = {start}
         cdef list queue = [start]
         cdef tuple curr, adj_pos
-        cdef int cq, cr, cs, i
+        cdef int cq, cr, i
         cdef int n_neighbors = len(neighbors)
 
         while queue:
             curr = queue.pop(0)
-            cq = curr[0]; cr = curr[1]; cs = curr[2]
+            cq = curr[0]; cr = curr[1]
             for i in range(6):
                 adj_pos = (cq + _WIN_OFFSETS[i][0],
-                           cr + _WIN_OFFSETS[i][1],
-                           cs + _WIN_OFFSETS[i][2])
+                           cr + _WIN_OFFSETS[i][1])
                 if adj_pos in neighbor_set and adj_pos not in visited:
                     visited.add(adj_pos)
                     queue.append(adj_pos)
@@ -307,8 +307,8 @@ cdef class NonagaLogic:
         cdef int tail = 0
         cdef int visited_count = 0
         cdef int idx, i, j
-        cdef int cq, cr, cs
-        cdef int adj_q, adj_r, adj_s
+        cdef int cq, cr
+        cdef int adj_q, adj_r
 
         piece_count = bitboard_get_pieces(&self.board, color, &q[0], &r[0], &s[0])
         if piece_count == 0:
@@ -327,16 +327,14 @@ cdef class NonagaLogic:
             head += 1
             cq = q[idx]
             cr = r[idx]
-            cs = s[idx]
 
             for i in range(6):
                 adj_q = cq + _WIN_OFFSETS[i][0]
                 adj_r = cr + _WIN_OFFSETS[i][1]
-                adj_s = cs + _WIN_OFFSETS[i][2]
                 for j in range(piece_count):
                     if visited[j]:
                         continue
-                    if q[j] == adj_q and r[j] == adj_r and s[j] == adj_s:
+                    if q[j] == adj_q and r[j] == adj_r:
                         visited[j] = 1
                         queue[tail] = j
                         tail += 1

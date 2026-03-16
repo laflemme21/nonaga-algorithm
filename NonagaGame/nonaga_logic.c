@@ -6,6 +6,13 @@
         "depends": [
             "NonagaGame\\nonaga_bitboard.h"
         ],
+        "extra_compile_args": [
+            "/Zi",
+            "/Od"
+        ],
+        "extra_link_args": [
+            "/DEBUG"
+        ],
         "include_dirs": [
             "NonagaGame"
         ],
@@ -3172,7 +3179,7 @@ static __pyx_mstatetype * const __pyx_mstate_global = &__pyx_mstate_global_stati
 #define __pyx_kp_b_iso88591_A_1D_a_Q_2 __pyx_string_tab[110]
 #define __pyx_kp_b_iso88591_A_1_1AT_QfATQRRXXYY_E_aq_V1D_aq __pyx_string_tab[111]
 #define __pyx_kp_b_iso88591_A_31AT_1D_4qPQQRRVVW_E_aq_1AT_4q __pyx_string_tab[112]
-#define __pyx_kp_b_iso88591_A_4_1A_9AQ_A_1_s_1_a_5_AQ_Qd_t1D __pyx_string_tab[113]
+#define __pyx_kp_b_iso88591_A_4_1A_9AQ_A_1_s_1_a_5_AQ_Qd_t1A __pyx_string_tab[113]
 #define __pyx_kp_b_iso88591_A_4_3a_a_a_a __pyx_string_tab[114]
 #define __pyx_kp_b_iso88591_A_4_3a_a_a_a_2 __pyx_string_tab[115]
 #define __pyx_kp_b_iso88591_A_4_s __pyx_string_tab[116]
@@ -4428,6 +4435,7 @@ static PyObject *__pyx_f_12nonaga_logic_11NonagaLogic__get_valid_tile_positions(
   int __pyx_v_i;
   int __pyx_v_count;
   PyObject *__pyx_v_tile_coords_set = 0;
+  PyObject *__pyx_v_tile_key = 0;
   PyObject *__pyx_v_neighbor_offsets = 0;
   PyObject *__pyx_v_candidate_positions = 0;
   PyObject *__pyx_v_existing_pos = 0;
@@ -4446,15 +4454,14 @@ static PyObject *__pyx_f_12nonaga_logic_11NonagaLogic__get_valid_tile_positions(
   int __pyx_t_4;
   PyObject *__pyx_t_5 = NULL;
   PyObject *__pyx_t_6 = NULL;
-  PyObject *__pyx_t_7 = NULL;
+  int __pyx_t_7;
   int __pyx_t_8;
-  int __pyx_t_9;
+  Py_ssize_t __pyx_t_9;
   Py_ssize_t __pyx_t_10;
   Py_ssize_t __pyx_t_11;
-  Py_ssize_t __pyx_t_12;
+  PyObject *__pyx_t_12 = NULL;
   PyObject *__pyx_t_13 = NULL;
-  PyObject *__pyx_t_14 = NULL;
-  int __pyx_t_15;
+  int __pyx_t_14;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
@@ -4467,7 +4474,7 @@ static PyObject *__pyx_f_12nonaga_logic_11NonagaLogic__get_valid_tile_positions(
  *         cdef int i
  *         cdef int count = bitboard_get_all_tiles(&self.board, &q[0], &r[0], &s[0], 448)             # <<<<<<<<<<<<<<
  *         cdef set tile_coords_set = set()
- *         for i in range(count):
+ *         cdef tuple tile_key
 */
   __pyx_v_count = bitboard_get_all_tiles((&__pyx_v_self->board), (&(__pyx_v_q[0])), (&(__pyx_v_r[0])), (&(__pyx_v_s[0])), 0x1C0);
 
@@ -4475,19 +4482,19 @@ static PyObject *__pyx_f_12nonaga_logic_11NonagaLogic__get_valid_tile_positions(
  *         cdef int i
  *         cdef int count = bitboard_get_all_tiles(&self.board, &q[0], &r[0], &s[0], 448)
  *         cdef set tile_coords_set = set()             # <<<<<<<<<<<<<<
+ *         cdef tuple tile_key
  *         for i in range(count):
- *             tile_coords_set.add((q[i], r[i], s[i]))
 */
   __pyx_t_1 = PySet_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 107, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_v_tile_coords_set = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "nonaga_logic.pyx":108
- *         cdef int count = bitboard_get_all_tiles(&self.board, &q[0], &r[0], &s[0], 448)
+  /* "nonaga_logic.pyx":109
  *         cdef set tile_coords_set = set()
+ *         cdef tuple tile_key
  *         for i in range(count):             # <<<<<<<<<<<<<<
- *             tile_coords_set.add((q[i], r[i], s[i]))
+ *             tile_coords_set.add((q[i], r[i]))
  * 
 */
   __pyx_t_2 = __pyx_v_count;
@@ -4495,137 +4502,158 @@ static PyObject *__pyx_f_12nonaga_logic_11NonagaLogic__get_valid_tile_positions(
   for (__pyx_t_4 = 0; __pyx_t_4 < __pyx_t_3; __pyx_t_4+=1) {
     __pyx_v_i = __pyx_t_4;
 
-    /* "nonaga_logic.pyx":109
- *         cdef set tile_coords_set = set()
+    /* "nonaga_logic.pyx":110
+ *         cdef tuple tile_key
  *         for i in range(count):
- *             tile_coords_set.add((q[i], r[i], s[i]))             # <<<<<<<<<<<<<<
+ *             tile_coords_set.add((q[i], r[i]))             # <<<<<<<<<<<<<<
  * 
- *         if tile_position not in tile_coords_set:
+ *         tile_key = (tile_position[0], tile_position[1])
 */
-    __pyx_t_1 = __Pyx_PyLong_From_int((__pyx_v_q[__pyx_v_i])); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 109, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyLong_From_int((__pyx_v_q[__pyx_v_i])); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 110, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_5 = __Pyx_PyLong_From_int((__pyx_v_r[__pyx_v_i])); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 109, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyLong_From_int((__pyx_v_r[__pyx_v_i])); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 110, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
-    __pyx_t_6 = __Pyx_PyLong_From_int((__pyx_v_s[__pyx_v_i])); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 109, __pyx_L1_error)
+    __pyx_t_6 = PyTuple_New(2); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 110, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
-    __pyx_t_7 = PyTuple_New(3); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 109, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_7);
     __Pyx_GIVEREF(__pyx_t_1);
-    if (__Pyx_PyTuple_SET_ITEM(__pyx_t_7, 0, __pyx_t_1) != (0)) __PYX_ERR(0, 109, __pyx_L1_error);
+    if (__Pyx_PyTuple_SET_ITEM(__pyx_t_6, 0, __pyx_t_1) != (0)) __PYX_ERR(0, 110, __pyx_L1_error);
     __Pyx_GIVEREF(__pyx_t_5);
-    if (__Pyx_PyTuple_SET_ITEM(__pyx_t_7, 1, __pyx_t_5) != (0)) __PYX_ERR(0, 109, __pyx_L1_error);
-    __Pyx_GIVEREF(__pyx_t_6);
-    if (__Pyx_PyTuple_SET_ITEM(__pyx_t_7, 2, __pyx_t_6) != (0)) __PYX_ERR(0, 109, __pyx_L1_error);
+    if (__Pyx_PyTuple_SET_ITEM(__pyx_t_6, 1, __pyx_t_5) != (0)) __PYX_ERR(0, 110, __pyx_L1_error);
     __pyx_t_1 = 0;
     __pyx_t_5 = 0;
-    __pyx_t_6 = 0;
-    __pyx_t_8 = PySet_Add(__pyx_v_tile_coords_set, __pyx_t_7); if (unlikely(__pyx_t_8 == ((int)-1))) __PYX_ERR(0, 109, __pyx_L1_error)
-    __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+    __pyx_t_7 = PySet_Add(__pyx_v_tile_coords_set, __pyx_t_6); if (unlikely(__pyx_t_7 == ((int)-1))) __PYX_ERR(0, 110, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
   }
 
-  /* "nonaga_logic.pyx":111
- *             tile_coords_set.add((q[i], r[i], s[i]))
+  /* "nonaga_logic.pyx":112
+ *             tile_coords_set.add((q[i], r[i]))
  * 
- *         if tile_position not in tile_coords_set:             # <<<<<<<<<<<<<<
- *             return set()
+ *         tile_key = (tile_position[0], tile_position[1])             # <<<<<<<<<<<<<<
  * 
+ *         if tile_key not in tile_coords_set:
 */
-  __pyx_t_9 = (__Pyx_PySet_ContainsTF(__pyx_v_tile_position, __pyx_v_tile_coords_set, Py_NE)); if (unlikely((__pyx_t_9 < 0))) __PYX_ERR(0, 111, __pyx_L1_error)
-  if (__pyx_t_9) {
-
-    /* "nonaga_logic.pyx":112
- * 
- *         if tile_position not in tile_coords_set:
- *             return set()             # <<<<<<<<<<<<<<
- * 
- *         tile_coords_set.remove(tile_position)
-*/
-    __Pyx_XDECREF(__pyx_r);
-    __pyx_t_7 = PySet_New(0); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 112, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_7);
-    __pyx_r = ((PyObject*)__pyx_t_7);
-    __pyx_t_7 = 0;
-    __Pyx_TraceReturnValue(__pyx_r, 43, 0, __PYX_ERR(0, 112, __pyx_L1_error));
-    goto __pyx_L0;
-
-    /* "nonaga_logic.pyx":111
- *             tile_coords_set.add((q[i], r[i], s[i]))
- * 
- *         if tile_position not in tile_coords_set:             # <<<<<<<<<<<<<<
- *             return set()
- * 
-*/
+  if (unlikely(__pyx_v_tile_position == Py_None)) {
+    PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+    __PYX_ERR(0, 112, __pyx_L1_error)
   }
+  if (unlikely(__pyx_v_tile_position == Py_None)) {
+    PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+    __PYX_ERR(0, 112, __pyx_L1_error)
+  }
+  __pyx_t_6 = PyTuple_New(2); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 112, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_6);
+  __Pyx_INCREF(__Pyx_PyTuple_GET_ITEM(__pyx_v_tile_position, 0));
+  __Pyx_GIVEREF(__Pyx_PyTuple_GET_ITEM(__pyx_v_tile_position, 0));
+  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_6, 0, __Pyx_PyTuple_GET_ITEM(__pyx_v_tile_position, 0)) != (0)) __PYX_ERR(0, 112, __pyx_L1_error);
+  __Pyx_INCREF(__Pyx_PyTuple_GET_ITEM(__pyx_v_tile_position, 1));
+  __Pyx_GIVEREF(__Pyx_PyTuple_GET_ITEM(__pyx_v_tile_position, 1));
+  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_6, 1, __Pyx_PyTuple_GET_ITEM(__pyx_v_tile_position, 1)) != (0)) __PYX_ERR(0, 112, __pyx_L1_error);
+  __pyx_v_tile_key = ((PyObject*)__pyx_t_6);
+  __pyx_t_6 = 0;
 
   /* "nonaga_logic.pyx":114
+ *         tile_key = (tile_position[0], tile_position[1])
+ * 
+ *         if tile_key not in tile_coords_set:             # <<<<<<<<<<<<<<
  *             return set()
  * 
- *         tile_coords_set.remove(tile_position)             # <<<<<<<<<<<<<<
+*/
+  __pyx_t_8 = (__Pyx_PySet_ContainsTF(__pyx_v_tile_key, __pyx_v_tile_coords_set, Py_NE)); if (unlikely((__pyx_t_8 < 0))) __PYX_ERR(0, 114, __pyx_L1_error)
+  if (__pyx_t_8) {
+
+    /* "nonaga_logic.pyx":115
+ * 
+ *         if tile_key not in tile_coords_set:
+ *             return set()             # <<<<<<<<<<<<<<
+ * 
+ *         tile_coords_set.remove(tile_key)
+*/
+    __Pyx_XDECREF(__pyx_r);
+    __pyx_t_6 = PySet_New(0); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 115, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_6);
+    __pyx_r = ((PyObject*)__pyx_t_6);
+    __pyx_t_6 = 0;
+    __Pyx_TraceReturnValue(__pyx_r, 47, 0, __PYX_ERR(0, 115, __pyx_L1_error));
+    goto __pyx_L0;
+
+    /* "nonaga_logic.pyx":114
+ *         tile_key = (tile_position[0], tile_position[1])
+ * 
+ *         if tile_key not in tile_coords_set:             # <<<<<<<<<<<<<<
+ *             return set()
+ * 
+*/
+  }
+
+  /* "nonaga_logic.pyx":117
+ *             return set()
+ * 
+ *         tile_coords_set.remove(tile_key)             # <<<<<<<<<<<<<<
  * 
  *         cdef tuple neighbor_offsets = _PY_NEIGHBOR_OFFSETS
 */
-  __pyx_t_8 = __Pyx_PySet_Remove(__pyx_v_tile_coords_set, __pyx_v_tile_position); if (unlikely(__pyx_t_8 == ((int)-1))) __PYX_ERR(0, 114, __pyx_L1_error)
+  __pyx_t_7 = __Pyx_PySet_Remove(__pyx_v_tile_coords_set, __pyx_v_tile_key); if (unlikely(__pyx_t_7 == ((int)-1))) __PYX_ERR(0, 117, __pyx_L1_error)
 
-  /* "nonaga_logic.pyx":116
- *         tile_coords_set.remove(tile_position)
+  /* "nonaga_logic.pyx":119
+ *         tile_coords_set.remove(tile_key)
  * 
  *         cdef tuple neighbor_offsets = _PY_NEIGHBOR_OFFSETS             # <<<<<<<<<<<<<<
  *         cdef set candidate_positions = set()
  *         cdef tuple existing_pos, offset, candidate, neighbor_pos
 */
-  __Pyx_GetModuleGlobalName(__pyx_t_7, __pyx_mstate_global->__pyx_n_u_PY_NEIGHBOR_OFFSETS); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 116, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_7);
-  if (!(likely(PyTuple_CheckExact(__pyx_t_7))||((__pyx_t_7) == Py_None) || __Pyx_RaiseUnexpectedTypeError("tuple", __pyx_t_7))) __PYX_ERR(0, 116, __pyx_L1_error)
-  __pyx_v_neighbor_offsets = ((PyObject*)__pyx_t_7);
-  __pyx_t_7 = 0;
+  __Pyx_GetModuleGlobalName(__pyx_t_6, __pyx_mstate_global->__pyx_n_u_PY_NEIGHBOR_OFFSETS); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 119, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_6);
+  if (!(likely(PyTuple_CheckExact(__pyx_t_6))||((__pyx_t_6) == Py_None) || __Pyx_RaiseUnexpectedTypeError("tuple", __pyx_t_6))) __PYX_ERR(0, 119, __pyx_L1_error)
+  __pyx_v_neighbor_offsets = ((PyObject*)__pyx_t_6);
+  __pyx_t_6 = 0;
 
-  /* "nonaga_logic.pyx":117
+  /* "nonaga_logic.pyx":120
  * 
  *         cdef tuple neighbor_offsets = _PY_NEIGHBOR_OFFSETS
  *         cdef set candidate_positions = set()             # <<<<<<<<<<<<<<
  *         cdef tuple existing_pos, offset, candidate, neighbor_pos
  *         cdef list neighbor_positions
 */
-  __pyx_t_7 = PySet_New(0); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 117, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_7);
-  __pyx_v_candidate_positions = ((PyObject*)__pyx_t_7);
-  __pyx_t_7 = 0;
+  __pyx_t_6 = PySet_New(0); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 120, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_6);
+  __pyx_v_candidate_positions = ((PyObject*)__pyx_t_6);
+  __pyx_t_6 = 0;
 
-  /* "nonaga_logic.pyx":121
+  /* "nonaga_logic.pyx":124
  *         cdef list neighbor_positions
  *         cdef int neighbor_count
  *         cdef set valid_positions = set()             # <<<<<<<<<<<<<<
  * 
  *         for existing_pos in tile_coords_set:
 */
-  __pyx_t_7 = PySet_New(0); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 121, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_7);
-  __pyx_v_valid_positions = ((PyObject*)__pyx_t_7);
-  __pyx_t_7 = 0;
+  __pyx_t_6 = PySet_New(0); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 124, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_6);
+  __pyx_v_valid_positions = ((PyObject*)__pyx_t_6);
+  __pyx_t_6 = 0;
 
-  /* "nonaga_logic.pyx":123
+  /* "nonaga_logic.pyx":126
  *         cdef set valid_positions = set()
  * 
  *         for existing_pos in tile_coords_set:             # <<<<<<<<<<<<<<
  *             for offset in neighbor_offsets:
  *                 candidate = (
 */
-  __pyx_t_10 = 0;
-  __pyx_t_6 = __Pyx_set_iterator(__pyx_v_tile_coords_set, 1, (&__pyx_t_11), (&__pyx_t_2)); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 123, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_6);
-  __Pyx_XDECREF(__pyx_t_7);
-  __pyx_t_7 = __pyx_t_6;
-  __pyx_t_6 = 0;
+  __pyx_t_9 = 0;
+  __pyx_t_5 = __Pyx_set_iterator(__pyx_v_tile_coords_set, 1, (&__pyx_t_10), (&__pyx_t_2)); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 126, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_5);
+  __Pyx_XDECREF(__pyx_t_6);
+  __pyx_t_6 = __pyx_t_5;
+  __pyx_t_5 = 0;
   while (1) {
-    __pyx_t_3 = __Pyx_set_iter_next(__pyx_t_7, __pyx_t_11, &__pyx_t_10, &__pyx_t_6, __pyx_t_2);
+    __pyx_t_3 = __Pyx_set_iter_next(__pyx_t_6, __pyx_t_10, &__pyx_t_9, &__pyx_t_5, __pyx_t_2);
     if (unlikely(__pyx_t_3 == 0)) break;
-    if (unlikely(__pyx_t_3 == -1)) __PYX_ERR(0, 123, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_6);
-    if (!(likely(PyTuple_CheckExact(__pyx_t_6))||((__pyx_t_6) == Py_None) || __Pyx_RaiseUnexpectedTypeError("tuple", __pyx_t_6))) __PYX_ERR(0, 123, __pyx_L1_error)
-    __Pyx_XDECREF_SET(__pyx_v_existing_pos, ((PyObject*)__pyx_t_6));
-    __pyx_t_6 = 0;
+    if (unlikely(__pyx_t_3 == -1)) __PYX_ERR(0, 126, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_5);
+    if (!(likely(PyTuple_CheckExact(__pyx_t_5))||((__pyx_t_5) == Py_None) || __Pyx_RaiseUnexpectedTypeError("tuple", __pyx_t_5))) __PYX_ERR(0, 126, __pyx_L1_error)
+    __Pyx_XDECREF_SET(__pyx_v_existing_pos, ((PyObject*)__pyx_t_5));
+    __pyx_t_5 = 0;
 
-    /* "nonaga_logic.pyx":124
+    /* "nonaga_logic.pyx":127
  * 
  *         for existing_pos in tile_coords_set:
  *             for offset in neighbor_offsets:             # <<<<<<<<<<<<<<
@@ -4634,126 +4662,105 @@ static PyObject *__pyx_f_12nonaga_logic_11NonagaLogic__get_valid_tile_positions(
 */
     if (unlikely(__pyx_v_neighbor_offsets == Py_None)) {
       PyErr_SetString(PyExc_TypeError, "'NoneType' object is not iterable");
-      __PYX_ERR(0, 124, __pyx_L1_error)
+      __PYX_ERR(0, 127, __pyx_L1_error)
     }
-    __pyx_t_6 = __pyx_v_neighbor_offsets; __Pyx_INCREF(__pyx_t_6);
-    __pyx_t_12 = 0;
+    __pyx_t_5 = __pyx_v_neighbor_offsets; __Pyx_INCREF(__pyx_t_5);
+    __pyx_t_11 = 0;
     for (;;) {
       {
-        Py_ssize_t __pyx_temp = __Pyx_PyTuple_GET_SIZE(__pyx_t_6);
+        Py_ssize_t __pyx_temp = __Pyx_PyTuple_GET_SIZE(__pyx_t_5);
         #if !CYTHON_ASSUME_SAFE_SIZE
-        if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 124, __pyx_L1_error)
+        if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 127, __pyx_L1_error)
         #endif
-        if (__pyx_t_12 >= __pyx_temp) break;
+        if (__pyx_t_11 >= __pyx_temp) break;
       }
       #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-      __pyx_t_5 = __Pyx_NewRef(PyTuple_GET_ITEM(__pyx_t_6, __pyx_t_12));
+      __pyx_t_1 = __Pyx_NewRef(PyTuple_GET_ITEM(__pyx_t_5, __pyx_t_11));
       #else
-      __pyx_t_5 = __Pyx_PySequence_ITEM(__pyx_t_6, __pyx_t_12);
+      __pyx_t_1 = __Pyx_PySequence_ITEM(__pyx_t_5, __pyx_t_11);
       #endif
-      ++__pyx_t_12;
-      if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 124, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_5);
-      if (!(likely(PyTuple_CheckExact(__pyx_t_5))||((__pyx_t_5) == Py_None) || __Pyx_RaiseUnexpectedTypeError("tuple", __pyx_t_5))) __PYX_ERR(0, 124, __pyx_L1_error)
-      __Pyx_XDECREF_SET(__pyx_v_offset, ((PyObject*)__pyx_t_5));
-      __pyx_t_5 = 0;
+      ++__pyx_t_11;
+      if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 127, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_1);
+      if (!(likely(PyTuple_CheckExact(__pyx_t_1))||((__pyx_t_1) == Py_None) || __Pyx_RaiseUnexpectedTypeError("tuple", __pyx_t_1))) __PYX_ERR(0, 127, __pyx_L1_error)
+      __Pyx_XDECREF_SET(__pyx_v_offset, ((PyObject*)__pyx_t_1));
+      __pyx_t_1 = 0;
 
-      /* "nonaga_logic.pyx":126
+      /* "nonaga_logic.pyx":129
  *             for offset in neighbor_offsets:
  *                 candidate = (
  *                     existing_pos[0] + offset[0],             # <<<<<<<<<<<<<<
  *                     existing_pos[1] + offset[1],
- *                     existing_pos[2] + offset[2]
-*/
-      if (unlikely(__pyx_v_existing_pos == Py_None)) {
-        PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-        __PYX_ERR(0, 126, __pyx_L1_error)
-      }
-      if (unlikely(__pyx_v_offset == Py_None)) {
-        PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-        __PYX_ERR(0, 126, __pyx_L1_error)
-      }
-      __pyx_t_5 = PyNumber_Add(__Pyx_PyTuple_GET_ITEM(__pyx_v_existing_pos, 0), __Pyx_PyTuple_GET_ITEM(__pyx_v_offset, 0)); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 126, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_5);
-
-      /* "nonaga_logic.pyx":127
- *                 candidate = (
- *                     existing_pos[0] + offset[0],
- *                     existing_pos[1] + offset[1],             # <<<<<<<<<<<<<<
- *                     existing_pos[2] + offset[2]
  *                 )
 */
       if (unlikely(__pyx_v_existing_pos == Py_None)) {
         PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-        __PYX_ERR(0, 127, __pyx_L1_error)
+        __PYX_ERR(0, 129, __pyx_L1_error)
       }
       if (unlikely(__pyx_v_offset == Py_None)) {
         PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-        __PYX_ERR(0, 127, __pyx_L1_error)
+        __PYX_ERR(0, 129, __pyx_L1_error)
       }
-      __pyx_t_1 = PyNumber_Add(__Pyx_PyTuple_GET_ITEM(__pyx_v_existing_pos, 1), __Pyx_PyTuple_GET_ITEM(__pyx_v_offset, 1)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 127, __pyx_L1_error)
+      __pyx_t_1 = PyNumber_Add(__Pyx_PyTuple_GET_ITEM(__pyx_v_existing_pos, 0), __Pyx_PyTuple_GET_ITEM(__pyx_v_offset, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 129, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
 
-      /* "nonaga_logic.pyx":128
+      /* "nonaga_logic.pyx":130
+ *                 candidate = (
  *                     existing_pos[0] + offset[0],
- *                     existing_pos[1] + offset[1],
- *                     existing_pos[2] + offset[2]             # <<<<<<<<<<<<<<
+ *                     existing_pos[1] + offset[1],             # <<<<<<<<<<<<<<
  *                 )
  *                 if candidate not in tile_coords_set:
 */
       if (unlikely(__pyx_v_existing_pos == Py_None)) {
         PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-        __PYX_ERR(0, 128, __pyx_L1_error)
+        __PYX_ERR(0, 130, __pyx_L1_error)
       }
       if (unlikely(__pyx_v_offset == Py_None)) {
         PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-        __PYX_ERR(0, 128, __pyx_L1_error)
+        __PYX_ERR(0, 130, __pyx_L1_error)
       }
-      __pyx_t_13 = PyNumber_Add(__Pyx_PyTuple_GET_ITEM(__pyx_v_existing_pos, 2), __Pyx_PyTuple_GET_ITEM(__pyx_v_offset, 2)); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 128, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_13);
+      __pyx_t_12 = PyNumber_Add(__Pyx_PyTuple_GET_ITEM(__pyx_v_existing_pos, 1), __Pyx_PyTuple_GET_ITEM(__pyx_v_offset, 1)); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 130, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_12);
 
-      /* "nonaga_logic.pyx":126
+      /* "nonaga_logic.pyx":129
  *             for offset in neighbor_offsets:
  *                 candidate = (
  *                     existing_pos[0] + offset[0],             # <<<<<<<<<<<<<<
  *                     existing_pos[1] + offset[1],
- *                     existing_pos[2] + offset[2]
+ *                 )
 */
-      __pyx_t_14 = PyTuple_New(3); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 126, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_14);
-      __Pyx_GIVEREF(__pyx_t_5);
-      if (__Pyx_PyTuple_SET_ITEM(__pyx_t_14, 0, __pyx_t_5) != (0)) __PYX_ERR(0, 126, __pyx_L1_error);
+      __pyx_t_13 = PyTuple_New(2); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 129, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_13);
       __Pyx_GIVEREF(__pyx_t_1);
-      if (__Pyx_PyTuple_SET_ITEM(__pyx_t_14, 1, __pyx_t_1) != (0)) __PYX_ERR(0, 126, __pyx_L1_error);
-      __Pyx_GIVEREF(__pyx_t_13);
-      if (__Pyx_PyTuple_SET_ITEM(__pyx_t_14, 2, __pyx_t_13) != (0)) __PYX_ERR(0, 126, __pyx_L1_error);
-      __pyx_t_5 = 0;
+      if (__Pyx_PyTuple_SET_ITEM(__pyx_t_13, 0, __pyx_t_1) != (0)) __PYX_ERR(0, 129, __pyx_L1_error);
+      __Pyx_GIVEREF(__pyx_t_12);
+      if (__Pyx_PyTuple_SET_ITEM(__pyx_t_13, 1, __pyx_t_12) != (0)) __PYX_ERR(0, 129, __pyx_L1_error);
       __pyx_t_1 = 0;
+      __pyx_t_12 = 0;
+      __Pyx_XDECREF_SET(__pyx_v_candidate, ((PyObject*)__pyx_t_13));
       __pyx_t_13 = 0;
-      __Pyx_XDECREF_SET(__pyx_v_candidate, ((PyObject*)__pyx_t_14));
-      __pyx_t_14 = 0;
 
-      /* "nonaga_logic.pyx":130
- *                     existing_pos[2] + offset[2]
+      /* "nonaga_logic.pyx":132
+ *                     existing_pos[1] + offset[1],
  *                 )
  *                 if candidate not in tile_coords_set:             # <<<<<<<<<<<<<<
  *                     candidate_positions.add(candidate)
  * 
 */
-      __pyx_t_9 = (__Pyx_PySet_ContainsTF(__pyx_v_candidate, __pyx_v_tile_coords_set, Py_NE)); if (unlikely((__pyx_t_9 < 0))) __PYX_ERR(0, 130, __pyx_L1_error)
-      if (__pyx_t_9) {
+      __pyx_t_8 = (__Pyx_PySet_ContainsTF(__pyx_v_candidate, __pyx_v_tile_coords_set, Py_NE)); if (unlikely((__pyx_t_8 < 0))) __PYX_ERR(0, 132, __pyx_L1_error)
+      if (__pyx_t_8) {
 
-        /* "nonaga_logic.pyx":131
+        /* "nonaga_logic.pyx":133
  *                 )
  *                 if candidate not in tile_coords_set:
  *                     candidate_positions.add(candidate)             # <<<<<<<<<<<<<<
  * 
  *         for candidate in candidate_positions:
 */
-        __pyx_t_8 = PySet_Add(__pyx_v_candidate_positions, __pyx_v_candidate); if (unlikely(__pyx_t_8 == ((int)-1))) __PYX_ERR(0, 131, __pyx_L1_error)
+        __pyx_t_7 = PySet_Add(__pyx_v_candidate_positions, __pyx_v_candidate); if (unlikely(__pyx_t_7 == ((int)-1))) __PYX_ERR(0, 133, __pyx_L1_error)
 
-        /* "nonaga_logic.pyx":130
- *                     existing_pos[2] + offset[2]
+        /* "nonaga_logic.pyx":132
+ *                     existing_pos[1] + offset[1],
  *                 )
  *                 if candidate not in tile_coords_set:             # <<<<<<<<<<<<<<
  *                     candidate_positions.add(candidate)
@@ -4761,7 +4768,7 @@ static PyObject *__pyx_f_12nonaga_logic_11NonagaLogic__get_valid_tile_positions(
 */
       }
 
-      /* "nonaga_logic.pyx":124
+      /* "nonaga_logic.pyx":127
  * 
  *         for existing_pos in tile_coords_set:
  *             for offset in neighbor_offsets:             # <<<<<<<<<<<<<<
@@ -4769,45 +4776,45 @@ static PyObject *__pyx_f_12nonaga_logic_11NonagaLogic__get_valid_tile_positions(
  *                     existing_pos[0] + offset[0],
 */
     }
-    __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+    __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
   }
-  __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+  __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
 
-  /* "nonaga_logic.pyx":133
+  /* "nonaga_logic.pyx":135
  *                     candidate_positions.add(candidate)
  * 
  *         for candidate in candidate_positions:             # <<<<<<<<<<<<<<
  *             neighbor_positions = []
  *             for offset in neighbor_offsets:
 */
-  __pyx_t_11 = 0;
-  __pyx_t_6 = __Pyx_set_iterator(__pyx_v_candidate_positions, 1, (&__pyx_t_10), (&__pyx_t_2)); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 133, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_6);
-  __Pyx_XDECREF(__pyx_t_7);
-  __pyx_t_7 = __pyx_t_6;
-  __pyx_t_6 = 0;
+  __pyx_t_10 = 0;
+  __pyx_t_5 = __Pyx_set_iterator(__pyx_v_candidate_positions, 1, (&__pyx_t_9), (&__pyx_t_2)); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 135, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_5);
+  __Pyx_XDECREF(__pyx_t_6);
+  __pyx_t_6 = __pyx_t_5;
+  __pyx_t_5 = 0;
   while (1) {
-    __pyx_t_3 = __Pyx_set_iter_next(__pyx_t_7, __pyx_t_10, &__pyx_t_11, &__pyx_t_6, __pyx_t_2);
+    __pyx_t_3 = __Pyx_set_iter_next(__pyx_t_6, __pyx_t_9, &__pyx_t_10, &__pyx_t_5, __pyx_t_2);
     if (unlikely(__pyx_t_3 == 0)) break;
-    if (unlikely(__pyx_t_3 == -1)) __PYX_ERR(0, 133, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_6);
-    if (!(likely(PyTuple_CheckExact(__pyx_t_6))||((__pyx_t_6) == Py_None) || __Pyx_RaiseUnexpectedTypeError("tuple", __pyx_t_6))) __PYX_ERR(0, 133, __pyx_L1_error)
-    __Pyx_XDECREF_SET(__pyx_v_candidate, ((PyObject*)__pyx_t_6));
-    __pyx_t_6 = 0;
+    if (unlikely(__pyx_t_3 == -1)) __PYX_ERR(0, 135, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_5);
+    if (!(likely(PyTuple_CheckExact(__pyx_t_5))||((__pyx_t_5) == Py_None) || __Pyx_RaiseUnexpectedTypeError("tuple", __pyx_t_5))) __PYX_ERR(0, 135, __pyx_L1_error)
+    __Pyx_XDECREF_SET(__pyx_v_candidate, ((PyObject*)__pyx_t_5));
+    __pyx_t_5 = 0;
 
-    /* "nonaga_logic.pyx":134
+    /* "nonaga_logic.pyx":136
  * 
  *         for candidate in candidate_positions:
  *             neighbor_positions = []             # <<<<<<<<<<<<<<
  *             for offset in neighbor_offsets:
  *                 neighbor_pos = (
 */
-    __pyx_t_6 = PyList_New(0); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 134, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_6);
-    __Pyx_XDECREF_SET(__pyx_v_neighbor_positions, ((PyObject*)__pyx_t_6));
-    __pyx_t_6 = 0;
+    __pyx_t_5 = PyList_New(0); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 136, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_5);
+    __Pyx_XDECREF_SET(__pyx_v_neighbor_positions, ((PyObject*)__pyx_t_5));
+    __pyx_t_5 = 0;
 
-    /* "nonaga_logic.pyx":135
+    /* "nonaga_logic.pyx":137
  *         for candidate in candidate_positions:
  *             neighbor_positions = []
  *             for offset in neighbor_offsets:             # <<<<<<<<<<<<<<
@@ -4816,126 +4823,105 @@ static PyObject *__pyx_f_12nonaga_logic_11NonagaLogic__get_valid_tile_positions(
 */
     if (unlikely(__pyx_v_neighbor_offsets == Py_None)) {
       PyErr_SetString(PyExc_TypeError, "'NoneType' object is not iterable");
-      __PYX_ERR(0, 135, __pyx_L1_error)
+      __PYX_ERR(0, 137, __pyx_L1_error)
     }
-    __pyx_t_6 = __pyx_v_neighbor_offsets; __Pyx_INCREF(__pyx_t_6);
-    __pyx_t_12 = 0;
+    __pyx_t_5 = __pyx_v_neighbor_offsets; __Pyx_INCREF(__pyx_t_5);
+    __pyx_t_11 = 0;
     for (;;) {
       {
-        Py_ssize_t __pyx_temp = __Pyx_PyTuple_GET_SIZE(__pyx_t_6);
+        Py_ssize_t __pyx_temp = __Pyx_PyTuple_GET_SIZE(__pyx_t_5);
         #if !CYTHON_ASSUME_SAFE_SIZE
-        if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 135, __pyx_L1_error)
+        if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 137, __pyx_L1_error)
         #endif
-        if (__pyx_t_12 >= __pyx_temp) break;
+        if (__pyx_t_11 >= __pyx_temp) break;
       }
       #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-      __pyx_t_14 = __Pyx_NewRef(PyTuple_GET_ITEM(__pyx_t_6, __pyx_t_12));
+      __pyx_t_13 = __Pyx_NewRef(PyTuple_GET_ITEM(__pyx_t_5, __pyx_t_11));
       #else
-      __pyx_t_14 = __Pyx_PySequence_ITEM(__pyx_t_6, __pyx_t_12);
+      __pyx_t_13 = __Pyx_PySequence_ITEM(__pyx_t_5, __pyx_t_11);
       #endif
-      ++__pyx_t_12;
-      if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 135, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_14);
-      if (!(likely(PyTuple_CheckExact(__pyx_t_14))||((__pyx_t_14) == Py_None) || __Pyx_RaiseUnexpectedTypeError("tuple", __pyx_t_14))) __PYX_ERR(0, 135, __pyx_L1_error)
-      __Pyx_XDECREF_SET(__pyx_v_offset, ((PyObject*)__pyx_t_14));
-      __pyx_t_14 = 0;
+      ++__pyx_t_11;
+      if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 137, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_13);
+      if (!(likely(PyTuple_CheckExact(__pyx_t_13))||((__pyx_t_13) == Py_None) || __Pyx_RaiseUnexpectedTypeError("tuple", __pyx_t_13))) __PYX_ERR(0, 137, __pyx_L1_error)
+      __Pyx_XDECREF_SET(__pyx_v_offset, ((PyObject*)__pyx_t_13));
+      __pyx_t_13 = 0;
 
-      /* "nonaga_logic.pyx":137
+      /* "nonaga_logic.pyx":139
  *             for offset in neighbor_offsets:
  *                 neighbor_pos = (
  *                     candidate[0] + offset[0],             # <<<<<<<<<<<<<<
  *                     candidate[1] + offset[1],
- *                     candidate[2] + offset[2],
-*/
-      if (unlikely(__pyx_v_candidate == Py_None)) {
-        PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-        __PYX_ERR(0, 137, __pyx_L1_error)
-      }
-      if (unlikely(__pyx_v_offset == Py_None)) {
-        PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-        __PYX_ERR(0, 137, __pyx_L1_error)
-      }
-      __pyx_t_14 = PyNumber_Add(__Pyx_PyTuple_GET_ITEM(__pyx_v_candidate, 0), __Pyx_PyTuple_GET_ITEM(__pyx_v_offset, 0)); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 137, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_14);
-
-      /* "nonaga_logic.pyx":138
- *                 neighbor_pos = (
- *                     candidate[0] + offset[0],
- *                     candidate[1] + offset[1],             # <<<<<<<<<<<<<<
- *                     candidate[2] + offset[2],
  *                 )
 */
       if (unlikely(__pyx_v_candidate == Py_None)) {
         PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-        __PYX_ERR(0, 138, __pyx_L1_error)
+        __PYX_ERR(0, 139, __pyx_L1_error)
       }
       if (unlikely(__pyx_v_offset == Py_None)) {
         PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-        __PYX_ERR(0, 138, __pyx_L1_error)
+        __PYX_ERR(0, 139, __pyx_L1_error)
       }
-      __pyx_t_13 = PyNumber_Add(__Pyx_PyTuple_GET_ITEM(__pyx_v_candidate, 1), __Pyx_PyTuple_GET_ITEM(__pyx_v_offset, 1)); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 138, __pyx_L1_error)
+      __pyx_t_13 = PyNumber_Add(__Pyx_PyTuple_GET_ITEM(__pyx_v_candidate, 0), __Pyx_PyTuple_GET_ITEM(__pyx_v_offset, 0)); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 139, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_13);
 
-      /* "nonaga_logic.pyx":139
+      /* "nonaga_logic.pyx":140
+ *                 neighbor_pos = (
  *                     candidate[0] + offset[0],
- *                     candidate[1] + offset[1],
- *                     candidate[2] + offset[2],             # <<<<<<<<<<<<<<
+ *                     candidate[1] + offset[1],             # <<<<<<<<<<<<<<
  *                 )
  *                 if neighbor_pos in tile_coords_set:
 */
       if (unlikely(__pyx_v_candidate == Py_None)) {
         PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-        __PYX_ERR(0, 139, __pyx_L1_error)
+        __PYX_ERR(0, 140, __pyx_L1_error)
       }
       if (unlikely(__pyx_v_offset == Py_None)) {
         PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-        __PYX_ERR(0, 139, __pyx_L1_error)
+        __PYX_ERR(0, 140, __pyx_L1_error)
       }
-      __pyx_t_1 = PyNumber_Add(__Pyx_PyTuple_GET_ITEM(__pyx_v_candidate, 2), __Pyx_PyTuple_GET_ITEM(__pyx_v_offset, 2)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 139, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_1);
+      __pyx_t_12 = PyNumber_Add(__Pyx_PyTuple_GET_ITEM(__pyx_v_candidate, 1), __Pyx_PyTuple_GET_ITEM(__pyx_v_offset, 1)); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 140, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_12);
 
-      /* "nonaga_logic.pyx":137
+      /* "nonaga_logic.pyx":139
  *             for offset in neighbor_offsets:
  *                 neighbor_pos = (
  *                     candidate[0] + offset[0],             # <<<<<<<<<<<<<<
  *                     candidate[1] + offset[1],
- *                     candidate[2] + offset[2],
+ *                 )
 */
-      __pyx_t_5 = PyTuple_New(3); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 137, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_5);
-      __Pyx_GIVEREF(__pyx_t_14);
-      if (__Pyx_PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_t_14) != (0)) __PYX_ERR(0, 137, __pyx_L1_error);
+      __pyx_t_1 = PyTuple_New(2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 139, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_1);
       __Pyx_GIVEREF(__pyx_t_13);
-      if (__Pyx_PyTuple_SET_ITEM(__pyx_t_5, 1, __pyx_t_13) != (0)) __PYX_ERR(0, 137, __pyx_L1_error);
-      __Pyx_GIVEREF(__pyx_t_1);
-      if (__Pyx_PyTuple_SET_ITEM(__pyx_t_5, 2, __pyx_t_1) != (0)) __PYX_ERR(0, 137, __pyx_L1_error);
-      __pyx_t_14 = 0;
+      if (__Pyx_PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_t_13) != (0)) __PYX_ERR(0, 139, __pyx_L1_error);
+      __Pyx_GIVEREF(__pyx_t_12);
+      if (__Pyx_PyTuple_SET_ITEM(__pyx_t_1, 1, __pyx_t_12) != (0)) __PYX_ERR(0, 139, __pyx_L1_error);
       __pyx_t_13 = 0;
+      __pyx_t_12 = 0;
+      __Pyx_XDECREF_SET(__pyx_v_neighbor_pos, ((PyObject*)__pyx_t_1));
       __pyx_t_1 = 0;
-      __Pyx_XDECREF_SET(__pyx_v_neighbor_pos, ((PyObject*)__pyx_t_5));
-      __pyx_t_5 = 0;
 
-      /* "nonaga_logic.pyx":141
- *                     candidate[2] + offset[2],
+      /* "nonaga_logic.pyx":142
+ *                     candidate[1] + offset[1],
  *                 )
  *                 if neighbor_pos in tile_coords_set:             # <<<<<<<<<<<<<<
  *                     neighbor_positions.append(neighbor_pos)
  * 
 */
-      __pyx_t_9 = (__Pyx_PySet_ContainsTF(__pyx_v_neighbor_pos, __pyx_v_tile_coords_set, Py_EQ)); if (unlikely((__pyx_t_9 < 0))) __PYX_ERR(0, 141, __pyx_L1_error)
-      if (__pyx_t_9) {
+      __pyx_t_8 = (__Pyx_PySet_ContainsTF(__pyx_v_neighbor_pos, __pyx_v_tile_coords_set, Py_EQ)); if (unlikely((__pyx_t_8 < 0))) __PYX_ERR(0, 142, __pyx_L1_error)
+      if (__pyx_t_8) {
 
-        /* "nonaga_logic.pyx":142
+        /* "nonaga_logic.pyx":143
  *                 )
  *                 if neighbor_pos in tile_coords_set:
  *                     neighbor_positions.append(neighbor_pos)             # <<<<<<<<<<<<<<
  * 
  *             neighbor_count = len(neighbor_positions)
 */
-        __pyx_t_8 = __Pyx_PyList_Append(__pyx_v_neighbor_positions, __pyx_v_neighbor_pos); if (unlikely(__pyx_t_8 == ((int)-1))) __PYX_ERR(0, 142, __pyx_L1_error)
+        __pyx_t_7 = __Pyx_PyList_Append(__pyx_v_neighbor_positions, __pyx_v_neighbor_pos); if (unlikely(__pyx_t_7 == ((int)-1))) __PYX_ERR(0, 143, __pyx_L1_error)
 
-        /* "nonaga_logic.pyx":141
- *                     candidate[2] + offset[2],
+        /* "nonaga_logic.pyx":142
+ *                     candidate[1] + offset[1],
  *                 )
  *                 if neighbor_pos in tile_coords_set:             # <<<<<<<<<<<<<<
  *                     neighbor_positions.append(neighbor_pos)
@@ -4943,7 +4929,7 @@ static PyObject *__pyx_f_12nonaga_logic_11NonagaLogic__get_valid_tile_positions(
 */
       }
 
-      /* "nonaga_logic.pyx":135
+      /* "nonaga_logic.pyx":137
  *         for candidate in candidate_positions:
  *             neighbor_positions = []
  *             for offset in neighbor_offsets:             # <<<<<<<<<<<<<<
@@ -4951,88 +4937,121 @@ static PyObject *__pyx_f_12nonaga_logic_11NonagaLogic__get_valid_tile_positions(
  *                     candidate[0] + offset[0],
 */
     }
-    __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+    __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
 
-    /* "nonaga_logic.pyx":144
+    /* "nonaga_logic.pyx":145
  *                     neighbor_positions.append(neighbor_pos)
  * 
  *             neighbor_count = len(neighbor_positions)             # <<<<<<<<<<<<<<
  *             if 2 <= neighbor_count <= 4:
  *                 if neighbor_count <= 2 or self._neighbors_restrain_piece(neighbor_positions):
 */
-    __pyx_t_12 = __Pyx_PyList_GET_SIZE(__pyx_v_neighbor_positions); if (unlikely(__pyx_t_12 == ((Py_ssize_t)-1))) __PYX_ERR(0, 144, __pyx_L1_error)
-    __pyx_v_neighbor_count = __pyx_t_12;
+    __pyx_t_11 = __Pyx_PyList_GET_SIZE(__pyx_v_neighbor_positions); if (unlikely(__pyx_t_11 == ((Py_ssize_t)-1))) __PYX_ERR(0, 145, __pyx_L1_error)
+    __pyx_v_neighbor_count = __pyx_t_11;
 
-    /* "nonaga_logic.pyx":145
+    /* "nonaga_logic.pyx":146
  * 
  *             neighbor_count = len(neighbor_positions)
  *             if 2 <= neighbor_count <= 4:             # <<<<<<<<<<<<<<
  *                 if neighbor_count <= 2 or self._neighbors_restrain_piece(neighbor_positions):
- *                     valid_positions.add(candidate)
+ *                     valid_positions.add((candidate[0], candidate[1], -candidate[0] - candidate[1]))
 */
-    __pyx_t_9 = (2 <= __pyx_v_neighbor_count);
-    if (__pyx_t_9) {
-      __pyx_t_9 = (__pyx_v_neighbor_count <= 4);
+    __pyx_t_8 = (2 <= __pyx_v_neighbor_count);
+    if (__pyx_t_8) {
+      __pyx_t_8 = (__pyx_v_neighbor_count <= 4);
     }
-    if (__pyx_t_9) {
+    if (__pyx_t_8) {
 
-      /* "nonaga_logic.pyx":146
+      /* "nonaga_logic.pyx":147
  *             neighbor_count = len(neighbor_positions)
  *             if 2 <= neighbor_count <= 4:
  *                 if neighbor_count <= 2 or self._neighbors_restrain_piece(neighbor_positions):             # <<<<<<<<<<<<<<
- *                     valid_positions.add(candidate)
+ *                     valid_positions.add((candidate[0], candidate[1], -candidate[0] - candidate[1]))
  * 
 */
-      __pyx_t_15 = (__pyx_v_neighbor_count <= 2);
-      if (!__pyx_t_15) {
+      __pyx_t_14 = (__pyx_v_neighbor_count <= 2);
+      if (!__pyx_t_14) {
       } else {
-        __pyx_t_9 = __pyx_t_15;
+        __pyx_t_8 = __pyx_t_14;
         goto __pyx_L20_bool_binop_done;
       }
-      __pyx_t_15 = ((struct __pyx_vtabstruct_12nonaga_logic_NonagaLogic *)__pyx_v_self->__pyx_vtab)->_neighbors_restrain_piece(__pyx_v_self, __pyx_v_neighbor_positions); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 146, __pyx_L1_error)
-      __pyx_t_9 = __pyx_t_15;
+      __pyx_t_14 = ((struct __pyx_vtabstruct_12nonaga_logic_NonagaLogic *)__pyx_v_self->__pyx_vtab)->_neighbors_restrain_piece(__pyx_v_self, __pyx_v_neighbor_positions); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 147, __pyx_L1_error)
+      __pyx_t_8 = __pyx_t_14;
       __pyx_L20_bool_binop_done:;
-      if (__pyx_t_9) {
+      if (__pyx_t_8) {
 
-        /* "nonaga_logic.pyx":147
+        /* "nonaga_logic.pyx":148
  *             if 2 <= neighbor_count <= 4:
  *                 if neighbor_count <= 2 or self._neighbors_restrain_piece(neighbor_positions):
- *                     valid_positions.add(candidate)             # <<<<<<<<<<<<<<
+ *                     valid_positions.add((candidate[0], candidate[1], -candidate[0] - candidate[1]))             # <<<<<<<<<<<<<<
  * 
  *         valid_positions.discard(tile_position)
 */
-        __pyx_t_8 = PySet_Add(__pyx_v_valid_positions, __pyx_v_candidate); if (unlikely(__pyx_t_8 == ((int)-1))) __PYX_ERR(0, 147, __pyx_L1_error)
+        if (unlikely(__pyx_v_candidate == Py_None)) {
+          PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+          __PYX_ERR(0, 148, __pyx_L1_error)
+        }
+        if (unlikely(__pyx_v_candidate == Py_None)) {
+          PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+          __PYX_ERR(0, 148, __pyx_L1_error)
+        }
+        if (unlikely(__pyx_v_candidate == Py_None)) {
+          PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+          __PYX_ERR(0, 148, __pyx_L1_error)
+        }
+        __pyx_t_5 = PyNumber_Negative(__Pyx_PyTuple_GET_ITEM(__pyx_v_candidate, 0)); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 148, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_5);
+        if (unlikely(__pyx_v_candidate == Py_None)) {
+          PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+          __PYX_ERR(0, 148, __pyx_L1_error)
+        }
+        __pyx_t_1 = PyNumber_Subtract(__pyx_t_5, __Pyx_PyTuple_GET_ITEM(__pyx_v_candidate, 1)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 148, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_1);
+        __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+        __pyx_t_5 = PyTuple_New(3); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 148, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_5);
+        __Pyx_INCREF(__Pyx_PyTuple_GET_ITEM(__pyx_v_candidate, 0));
+        __Pyx_GIVEREF(__Pyx_PyTuple_GET_ITEM(__pyx_v_candidate, 0));
+        if (__Pyx_PyTuple_SET_ITEM(__pyx_t_5, 0, __Pyx_PyTuple_GET_ITEM(__pyx_v_candidate, 0)) != (0)) __PYX_ERR(0, 148, __pyx_L1_error);
+        __Pyx_INCREF(__Pyx_PyTuple_GET_ITEM(__pyx_v_candidate, 1));
+        __Pyx_GIVEREF(__Pyx_PyTuple_GET_ITEM(__pyx_v_candidate, 1));
+        if (__Pyx_PyTuple_SET_ITEM(__pyx_t_5, 1, __Pyx_PyTuple_GET_ITEM(__pyx_v_candidate, 1)) != (0)) __PYX_ERR(0, 148, __pyx_L1_error);
+        __Pyx_GIVEREF(__pyx_t_1);
+        if (__Pyx_PyTuple_SET_ITEM(__pyx_t_5, 2, __pyx_t_1) != (0)) __PYX_ERR(0, 148, __pyx_L1_error);
+        __pyx_t_1 = 0;
+        __pyx_t_7 = PySet_Add(__pyx_v_valid_positions, __pyx_t_5); if (unlikely(__pyx_t_7 == ((int)-1))) __PYX_ERR(0, 148, __pyx_L1_error)
+        __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
 
-        /* "nonaga_logic.pyx":146
+        /* "nonaga_logic.pyx":147
  *             neighbor_count = len(neighbor_positions)
  *             if 2 <= neighbor_count <= 4:
  *                 if neighbor_count <= 2 or self._neighbors_restrain_piece(neighbor_positions):             # <<<<<<<<<<<<<<
- *                     valid_positions.add(candidate)
+ *                     valid_positions.add((candidate[0], candidate[1], -candidate[0] - candidate[1]))
  * 
 */
       }
 
-      /* "nonaga_logic.pyx":145
+      /* "nonaga_logic.pyx":146
  * 
  *             neighbor_count = len(neighbor_positions)
  *             if 2 <= neighbor_count <= 4:             # <<<<<<<<<<<<<<
  *                 if neighbor_count <= 2 or self._neighbors_restrain_piece(neighbor_positions):
- *                     valid_positions.add(candidate)
+ *                     valid_positions.add((candidate[0], candidate[1], -candidate[0] - candidate[1]))
 */
     }
   }
-  __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+  __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
 
-  /* "nonaga_logic.pyx":149
- *                     valid_positions.add(candidate)
+  /* "nonaga_logic.pyx":150
+ *                     valid_positions.add((candidate[0], candidate[1], -candidate[0] - candidate[1]))
  * 
  *         valid_positions.discard(tile_position)             # <<<<<<<<<<<<<<
  *         return valid_positions
  * 
 */
-  __pyx_t_8 = __Pyx_PySet_Discard(__pyx_v_valid_positions, __pyx_v_tile_position); if (unlikely(__pyx_t_8 == ((int)-1))) __PYX_ERR(0, 149, __pyx_L1_error)
+  __pyx_t_7 = __Pyx_PySet_Discard(__pyx_v_valid_positions, __pyx_v_tile_position); if (unlikely(__pyx_t_7 == ((int)-1))) __PYX_ERR(0, 150, __pyx_L1_error)
 
-  /* "nonaga_logic.pyx":150
+  /* "nonaga_logic.pyx":151
  * 
  *         valid_positions.discard(tile_position)
  *         return valid_positions             # <<<<<<<<<<<<<<
@@ -5042,7 +5061,7 @@ static PyObject *__pyx_f_12nonaga_logic_11NonagaLogic__get_valid_tile_positions(
   __Pyx_XDECREF(__pyx_r);
   __Pyx_INCREF(__pyx_v_valid_positions);
   __pyx_r = __pyx_v_valid_positions;
-  __Pyx_TraceReturnValue(__pyx_r, 155, 0, __PYX_ERR(0, 150, __pyx_L1_error));
+  __Pyx_TraceReturnValue(__pyx_r, 158, 0, __PYX_ERR(0, 151, __pyx_L1_error));
   goto __pyx_L0;
 
   /* "nonaga_logic.pyx":101
@@ -5058,9 +5077,8 @@ static PyObject *__pyx_f_12nonaga_logic_11NonagaLogic__get_valid_tile_positions(
   __Pyx_XDECREF(__pyx_t_1);
   __Pyx_XDECREF(__pyx_t_5);
   __Pyx_XDECREF(__pyx_t_6);
-  __Pyx_XDECREF(__pyx_t_7);
+  __Pyx_XDECREF(__pyx_t_12);
   __Pyx_XDECREF(__pyx_t_13);
-  __Pyx_XDECREF(__pyx_t_14);
   __Pyx_TraceException(__pyx_lineno, 0, 0);
   #if CYTHON_USE_SYS_MONITORING
   __Pyx_TraceExceptionUnwind(0, 0);
@@ -5071,6 +5089,7 @@ static PyObject *__pyx_f_12nonaga_logic_11NonagaLogic__get_valid_tile_positions(
   __pyx_r = 0;
   __pyx_L0:;
   __Pyx_XDECREF(__pyx_v_tile_coords_set);
+  __Pyx_XDECREF(__pyx_v_tile_key);
   __Pyx_XDECREF(__pyx_v_neighbor_offsets);
   __Pyx_XDECREF(__pyx_v_candidate_positions);
   __Pyx_XDECREF(__pyx_v_existing_pos);
@@ -5085,7 +5104,7 @@ static PyObject *__pyx_f_12nonaga_logic_11NonagaLogic__get_valid_tile_positions(
   return __pyx_r;
 }
 
-/* "nonaga_logic.pyx":152
+/* "nonaga_logic.pyx":153
  *         return valid_positions
  * 
  *     cdef bint _neighbors_restrain_piece(self, list neighbors):             # <<<<<<<<<<<<<<
@@ -5102,7 +5121,6 @@ static int __pyx_f_12nonaga_logic_11NonagaLogic__neighbors_restrain_piece(CYTHON
   PyObject *__pyx_v_adj_pos = 0;
   int __pyx_v_cq;
   int __pyx_v_cr;
-  int __pyx_v_cs;
   int __pyx_v_i;
   int __pyx_v_n_neighbors;
   int __pyx_r;
@@ -5115,16 +5133,15 @@ static int __pyx_f_12nonaga_logic_11NonagaLogic__neighbors_restrain_piece(CYTHON
   int __pyx_t_5;
   PyObject *__pyx_t_6 = NULL;
   PyObject *__pyx_t_7 = NULL;
-  PyObject *__pyx_t_8 = NULL;
-  int __pyx_t_9;
+  int __pyx_t_8;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_TraceFrameInit(((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[6]))
   __Pyx_RefNannySetupContext("_neighbors_restrain_piece", 0);
-  __Pyx_TraceStartFunc("_neighbors_restrain_piece", __pyx_f[0], 152, 0, 0, 0, __PYX_ERR(0, 152, __pyx_L1_error));
+  __Pyx_TraceStartFunc("_neighbors_restrain_piece", __pyx_f[0], 153, 0, 0, 0, __PYX_ERR(0, 153, __pyx_L1_error));
 
-  /* "nonaga_logic.pyx":153
+  /* "nonaga_logic.pyx":154
  * 
  *     cdef bint _neighbors_restrain_piece(self, list neighbors):
  *         if not neighbors: return False             # <<<<<<<<<<<<<<
@@ -5135,30 +5152,30 @@ static int __pyx_f_12nonaga_logic_11NonagaLogic__neighbors_restrain_piece(CYTHON
   else
   {
     Py_ssize_t __pyx_temp = __Pyx_PyList_GET_SIZE(__pyx_v_neighbors);
-    if (unlikely(((!CYTHON_ASSUME_SAFE_SIZE) && __pyx_temp < 0))) __PYX_ERR(0, 153, __pyx_L1_error)
+    if (unlikely(((!CYTHON_ASSUME_SAFE_SIZE) && __pyx_temp < 0))) __PYX_ERR(0, 154, __pyx_L1_error)
     __pyx_t_1 = (__pyx_temp != 0);
   }
 
   __pyx_t_2 = (!__pyx_t_1);
   if (__pyx_t_2) {
     __pyx_r = 0;
-    __Pyx_TraceReturnCValue(__pyx_r, __Pyx_PyBool_FromLong, 4, 0, __PYX_ERR(0, 153, __pyx_L1_error));
+    __Pyx_TraceReturnCValue(__pyx_r, __Pyx_PyBool_FromLong, 4, 0, __PYX_ERR(0, 154, __pyx_L1_error));
     goto __pyx_L0;
   }
 
-  /* "nonaga_logic.pyx":154
+  /* "nonaga_logic.pyx":155
  *     cdef bint _neighbors_restrain_piece(self, list neighbors):
  *         if not neighbors: return False
  *         cdef set neighbor_set = set(neighbors)             # <<<<<<<<<<<<<<
  *         cdef tuple start = neighbors[0]
  *         cdef set visited = {start}
 */
-  __pyx_t_3 = PySet_New(__pyx_v_neighbors); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 154, __pyx_L1_error)
+  __pyx_t_3 = PySet_New(__pyx_v_neighbors); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 155, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __pyx_v_neighbor_set = ((PyObject*)__pyx_t_3);
   __pyx_t_3 = 0;
 
-  /* "nonaga_logic.pyx":155
+  /* "nonaga_logic.pyx":156
  *         if not neighbors: return False
  *         cdef set neighbor_set = set(neighbors)
  *         cdef tuple start = neighbors[0]             # <<<<<<<<<<<<<<
@@ -5167,175 +5184,156 @@ static int __pyx_f_12nonaga_logic_11NonagaLogic__neighbors_restrain_piece(CYTHON
 */
   if (unlikely(__pyx_v_neighbors == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-    __PYX_ERR(0, 155, __pyx_L1_error)
+    __PYX_ERR(0, 156, __pyx_L1_error)
   }
   __pyx_t_3 = __Pyx_PyList_GET_ITEM(__pyx_v_neighbors, 0);
   __Pyx_INCREF(__pyx_t_3);
-  if (!(likely(PyTuple_CheckExact(__pyx_t_3))||((__pyx_t_3) == Py_None) || __Pyx_RaiseUnexpectedTypeError("tuple", __pyx_t_3))) __PYX_ERR(0, 155, __pyx_L1_error)
+  if (!(likely(PyTuple_CheckExact(__pyx_t_3))||((__pyx_t_3) == Py_None) || __Pyx_RaiseUnexpectedTypeError("tuple", __pyx_t_3))) __PYX_ERR(0, 156, __pyx_L1_error)
   __pyx_v_start = ((PyObject*)__pyx_t_3);
   __pyx_t_3 = 0;
 
-  /* "nonaga_logic.pyx":156
+  /* "nonaga_logic.pyx":157
  *         cdef set neighbor_set = set(neighbors)
  *         cdef tuple start = neighbors[0]
  *         cdef set visited = {start}             # <<<<<<<<<<<<<<
  *         cdef list queue = [start]
  *         cdef tuple curr, adj_pos
 */
-  __pyx_t_3 = PySet_New(0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 156, __pyx_L1_error)
+  __pyx_t_3 = PySet_New(0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 157, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  if (PySet_Add(__pyx_t_3, __pyx_v_start) < (0)) __PYX_ERR(0, 156, __pyx_L1_error)
+  if (PySet_Add(__pyx_t_3, __pyx_v_start) < (0)) __PYX_ERR(0, 157, __pyx_L1_error)
   __pyx_v_visited = ((PyObject*)__pyx_t_3);
   __pyx_t_3 = 0;
 
-  /* "nonaga_logic.pyx":157
+  /* "nonaga_logic.pyx":158
  *         cdef tuple start = neighbors[0]
  *         cdef set visited = {start}
  *         cdef list queue = [start]             # <<<<<<<<<<<<<<
  *         cdef tuple curr, adj_pos
- *         cdef int cq, cr, cs, i
+ *         cdef int cq, cr, i
 */
-  __pyx_t_3 = PyList_New(1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 157, __pyx_L1_error)
+  __pyx_t_3 = PyList_New(1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 158, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_INCREF(__pyx_v_start);
   __Pyx_GIVEREF(__pyx_v_start);
-  if (__Pyx_PyList_SET_ITEM(__pyx_t_3, 0, __pyx_v_start) != (0)) __PYX_ERR(0, 157, __pyx_L1_error);
+  if (__Pyx_PyList_SET_ITEM(__pyx_t_3, 0, __pyx_v_start) != (0)) __PYX_ERR(0, 158, __pyx_L1_error);
   __pyx_v_queue = ((PyObject*)__pyx_t_3);
   __pyx_t_3 = 0;
 
-  /* "nonaga_logic.pyx":160
+  /* "nonaga_logic.pyx":161
  *         cdef tuple curr, adj_pos
- *         cdef int cq, cr, cs, i
+ *         cdef int cq, cr, i
  *         cdef int n_neighbors = len(neighbors)             # <<<<<<<<<<<<<<
  * 
  *         while queue:
 */
   if (unlikely(__pyx_v_neighbors == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "object of type 'NoneType' has no len()");
-    __PYX_ERR(0, 160, __pyx_L1_error)
+    __PYX_ERR(0, 161, __pyx_L1_error)
   }
-  __pyx_t_4 = __Pyx_PyList_GET_SIZE(__pyx_v_neighbors); if (unlikely(__pyx_t_4 == ((Py_ssize_t)-1))) __PYX_ERR(0, 160, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyList_GET_SIZE(__pyx_v_neighbors); if (unlikely(__pyx_t_4 == ((Py_ssize_t)-1))) __PYX_ERR(0, 161, __pyx_L1_error)
   __pyx_v_n_neighbors = __pyx_t_4;
 
-  /* "nonaga_logic.pyx":162
+  /* "nonaga_logic.pyx":163
  *         cdef int n_neighbors = len(neighbors)
  * 
  *         while queue:             # <<<<<<<<<<<<<<
  *             curr = queue.pop(0)
- *             cq = curr[0]; cr = curr[1]; cs = curr[2]
+ *             cq = curr[0]; cr = curr[1]
 */
   while (1) {
     {
       Py_ssize_t __pyx_temp = __Pyx_PyList_GET_SIZE(__pyx_v_queue);
-      if (unlikely(((!CYTHON_ASSUME_SAFE_SIZE) && __pyx_temp < 0))) __PYX_ERR(0, 162, __pyx_L1_error)
+      if (unlikely(((!CYTHON_ASSUME_SAFE_SIZE) && __pyx_temp < 0))) __PYX_ERR(0, 163, __pyx_L1_error)
       __pyx_t_2 = (__pyx_temp != 0);
     }
 
     if (!__pyx_t_2) break;
 
-    /* "nonaga_logic.pyx":163
+    /* "nonaga_logic.pyx":164
  * 
  *         while queue:
  *             curr = queue.pop(0)             # <<<<<<<<<<<<<<
- *             cq = curr[0]; cr = curr[1]; cs = curr[2]
+ *             cq = curr[0]; cr = curr[1]
  *             for i in range(6):
 */
-    __pyx_t_3 = __Pyx_PyList_PopIndex(__pyx_v_queue, __pyx_mstate_global->__pyx_int_0, 0, 1, Py_ssize_t, PyLong_FromSsize_t); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 163, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyList_PopIndex(__pyx_v_queue, __pyx_mstate_global->__pyx_int_0, 0, 1, Py_ssize_t, PyLong_FromSsize_t); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 164, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
-    if (!(likely(PyTuple_CheckExact(__pyx_t_3))||((__pyx_t_3) == Py_None) || __Pyx_RaiseUnexpectedTypeError("tuple", __pyx_t_3))) __PYX_ERR(0, 163, __pyx_L1_error)
+    if (!(likely(PyTuple_CheckExact(__pyx_t_3))||((__pyx_t_3) == Py_None) || __Pyx_RaiseUnexpectedTypeError("tuple", __pyx_t_3))) __PYX_ERR(0, 164, __pyx_L1_error)
     __Pyx_XDECREF_SET(__pyx_v_curr, ((PyObject*)__pyx_t_3));
     __pyx_t_3 = 0;
 
-    /* "nonaga_logic.pyx":164
+    /* "nonaga_logic.pyx":165
  *         while queue:
  *             curr = queue.pop(0)
- *             cq = curr[0]; cr = curr[1]; cs = curr[2]             # <<<<<<<<<<<<<<
+ *             cq = curr[0]; cr = curr[1]             # <<<<<<<<<<<<<<
  *             for i in range(6):
  *                 adj_pos = (cq + _WIN_OFFSETS[i][0],
 */
     if (unlikely(__pyx_v_curr == Py_None)) {
       PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-      __PYX_ERR(0, 164, __pyx_L1_error)
+      __PYX_ERR(0, 165, __pyx_L1_error)
     }
-    __pyx_t_5 = __Pyx_PyLong_As_int(__Pyx_PyTuple_GET_ITEM(__pyx_v_curr, 0)); if (unlikely((__pyx_t_5 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 164, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyLong_As_int(__Pyx_PyTuple_GET_ITEM(__pyx_v_curr, 0)); if (unlikely((__pyx_t_5 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 165, __pyx_L1_error)
     __pyx_v_cq = __pyx_t_5;
     if (unlikely(__pyx_v_curr == Py_None)) {
       PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-      __PYX_ERR(0, 164, __pyx_L1_error)
+      __PYX_ERR(0, 165, __pyx_L1_error)
     }
-    __pyx_t_5 = __Pyx_PyLong_As_int(__Pyx_PyTuple_GET_ITEM(__pyx_v_curr, 1)); if (unlikely((__pyx_t_5 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 164, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyLong_As_int(__Pyx_PyTuple_GET_ITEM(__pyx_v_curr, 1)); if (unlikely((__pyx_t_5 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 165, __pyx_L1_error)
     __pyx_v_cr = __pyx_t_5;
-    if (unlikely(__pyx_v_curr == Py_None)) {
-      PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-      __PYX_ERR(0, 164, __pyx_L1_error)
-    }
-    __pyx_t_5 = __Pyx_PyLong_As_int(__Pyx_PyTuple_GET_ITEM(__pyx_v_curr, 2)); if (unlikely((__pyx_t_5 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 164, __pyx_L1_error)
-    __pyx_v_cs = __pyx_t_5;
 
-    /* "nonaga_logic.pyx":165
+    /* "nonaga_logic.pyx":166
  *             curr = queue.pop(0)
- *             cq = curr[0]; cr = curr[1]; cs = curr[2]
+ *             cq = curr[0]; cr = curr[1]
  *             for i in range(6):             # <<<<<<<<<<<<<<
  *                 adj_pos = (cq + _WIN_OFFSETS[i][0],
- *                            cr + _WIN_OFFSETS[i][1],
+ *                            cr + _WIN_OFFSETS[i][1])
 */
     for (__pyx_t_5 = 0; __pyx_t_5 < 6; __pyx_t_5+=1) {
       __pyx_v_i = __pyx_t_5;
 
-      /* "nonaga_logic.pyx":166
- *             cq = curr[0]; cr = curr[1]; cs = curr[2]
+      /* "nonaga_logic.pyx":167
+ *             cq = curr[0]; cr = curr[1]
  *             for i in range(6):
  *                 adj_pos = (cq + _WIN_OFFSETS[i][0],             # <<<<<<<<<<<<<<
- *                            cr + _WIN_OFFSETS[i][1],
- *                            cs + _WIN_OFFSETS[i][2])
-*/
-      __pyx_t_3 = __Pyx_PyLong_From_int((__pyx_v_cq + ((__pyx_v_12nonaga_logic__WIN_OFFSETS[__pyx_v_i])[0]))); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 166, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_3);
-
-      /* "nonaga_logic.pyx":167
- *             for i in range(6):
- *                 adj_pos = (cq + _WIN_OFFSETS[i][0],
- *                            cr + _WIN_OFFSETS[i][1],             # <<<<<<<<<<<<<<
- *                            cs + _WIN_OFFSETS[i][2])
+ *                            cr + _WIN_OFFSETS[i][1])
  *                 if adj_pos in neighbor_set and adj_pos not in visited:
 */
-      __pyx_t_6 = __Pyx_PyLong_From_int((__pyx_v_cr + ((__pyx_v_12nonaga_logic__WIN_OFFSETS[__pyx_v_i])[1]))); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 167, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_6);
+      __pyx_t_3 = __Pyx_PyLong_From_int((__pyx_v_cq + ((__pyx_v_12nonaga_logic__WIN_OFFSETS[__pyx_v_i])[0]))); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 167, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_3);
 
       /* "nonaga_logic.pyx":168
+ *             for i in range(6):
  *                 adj_pos = (cq + _WIN_OFFSETS[i][0],
- *                            cr + _WIN_OFFSETS[i][1],
- *                            cs + _WIN_OFFSETS[i][2])             # <<<<<<<<<<<<<<
+ *                            cr + _WIN_OFFSETS[i][1])             # <<<<<<<<<<<<<<
  *                 if adj_pos in neighbor_set and adj_pos not in visited:
  *                     visited.add(adj_pos)
 */
-      __pyx_t_7 = __Pyx_PyLong_From_int((__pyx_v_cs + ((__pyx_v_12nonaga_logic__WIN_OFFSETS[__pyx_v_i])[2]))); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 168, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_7);
+      __pyx_t_6 = __Pyx_PyLong_From_int((__pyx_v_cr + ((__pyx_v_12nonaga_logic__WIN_OFFSETS[__pyx_v_i])[1]))); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 168, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_6);
 
-      /* "nonaga_logic.pyx":166
- *             cq = curr[0]; cr = curr[1]; cs = curr[2]
+      /* "nonaga_logic.pyx":167
+ *             cq = curr[0]; cr = curr[1]
  *             for i in range(6):
  *                 adj_pos = (cq + _WIN_OFFSETS[i][0],             # <<<<<<<<<<<<<<
- *                            cr + _WIN_OFFSETS[i][1],
- *                            cs + _WIN_OFFSETS[i][2])
+ *                            cr + _WIN_OFFSETS[i][1])
+ *                 if adj_pos in neighbor_set and adj_pos not in visited:
 */
-      __pyx_t_8 = PyTuple_New(3); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 166, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_8);
+      __pyx_t_7 = PyTuple_New(2); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 167, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_7);
       __Pyx_GIVEREF(__pyx_t_3);
-      if (__Pyx_PyTuple_SET_ITEM(__pyx_t_8, 0, __pyx_t_3) != (0)) __PYX_ERR(0, 166, __pyx_L1_error);
+      if (__Pyx_PyTuple_SET_ITEM(__pyx_t_7, 0, __pyx_t_3) != (0)) __PYX_ERR(0, 167, __pyx_L1_error);
       __Pyx_GIVEREF(__pyx_t_6);
-      if (__Pyx_PyTuple_SET_ITEM(__pyx_t_8, 1, __pyx_t_6) != (0)) __PYX_ERR(0, 166, __pyx_L1_error);
-      __Pyx_GIVEREF(__pyx_t_7);
-      if (__Pyx_PyTuple_SET_ITEM(__pyx_t_8, 2, __pyx_t_7) != (0)) __PYX_ERR(0, 166, __pyx_L1_error);
+      if (__Pyx_PyTuple_SET_ITEM(__pyx_t_7, 1, __pyx_t_6) != (0)) __PYX_ERR(0, 167, __pyx_L1_error);
       __pyx_t_3 = 0;
       __pyx_t_6 = 0;
+      __Pyx_XDECREF_SET(__pyx_v_adj_pos, ((PyObject*)__pyx_t_7));
       __pyx_t_7 = 0;
-      __Pyx_XDECREF_SET(__pyx_v_adj_pos, ((PyObject*)__pyx_t_8));
-      __pyx_t_8 = 0;
 
       /* "nonaga_logic.pyx":169
- *                            cr + _WIN_OFFSETS[i][1],
- *                            cs + _WIN_OFFSETS[i][2])
+ *                 adj_pos = (cq + _WIN_OFFSETS[i][0],
+ *                            cr + _WIN_OFFSETS[i][1])
  *                 if adj_pos in neighbor_set and adj_pos not in visited:             # <<<<<<<<<<<<<<
  *                     visited.add(adj_pos)
  *                     queue.append(adj_pos)
@@ -5352,13 +5350,13 @@ static int __pyx_f_12nonaga_logic_11NonagaLogic__neighbors_restrain_piece(CYTHON
       if (__pyx_t_2) {
 
         /* "nonaga_logic.pyx":170
- *                            cs + _WIN_OFFSETS[i][2])
+ *                            cr + _WIN_OFFSETS[i][1])
  *                 if adj_pos in neighbor_set and adj_pos not in visited:
  *                     visited.add(adj_pos)             # <<<<<<<<<<<<<<
  *                     queue.append(adj_pos)
  * 
 */
-        __pyx_t_9 = PySet_Add(__pyx_v_visited, __pyx_v_adj_pos); if (unlikely(__pyx_t_9 == ((int)-1))) __PYX_ERR(0, 170, __pyx_L1_error)
+        __pyx_t_8 = PySet_Add(__pyx_v_visited, __pyx_v_adj_pos); if (unlikely(__pyx_t_8 == ((int)-1))) __PYX_ERR(0, 170, __pyx_L1_error)
 
         /* "nonaga_logic.pyx":171
  *                 if adj_pos in neighbor_set and adj_pos not in visited:
@@ -5367,11 +5365,11 @@ static int __pyx_f_12nonaga_logic_11NonagaLogic__neighbors_restrain_piece(CYTHON
  * 
  *         return len(visited) == n_neighbors
 */
-        __pyx_t_9 = __Pyx_PyList_Append(__pyx_v_queue, __pyx_v_adj_pos); if (unlikely(__pyx_t_9 == ((int)-1))) __PYX_ERR(0, 171, __pyx_L1_error)
+        __pyx_t_8 = __Pyx_PyList_Append(__pyx_v_queue, __pyx_v_adj_pos); if (unlikely(__pyx_t_8 == ((int)-1))) __PYX_ERR(0, 171, __pyx_L1_error)
 
         /* "nonaga_logic.pyx":169
- *                            cr + _WIN_OFFSETS[i][1],
- *                            cs + _WIN_OFFSETS[i][2])
+ *                 adj_pos = (cq + _WIN_OFFSETS[i][0],
+ *                            cr + _WIN_OFFSETS[i][1])
  *                 if adj_pos in neighbor_set and adj_pos not in visited:             # <<<<<<<<<<<<<<
  *                     visited.add(adj_pos)
  *                     queue.append(adj_pos)
@@ -5389,10 +5387,10 @@ static int __pyx_f_12nonaga_logic_11NonagaLogic__neighbors_restrain_piece(CYTHON
 */
   __pyx_t_4 = __Pyx_PySet_GET_SIZE(__pyx_v_visited); if (unlikely(__pyx_t_4 == ((Py_ssize_t)-1))) __PYX_ERR(0, 173, __pyx_L1_error)
   __pyx_r = (__pyx_t_4 == __pyx_v_n_neighbors);
-  __Pyx_TraceReturnCValue(__pyx_r, __Pyx_PyBool_FromLong, 85, 0, __PYX_ERR(0, 173, __pyx_L1_error));
+  __Pyx_TraceReturnCValue(__pyx_r, __Pyx_PyBool_FromLong, 74, 0, __PYX_ERR(0, 173, __pyx_L1_error));
   goto __pyx_L0;
 
-  /* "nonaga_logic.pyx":152
+  /* "nonaga_logic.pyx":153
  *         return valid_positions
  * 
  *     cdef bint _neighbors_restrain_piece(self, list neighbors):             # <<<<<<<<<<<<<<
@@ -5405,12 +5403,11 @@ static int __pyx_f_12nonaga_logic_11NonagaLogic__neighbors_restrain_piece(CYTHON
   __Pyx_XDECREF(__pyx_t_3);
   __Pyx_XDECREF(__pyx_t_6);
   __Pyx_XDECREF(__pyx_t_7);
-  __Pyx_XDECREF(__pyx_t_8);
   __Pyx_TraceException(__pyx_lineno, 0, 0);
   #if CYTHON_USE_SYS_MONITORING
   __Pyx_TraceExceptionUnwind(0, 0);
   #else
-  __Pyx_TraceReturnValue(NULL, 0, 0, __PYX_ERR(0, 152, __pyx_L1_error));
+  __Pyx_TraceReturnValue(NULL, 0, 0, __PYX_ERR(0, 153, __pyx_L1_error));
   #endif
   __Pyx_AddTraceback("nonaga_logic.NonagaLogic._neighbors_restrain_piece", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = 0;
@@ -7714,10 +7711,8 @@ static int __pyx_f_12nonaga_logic_11NonagaLogic_check_win_condition(struct __pyx
   int __pyx_v_j;
   int __pyx_v_cq;
   int __pyx_v_cr;
-  int __pyx_v_cs;
   int __pyx_v_adj_q;
   int __pyx_v_adj_r;
-  int __pyx_v_adj_s;
   int __pyx_r;
   __Pyx_TraceDeclarationsFunc
   int __pyx_t_1;
@@ -7755,12 +7750,12 @@ static int __pyx_f_12nonaga_logic_11NonagaLogic_check_win_condition(struct __pyx
  *         cdef int tail = 0
  *         cdef int visited_count = 0             # <<<<<<<<<<<<<<
  *         cdef int idx, i, j
- *         cdef int cq, cr, cs
+ *         cdef int cq, cr
 */
   __pyx_v_visited_count = 0;
 
   /* "nonaga_logic.pyx":313
- *         cdef int adj_q, adj_r, adj_s
+ *         cdef int adj_q, adj_r
  * 
  *         piece_count = bitboard_get_pieces(&self.board, color, &q[0], &r[0], &s[0])             # <<<<<<<<<<<<<<
  *         if piece_count == 0:
@@ -7888,7 +7883,7 @@ static int __pyx_f_12nonaga_logic_11NonagaLogic_check_win_condition(struct __pyx
  *             head += 1
  *             cq = q[idx]             # <<<<<<<<<<<<<<
  *             cr = r[idx]
- *             cs = s[idx]
+ * 
 */
     __pyx_v_cq = (__pyx_v_q[__pyx_v_idx]);
 
@@ -7896,22 +7891,13 @@ static int __pyx_f_12nonaga_logic_11NonagaLogic_check_win_condition(struct __pyx
  *             head += 1
  *             cq = q[idx]
  *             cr = r[idx]             # <<<<<<<<<<<<<<
- *             cs = s[idx]
- * 
-*/
-    __pyx_v_cr = (__pyx_v_r[__pyx_v_idx]);
-
-    /* "nonaga_logic.pyx":330
- *             cq = q[idx]
- *             cr = r[idx]
- *             cs = s[idx]             # <<<<<<<<<<<<<<
  * 
  *             for i in range(6):
 */
-    __pyx_v_cs = (__pyx_v_s[__pyx_v_idx]);
+    __pyx_v_cr = (__pyx_v_r[__pyx_v_idx]);
 
-    /* "nonaga_logic.pyx":332
- *             cs = s[idx]
+    /* "nonaga_logic.pyx":331
+ *             cr = r[idx]
  * 
  *             for i in range(6):             # <<<<<<<<<<<<<<
  *                 adj_q = cq + _WIN_OFFSETS[i][0]
@@ -7920,36 +7906,27 @@ static int __pyx_f_12nonaga_logic_11NonagaLogic_check_win_condition(struct __pyx
     for (__pyx_t_2 = 0; __pyx_t_2 < 6; __pyx_t_2+=1) {
       __pyx_v_i = __pyx_t_2;
 
-      /* "nonaga_logic.pyx":333
+      /* "nonaga_logic.pyx":332
  * 
  *             for i in range(6):
  *                 adj_q = cq + _WIN_OFFSETS[i][0]             # <<<<<<<<<<<<<<
  *                 adj_r = cr + _WIN_OFFSETS[i][1]
- *                 adj_s = cs + _WIN_OFFSETS[i][2]
+ *                 for j in range(piece_count):
 */
       __pyx_v_adj_q = (__pyx_v_cq + ((__pyx_v_12nonaga_logic__WIN_OFFSETS[__pyx_v_i])[0]));
 
-      /* "nonaga_logic.pyx":334
+      /* "nonaga_logic.pyx":333
  *             for i in range(6):
  *                 adj_q = cq + _WIN_OFFSETS[i][0]
  *                 adj_r = cr + _WIN_OFFSETS[i][1]             # <<<<<<<<<<<<<<
- *                 adj_s = cs + _WIN_OFFSETS[i][2]
- *                 for j in range(piece_count):
-*/
-      __pyx_v_adj_r = (__pyx_v_cr + ((__pyx_v_12nonaga_logic__WIN_OFFSETS[__pyx_v_i])[1]));
-
-      /* "nonaga_logic.pyx":335
- *                 adj_q = cq + _WIN_OFFSETS[i][0]
- *                 adj_r = cr + _WIN_OFFSETS[i][1]
- *                 adj_s = cs + _WIN_OFFSETS[i][2]             # <<<<<<<<<<<<<<
  *                 for j in range(piece_count):
  *                     if visited[j]:
 */
-      __pyx_v_adj_s = (__pyx_v_cs + ((__pyx_v_12nonaga_logic__WIN_OFFSETS[__pyx_v_i])[2]));
+      __pyx_v_adj_r = (__pyx_v_cr + ((__pyx_v_12nonaga_logic__WIN_OFFSETS[__pyx_v_i])[1]));
 
-      /* "nonaga_logic.pyx":336
+      /* "nonaga_logic.pyx":334
+ *                 adj_q = cq + _WIN_OFFSETS[i][0]
  *                 adj_r = cr + _WIN_OFFSETS[i][1]
- *                 adj_s = cs + _WIN_OFFSETS[i][2]
  *                 for j in range(piece_count):             # <<<<<<<<<<<<<<
  *                     if visited[j]:
  *                         continue
@@ -7959,38 +7936,38 @@ static int __pyx_f_12nonaga_logic_11NonagaLogic_check_win_condition(struct __pyx
       for (__pyx_t_5 = 0; __pyx_t_5 < __pyx_t_4; __pyx_t_5+=1) {
         __pyx_v_j = __pyx_t_5;
 
-        /* "nonaga_logic.pyx":337
- *                 adj_s = cs + _WIN_OFFSETS[i][2]
+        /* "nonaga_logic.pyx":335
+ *                 adj_r = cr + _WIN_OFFSETS[i][1]
  *                 for j in range(piece_count):
  *                     if visited[j]:             # <<<<<<<<<<<<<<
  *                         continue
- *                     if q[j] == adj_q and r[j] == adj_r and s[j] == adj_s:
+ *                     if q[j] == adj_q and r[j] == adj_r:
 */
         __pyx_t_1 = ((__pyx_v_visited[__pyx_v_j]) != 0);
         if (__pyx_t_1) {
 
-          /* "nonaga_logic.pyx":338
+          /* "nonaga_logic.pyx":336
  *                 for j in range(piece_count):
  *                     if visited[j]:
  *                         continue             # <<<<<<<<<<<<<<
- *                     if q[j] == adj_q and r[j] == adj_r and s[j] == adj_s:
+ *                     if q[j] == adj_q and r[j] == adj_r:
  *                         visited[j] = 1
 */
           goto __pyx_L10_continue;
 
-          /* "nonaga_logic.pyx":337
- *                 adj_s = cs + _WIN_OFFSETS[i][2]
+          /* "nonaga_logic.pyx":335
+ *                 adj_r = cr + _WIN_OFFSETS[i][1]
  *                 for j in range(piece_count):
  *                     if visited[j]:             # <<<<<<<<<<<<<<
  *                         continue
- *                     if q[j] == adj_q and r[j] == adj_r and s[j] == adj_s:
+ *                     if q[j] == adj_q and r[j] == adj_r:
 */
         }
 
-        /* "nonaga_logic.pyx":339
+        /* "nonaga_logic.pyx":337
  *                     if visited[j]:
  *                         continue
- *                     if q[j] == adj_q and r[j] == adj_r and s[j] == adj_s:             # <<<<<<<<<<<<<<
+ *                     if q[j] == adj_q and r[j] == adj_r:             # <<<<<<<<<<<<<<
  *                         visited[j] = 1
  *                         queue[tail] = j
 */
@@ -8001,27 +7978,21 @@ static int __pyx_f_12nonaga_logic_11NonagaLogic_check_win_condition(struct __pyx
           goto __pyx_L14_bool_binop_done;
         }
         __pyx_t_6 = ((__pyx_v_r[__pyx_v_j]) == __pyx_v_adj_r);
-        if (__pyx_t_6) {
-        } else {
-          __pyx_t_1 = __pyx_t_6;
-          goto __pyx_L14_bool_binop_done;
-        }
-        __pyx_t_6 = ((__pyx_v_s[__pyx_v_j]) == __pyx_v_adj_s);
         __pyx_t_1 = __pyx_t_6;
         __pyx_L14_bool_binop_done:;
         if (__pyx_t_1) {
 
-          /* "nonaga_logic.pyx":340
+          /* "nonaga_logic.pyx":338
  *                         continue
- *                     if q[j] == adj_q and r[j] == adj_r and s[j] == adj_s:
+ *                     if q[j] == adj_q and r[j] == adj_r:
  *                         visited[j] = 1             # <<<<<<<<<<<<<<
  *                         queue[tail] = j
  *                         tail += 1
 */
           (__pyx_v_visited[__pyx_v_j]) = 1;
 
-          /* "nonaga_logic.pyx":341
- *                     if q[j] == adj_q and r[j] == adj_r and s[j] == adj_s:
+          /* "nonaga_logic.pyx":339
+ *                     if q[j] == adj_q and r[j] == adj_r:
  *                         visited[j] = 1
  *                         queue[tail] = j             # <<<<<<<<<<<<<<
  *                         tail += 1
@@ -8029,7 +8000,7 @@ static int __pyx_f_12nonaga_logic_11NonagaLogic_check_win_condition(struct __pyx
 */
           (__pyx_v_queue[__pyx_v_tail]) = __pyx_v_j;
 
-          /* "nonaga_logic.pyx":342
+          /* "nonaga_logic.pyx":340
  *                         visited[j] = 1
  *                         queue[tail] = j
  *                         tail += 1             # <<<<<<<<<<<<<<
@@ -8038,7 +8009,7 @@ static int __pyx_f_12nonaga_logic_11NonagaLogic_check_win_condition(struct __pyx
 */
           __pyx_v_tail = (__pyx_v_tail + 1);
 
-          /* "nonaga_logic.pyx":343
+          /* "nonaga_logic.pyx":341
  *                         queue[tail] = j
  *                         tail += 1
  *                         visited_count += 1             # <<<<<<<<<<<<<<
@@ -8047,7 +8018,7 @@ static int __pyx_f_12nonaga_logic_11NonagaLogic_check_win_condition(struct __pyx
 */
           __pyx_v_visited_count = (__pyx_v_visited_count + 1);
 
-          /* "nonaga_logic.pyx":344
+          /* "nonaga_logic.pyx":342
  *                         tail += 1
  *                         visited_count += 1
  *                         break             # <<<<<<<<<<<<<<
@@ -8056,10 +8027,10 @@ static int __pyx_f_12nonaga_logic_11NonagaLogic_check_win_condition(struct __pyx
 */
           goto __pyx_L11_break;
 
-          /* "nonaga_logic.pyx":339
+          /* "nonaga_logic.pyx":337
  *                     if visited[j]:
  *                         continue
- *                     if q[j] == adj_q and r[j] == adj_r and s[j] == adj_s:             # <<<<<<<<<<<<<<
+ *                     if q[j] == adj_q and r[j] == adj_r:             # <<<<<<<<<<<<<<
  *                         visited[j] = 1
  *                         queue[tail] = j
 */
@@ -8070,7 +8041,7 @@ static int __pyx_f_12nonaga_logic_11NonagaLogic_check_win_condition(struct __pyx
     }
   }
 
-  /* "nonaga_logic.pyx":346
+  /* "nonaga_logic.pyx":344
  *                         break
  * 
  *         return visited_count == piece_count             # <<<<<<<<<<<<<<
@@ -8078,7 +8049,7 @@ static int __pyx_f_12nonaga_logic_11NonagaLogic_check_win_condition(struct __pyx
  *     cpdef bint check_win_condition_py(self, int color):
 */
   __pyx_r = (__pyx_v_visited_count == __pyx_v_piece_count);
-  __Pyx_TraceReturnCValue(__pyx_r, __Pyx_PyBool_FromLong, 145, 0, __PYX_ERR(0, 346, __pyx_L1_error));
+  __Pyx_TraceReturnCValue(__pyx_r, __Pyx_PyBool_FromLong, 127, 0, __PYX_ERR(0, 344, __pyx_L1_error));
   goto __pyx_L0;
 
   /* "nonaga_logic.pyx":299
@@ -8104,7 +8075,7 @@ static int __pyx_f_12nonaga_logic_11NonagaLogic_check_win_condition(struct __pyx
   return __pyx_r;
 }
 
-/* "nonaga_logic.pyx":348
+/* "nonaga_logic.pyx":346
  *         return visited_count == piece_count
  * 
  *     cpdef bint check_win_condition_py(self, int color):             # <<<<<<<<<<<<<<
@@ -8135,7 +8106,7 @@ static int __pyx_f_12nonaga_logic_11NonagaLogic_check_win_condition_py(struct __
   int __pyx_clineno = 0;
   __Pyx_TraceFrameInit(((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[20]))
   __Pyx_RefNannySetupContext("check_win_condition_py", 0);
-  __Pyx_TraceStartFunc("check_win_condition_py", __pyx_f[0], 348, 0, 0, __pyx_skip_dispatch, __PYX_ERR(0, 348, __pyx_L1_error));
+  __Pyx_TraceStartFunc("check_win_condition_py", __pyx_f[0], 346, 0, 0, __pyx_skip_dispatch, __PYX_ERR(0, 346, __pyx_L1_error));
   /* Check if called by wrapper */
   if (unlikely(__pyx_skip_dispatch)) ;
   /* Check if overridden in Python */
@@ -8152,13 +8123,13 @@ static int __pyx_f_12nonaga_logic_11NonagaLogic_check_win_condition_py(struct __
     if (unlikely(!__Pyx_object_dict_version_matches(((PyObject *)__pyx_v_self), __pyx_tp_dict_version, __pyx_obj_dict_version))) {
       PY_UINT64_T __pyx_typedict_guard = __Pyx_get_tp_dict_version(((PyObject *)__pyx_v_self));
       #endif
-      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_mstate_global->__pyx_n_u_check_win_condition_py); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 348, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_mstate_global->__pyx_n_u_check_win_condition_py); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 346, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       if (!__Pyx_IsSameCFunction(__pyx_t_1, (void(*)(void)) __pyx_pw_12nonaga_logic_11NonagaLogic_15check_win_condition_py)) {
         __pyx_t_3 = NULL;
         __Pyx_INCREF(__pyx_t_1);
         __pyx_t_4 = __pyx_t_1; 
-        __pyx_t_5 = __Pyx_PyLong_From_int(__pyx_v_color); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 348, __pyx_L1_error)
+        __pyx_t_5 = __Pyx_PyLong_From_int(__pyx_v_color); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 346, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_5);
         __pyx_t_6 = 1;
         #if CYTHON_UNPACK_METHODS
@@ -8178,13 +8149,13 @@ static int __pyx_f_12nonaga_logic_11NonagaLogic_check_win_condition_py(struct __
           __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
           __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
           __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-          if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 348, __pyx_L1_error)
+          if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 346, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_2);
         }
-        __pyx_t_7 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely((__pyx_t_7 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 348, __pyx_L1_error)
+        __pyx_t_7 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely((__pyx_t_7 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 346, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
         __pyx_r = __pyx_t_7;
-        __Pyx_TraceReturnCValue(__pyx_r, __Pyx_PyBool_FromLong, 0, 0, __PYX_ERR(0, 348, __pyx_L1_error));
+        __Pyx_TraceReturnCValue(__pyx_r, __Pyx_PyBool_FromLong, 0, 0, __PYX_ERR(0, 346, __pyx_L1_error));
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
         goto __pyx_L0;
       }
@@ -8201,19 +8172,19 @@ static int __pyx_f_12nonaga_logic_11NonagaLogic_check_win_condition_py(struct __
     #endif
   }
 
-  /* "nonaga_logic.pyx":349
+  /* "nonaga_logic.pyx":347
  * 
  *     cpdef bint check_win_condition_py(self, int color):
  *         return self.check_win_condition(color)             # <<<<<<<<<<<<<<
  * 
  *     cpdef int get_current_player(self):
 */
-  __pyx_t_7 = ((struct __pyx_vtabstruct_12nonaga_logic_NonagaLogic *)__pyx_v_self->__pyx_vtab)->check_win_condition(__pyx_v_self, __pyx_v_color); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 349, __pyx_L1_error)
+  __pyx_t_7 = ((struct __pyx_vtabstruct_12nonaga_logic_NonagaLogic *)__pyx_v_self->__pyx_vtab)->check_win_condition(__pyx_v_self, __pyx_v_color); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 347, __pyx_L1_error)
   __pyx_r = __pyx_t_7;
-  __Pyx_TraceReturnCValue(__pyx_r, __Pyx_PyBool_FromLong, 1, 0, __PYX_ERR(0, 349, __pyx_L1_error));
+  __Pyx_TraceReturnCValue(__pyx_r, __Pyx_PyBool_FromLong, 1, 0, __PYX_ERR(0, 347, __pyx_L1_error));
   goto __pyx_L0;
 
-  /* "nonaga_logic.pyx":348
+  /* "nonaga_logic.pyx":346
  *         return visited_count == piece_count
  * 
  *     cpdef bint check_win_condition_py(self, int color):             # <<<<<<<<<<<<<<
@@ -8232,7 +8203,7 @@ static int __pyx_f_12nonaga_logic_11NonagaLogic_check_win_condition_py(struct __
   #if CYTHON_USE_SYS_MONITORING
   __Pyx_TraceExceptionUnwind(0, 0);
   #else
-  __Pyx_TraceReturnValue(NULL, 0, 0, __PYX_ERR(0, 348, __pyx_L1_error));
+  __Pyx_TraceReturnValue(NULL, 0, 0, __PYX_ERR(0, 346, __pyx_L1_error));
   #endif
   __Pyx_AddTraceback("nonaga_logic.NonagaLogic.check_win_condition_py", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = 0;
@@ -8281,32 +8252,32 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   {
     PyObject ** const __pyx_pyargnames[] = {&__pyx_mstate_global->__pyx_n_u_color,0};
     const Py_ssize_t __pyx_kwds_len = (__pyx_kwds) ? __Pyx_NumKwargs_FASTCALL(__pyx_kwds) : 0;
-    if (unlikely(__pyx_kwds_len) < 0) __PYX_ERR(0, 348, __pyx_L3_error)
+    if (unlikely(__pyx_kwds_len) < 0) __PYX_ERR(0, 346, __pyx_L3_error)
     if (__pyx_kwds_len > 0) {
       switch (__pyx_nargs) {
         case  1:
         values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 348, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 346, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  0: break;
         default: goto __pyx_L5_argtuple_error;
       }
       const Py_ssize_t kwd_pos_args = __pyx_nargs;
-      if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "check_win_condition_py", 0) < (0)) __PYX_ERR(0, 348, __pyx_L3_error)
+      if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "check_win_condition_py", 0) < (0)) __PYX_ERR(0, 346, __pyx_L3_error)
       for (Py_ssize_t i = __pyx_nargs; i < 1; i++) {
-        if (unlikely(!values[i])) { __Pyx_RaiseArgtupleInvalid("check_win_condition_py", 1, 1, 1, i); __PYX_ERR(0, 348, __pyx_L3_error) }
+        if (unlikely(!values[i])) { __Pyx_RaiseArgtupleInvalid("check_win_condition_py", 1, 1, 1, i); __PYX_ERR(0, 346, __pyx_L3_error) }
       }
     } else if (unlikely(__pyx_nargs != 1)) {
       goto __pyx_L5_argtuple_error;
     } else {
       values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
-      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 348, __pyx_L3_error)
+      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 346, __pyx_L3_error)
     }
-    __pyx_v_color = __Pyx_PyLong_As_int(values[0]); if (unlikely((__pyx_v_color == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 348, __pyx_L3_error)
+    __pyx_v_color = __Pyx_PyLong_As_int(values[0]); if (unlikely((__pyx_v_color == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 346, __pyx_L3_error)
   }
   goto __pyx_L6_skip;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("check_win_condition_py", 1, 1, 1, __pyx_nargs); __PYX_ERR(0, 348, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("check_win_condition_py", 1, 1, 1, __pyx_nargs); __PYX_ERR(0, 346, __pyx_L3_error)
   __pyx_L6_skip:;
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -8338,10 +8309,10 @@ static PyObject *__pyx_pf_12nonaga_logic_11NonagaLogic_14check_win_condition_py(
   int __pyx_clineno = 0;
   __Pyx_TraceFrameInit(((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[20]))
   __Pyx_RefNannySetupContext("check_win_condition_py", 0);
-  __Pyx_TraceStartFunc("check_win_condition_py (wrapper)", __pyx_f[0], 348, 0, 0, 0, __PYX_ERR(0, 348, __pyx_L1_error));
+  __Pyx_TraceStartFunc("check_win_condition_py (wrapper)", __pyx_f[0], 346, 0, 0, 0, __PYX_ERR(0, 346, __pyx_L1_error));
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_12nonaga_logic_11NonagaLogic_check_win_condition_py(__pyx_v_self, __pyx_v_color, 1); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 348, __pyx_L1_error)
-  __pyx_t_2 = __Pyx_PyBool_FromLong(__pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 348, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_12nonaga_logic_11NonagaLogic_check_win_condition_py(__pyx_v_self, __pyx_v_color, 1); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 346, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyBool_FromLong(__pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 346, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_r = __pyx_t_2;
   __pyx_t_2 = 0;
@@ -8354,7 +8325,7 @@ static PyObject *__pyx_pf_12nonaga_logic_11NonagaLogic_14check_win_condition_py(
   #if CYTHON_USE_SYS_MONITORING
   __Pyx_TraceExceptionUnwind(0, 0);
   #else
-  __Pyx_TraceReturnValue(NULL, 0, 0, __PYX_ERR(0, 348, __pyx_L1_error));
+  __Pyx_TraceReturnValue(NULL, 0, 0, __PYX_ERR(0, 346, __pyx_L1_error));
   #endif
   __Pyx_AddTraceback("nonaga_logic.NonagaLogic.check_win_condition_py", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
@@ -8365,7 +8336,7 @@ static PyObject *__pyx_pf_12nonaga_logic_11NonagaLogic_14check_win_condition_py(
   return __pyx_r;
 }
 
-/* "nonaga_logic.pyx":351
+/* "nonaga_logic.pyx":349
  *         return self.check_win_condition(color)
  * 
  *     cpdef int get_current_player(self):             # <<<<<<<<<<<<<<
@@ -8395,7 +8366,7 @@ static int __pyx_f_12nonaga_logic_11NonagaLogic_get_current_player(struct __pyx_
   int __pyx_clineno = 0;
   __Pyx_TraceFrameInit(((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[21]))
   __Pyx_RefNannySetupContext("get_current_player", 0);
-  __Pyx_TraceStartFunc("get_current_player", __pyx_f[0], 351, 0, 0, __pyx_skip_dispatch, __PYX_ERR(0, 351, __pyx_L1_error));
+  __Pyx_TraceStartFunc("get_current_player", __pyx_f[0], 349, 0, 0, __pyx_skip_dispatch, __PYX_ERR(0, 349, __pyx_L1_error));
   /* Check if called by wrapper */
   if (unlikely(__pyx_skip_dispatch)) ;
   /* Check if overridden in Python */
@@ -8412,7 +8383,7 @@ static int __pyx_f_12nonaga_logic_11NonagaLogic_get_current_player(struct __pyx_
     if (unlikely(!__Pyx_object_dict_version_matches(((PyObject *)__pyx_v_self), __pyx_tp_dict_version, __pyx_obj_dict_version))) {
       PY_UINT64_T __pyx_typedict_guard = __Pyx_get_tp_dict_version(((PyObject *)__pyx_v_self));
       #endif
-      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_mstate_global->__pyx_n_u_get_current_player); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 351, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_mstate_global->__pyx_n_u_get_current_player); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 349, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       if (!__Pyx_IsSameCFunction(__pyx_t_1, (void(*)(void)) __pyx_pw_12nonaga_logic_11NonagaLogic_17get_current_player)) {
         __pyx_t_3 = NULL;
@@ -8435,13 +8406,13 @@ static int __pyx_f_12nonaga_logic_11NonagaLogic_get_current_player(struct __pyx_
           __pyx_t_2 = __Pyx_PyObject_FastCall((PyObject*)__pyx_t_4, __pyx_callargs+__pyx_t_5, (1-__pyx_t_5) | (__pyx_t_5*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
           __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
           __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-          if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 351, __pyx_L1_error)
+          if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 349, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_2);
         }
-        __pyx_t_6 = __Pyx_PyLong_As_int(__pyx_t_2); if (unlikely((__pyx_t_6 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 351, __pyx_L1_error)
+        __pyx_t_6 = __Pyx_PyLong_As_int(__pyx_t_2); if (unlikely((__pyx_t_6 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 349, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
         __pyx_r = __pyx_t_6;
-        __Pyx_TraceReturnCValue(__pyx_r, __Pyx_PyLong_From_int, 0, 0, __PYX_ERR(0, 351, __pyx_L1_error));
+        __Pyx_TraceReturnCValue(__pyx_r, __Pyx_PyLong_From_int, 0, 0, __PYX_ERR(0, 349, __pyx_L1_error));
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
         goto __pyx_L0;
       }
@@ -8458,7 +8429,7 @@ static int __pyx_f_12nonaga_logic_11NonagaLogic_get_current_player(struct __pyx_
     #endif
   }
 
-  /* "nonaga_logic.pyx":352
+  /* "nonaga_logic.pyx":350
  * 
  *     cpdef int get_current_player(self):
  *         return self.current_player             # <<<<<<<<<<<<<<
@@ -8466,10 +8437,10 @@ static int __pyx_f_12nonaga_logic_11NonagaLogic_get_current_player(struct __pyx_
  *     cpdef void switch_player(self):
 */
   __pyx_r = __pyx_v_self->current_player;
-  __Pyx_TraceReturnCValue(__pyx_r, __Pyx_PyLong_From_int, 1, 0, __PYX_ERR(0, 352, __pyx_L1_error));
+  __Pyx_TraceReturnCValue(__pyx_r, __Pyx_PyLong_From_int, 1, 0, __PYX_ERR(0, 350, __pyx_L1_error));
   goto __pyx_L0;
 
-  /* "nonaga_logic.pyx":351
+  /* "nonaga_logic.pyx":349
  *         return self.check_win_condition(color)
  * 
  *     cpdef int get_current_player(self):             # <<<<<<<<<<<<<<
@@ -8487,7 +8458,7 @@ static int __pyx_f_12nonaga_logic_11NonagaLogic_get_current_player(struct __pyx_
   #if CYTHON_USE_SYS_MONITORING
   __Pyx_TraceExceptionUnwind(0, 0);
   #else
-  __Pyx_TraceReturnValue(NULL, 0, 0, __PYX_ERR(0, 351, __pyx_L1_error));
+  __Pyx_TraceReturnValue(NULL, 0, 0, __PYX_ERR(0, 349, __pyx_L1_error));
   #endif
   __Pyx_AddTraceback("nonaga_logic.NonagaLogic.get_current_player", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = 0;
@@ -8550,10 +8521,10 @@ static PyObject *__pyx_pf_12nonaga_logic_11NonagaLogic_16get_current_player(stru
   int __pyx_clineno = 0;
   __Pyx_TraceFrameInit(((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[21]))
   __Pyx_RefNannySetupContext("get_current_player", 0);
-  __Pyx_TraceStartFunc("get_current_player (wrapper)", __pyx_f[0], 351, 0, 0, 0, __PYX_ERR(0, 351, __pyx_L1_error));
+  __Pyx_TraceStartFunc("get_current_player (wrapper)", __pyx_f[0], 349, 0, 0, 0, __PYX_ERR(0, 349, __pyx_L1_error));
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_12nonaga_logic_11NonagaLogic_get_current_player(__pyx_v_self, 1); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 351, __pyx_L1_error)
-  __pyx_t_2 = __Pyx_PyLong_From_int(__pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 351, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_12nonaga_logic_11NonagaLogic_get_current_player(__pyx_v_self, 1); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 349, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyLong_From_int(__pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 349, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_r = __pyx_t_2;
   __pyx_t_2 = 0;
@@ -8566,7 +8537,7 @@ static PyObject *__pyx_pf_12nonaga_logic_11NonagaLogic_16get_current_player(stru
   #if CYTHON_USE_SYS_MONITORING
   __Pyx_TraceExceptionUnwind(0, 0);
   #else
-  __Pyx_TraceReturnValue(NULL, 0, 0, __PYX_ERR(0, 351, __pyx_L1_error));
+  __Pyx_TraceReturnValue(NULL, 0, 0, __PYX_ERR(0, 349, __pyx_L1_error));
   #endif
   __Pyx_AddTraceback("nonaga_logic.NonagaLogic.get_current_player", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
@@ -8577,7 +8548,7 @@ static PyObject *__pyx_pf_12nonaga_logic_11NonagaLogic_16get_current_player(stru
   return __pyx_r;
 }
 
-/* "nonaga_logic.pyx":354
+/* "nonaga_logic.pyx":352
  *         return self.current_player
  * 
  *     cpdef void switch_player(self):             # <<<<<<<<<<<<<<
@@ -8607,7 +8578,7 @@ static void __pyx_f_12nonaga_logic_11NonagaLogic_switch_player(struct __pyx_obj_
   int __pyx_clineno = 0;
   __Pyx_TraceFrameInit(((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[22]))
   __Pyx_RefNannySetupContext("switch_player", 0);
-  __Pyx_TraceStartFunc("switch_player", __pyx_f[0], 354, 0, 0, __pyx_skip_dispatch, __PYX_ERR(0, 354, __pyx_L1_error));
+  __Pyx_TraceStartFunc("switch_player", __pyx_f[0], 352, 0, 0, __pyx_skip_dispatch, __PYX_ERR(0, 352, __pyx_L1_error));
   /* Check if called by wrapper */
   if (unlikely(__pyx_skip_dispatch)) ;
   /* Check if overridden in Python */
@@ -8624,7 +8595,7 @@ static void __pyx_f_12nonaga_logic_11NonagaLogic_switch_player(struct __pyx_obj_
     if (unlikely(!__Pyx_object_dict_version_matches(((PyObject *)__pyx_v_self), __pyx_tp_dict_version, __pyx_obj_dict_version))) {
       PY_UINT64_T __pyx_typedict_guard = __Pyx_get_tp_dict_version(((PyObject *)__pyx_v_self));
       #endif
-      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_mstate_global->__pyx_n_u_switch_player); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 354, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_mstate_global->__pyx_n_u_switch_player); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 352, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       if (!__Pyx_IsSameCFunction(__pyx_t_1, (void(*)(void)) __pyx_pw_12nonaga_logic_11NonagaLogic_19switch_player)) {
         __pyx_t_3 = NULL;
@@ -8647,11 +8618,11 @@ static void __pyx_f_12nonaga_logic_11NonagaLogic_switch_player(struct __pyx_obj_
           __pyx_t_2 = __Pyx_PyObject_FastCall((PyObject*)__pyx_t_4, __pyx_callargs+__pyx_t_5, (1-__pyx_t_5) | (__pyx_t_5*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
           __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
           __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-          if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 354, __pyx_L1_error)
+          if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 352, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_2);
         }
         __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-        __Pyx_TraceReturnValue(Py_None, 0, 0, __PYX_ERR(0, 354, __pyx_L1_error));
+        __Pyx_TraceReturnValue(Py_None, 0, 0, __PYX_ERR(0, 352, __pyx_L1_error));
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
         goto __pyx_L0;
       }
@@ -8668,38 +8639,38 @@ static void __pyx_f_12nonaga_logic_11NonagaLogic_switch_player(struct __pyx_obj_
     #endif
   }
 
-  /* "nonaga_logic.pyx":355
+  /* "nonaga_logic.pyx":353
  * 
  *     cpdef void switch_player(self):
  *         if self.current_player == RED:             # <<<<<<<<<<<<<<
  *             self.current_player = BLACK
  *         else:
 */
-  __pyx_t_1 = __Pyx_PyLong_From_int(__pyx_v_self->current_player); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 355, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyLong_From_int(__pyx_v_self->current_player); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 353, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_mstate_global->__pyx_n_u_RED); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 355, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_mstate_global->__pyx_n_u_RED); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 353, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_4 = PyObject_RichCompare(__pyx_t_1, __pyx_t_2, Py_EQ); __Pyx_XGOTREF(__pyx_t_4); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 355, __pyx_L1_error)
+  __pyx_t_4 = PyObject_RichCompare(__pyx_t_1, __pyx_t_2, Py_EQ); __Pyx_XGOTREF(__pyx_t_4); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 353, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_6 = __Pyx_PyObject_IsTrue(__pyx_t_4); if (unlikely((__pyx_t_6 < 0))) __PYX_ERR(0, 355, __pyx_L1_error)
+  __pyx_t_6 = __Pyx_PyObject_IsTrue(__pyx_t_4); if (unlikely((__pyx_t_6 < 0))) __PYX_ERR(0, 353, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
   if (__pyx_t_6) {
 
-    /* "nonaga_logic.pyx":356
+    /* "nonaga_logic.pyx":354
  *     cpdef void switch_player(self):
  *         if self.current_player == RED:
  *             self.current_player = BLACK             # <<<<<<<<<<<<<<
  *         else:
  *             self.current_player = RED
 */
-    __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_mstate_global->__pyx_n_u_BLACK); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 356, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_mstate_global->__pyx_n_u_BLACK); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 354, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_7 = __Pyx_PyLong_As_int(__pyx_t_4); if (unlikely((__pyx_t_7 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 356, __pyx_L1_error)
+    __pyx_t_7 = __Pyx_PyLong_As_int(__pyx_t_4); if (unlikely((__pyx_t_7 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 354, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     __pyx_v_self->current_player = __pyx_t_7;
 
-    /* "nonaga_logic.pyx":355
+    /* "nonaga_logic.pyx":353
  * 
  *     cpdef void switch_player(self):
  *         if self.current_player == RED:             # <<<<<<<<<<<<<<
@@ -8709,21 +8680,21 @@ static void __pyx_f_12nonaga_logic_11NonagaLogic_switch_player(struct __pyx_obj_
     goto __pyx_L3;
   }
 
-  /* "nonaga_logic.pyx":358
+  /* "nonaga_logic.pyx":356
  *             self.current_player = BLACK
  *         else:
  *             self.current_player = RED             # <<<<<<<<<<<<<<
 */
   /*else*/ {
-    __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_mstate_global->__pyx_n_u_RED); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 358, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_mstate_global->__pyx_n_u_RED); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 356, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_7 = __Pyx_PyLong_As_int(__pyx_t_4); if (unlikely((__pyx_t_7 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 358, __pyx_L1_error)
+    __pyx_t_7 = __Pyx_PyLong_As_int(__pyx_t_4); if (unlikely((__pyx_t_7 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 356, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     __pyx_v_self->current_player = __pyx_t_7;
   }
   __pyx_L3:;
 
-  /* "nonaga_logic.pyx":354
+  /* "nonaga_logic.pyx":352
  *         return self.current_player
  * 
  *     cpdef void switch_player(self):             # <<<<<<<<<<<<<<
@@ -8732,7 +8703,7 @@ static void __pyx_f_12nonaga_logic_11NonagaLogic_switch_player(struct __pyx_obj_
 */
 
   /* function exit code */
-  __Pyx_TraceReturnValue(Py_None, 0, 0, __PYX_ERR(0, 354, __pyx_L1_error));
+  __Pyx_TraceReturnValue(Py_None, 0, 0, __PYX_ERR(0, 352, __pyx_L1_error));
   goto __pyx_L0;
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
@@ -8743,7 +8714,7 @@ static void __pyx_f_12nonaga_logic_11NonagaLogic_switch_player(struct __pyx_obj_
   #if CYTHON_USE_SYS_MONITORING
   __Pyx_TraceExceptionUnwind(0, 0);
   #else
-  __Pyx_TraceReturnValue(NULL, 0, 0, __PYX_ERR(0, 354, __pyx_L1_error));
+  __Pyx_TraceReturnValue(NULL, 0, 0, __PYX_ERR(0, 352, __pyx_L1_error));
   #endif
   __Pyx_AddTraceback("nonaga_logic.NonagaLogic.switch_player", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_L0:;
@@ -8803,10 +8774,10 @@ static PyObject *__pyx_pf_12nonaga_logic_11NonagaLogic_18switch_player(struct __
   int __pyx_clineno = 0;
   __Pyx_TraceFrameInit(((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[22]))
   __Pyx_RefNannySetupContext("switch_player", 0);
-  __Pyx_TraceStartFunc("switch_player (wrapper)", __pyx_f[0], 354, 0, 0, 0, __PYX_ERR(0, 354, __pyx_L1_error));
+  __Pyx_TraceStartFunc("switch_player (wrapper)", __pyx_f[0], 352, 0, 0, 0, __PYX_ERR(0, 352, __pyx_L1_error));
   __Pyx_XDECREF(__pyx_r);
-  __pyx_f_12nonaga_logic_11NonagaLogic_switch_player(__pyx_v_self, 1); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 354, __pyx_L1_error)
-  __pyx_t_1 = __Pyx_void_to_None(NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 354, __pyx_L1_error)
+  __pyx_f_12nonaga_logic_11NonagaLogic_switch_player(__pyx_v_self, 1); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 352, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_void_to_None(NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 352, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -8819,7 +8790,7 @@ static PyObject *__pyx_pf_12nonaga_logic_11NonagaLogic_18switch_player(struct __
   #if CYTHON_USE_SYS_MONITORING
   __Pyx_TraceExceptionUnwind(0, 0);
   #else
-  __Pyx_TraceReturnValue(NULL, 0, 0, __PYX_ERR(0, 354, __pyx_L1_error));
+  __Pyx_TraceReturnValue(NULL, 0, 0, __PYX_ERR(0, 352, __pyx_L1_error));
   #endif
   __Pyx_AddTraceback("nonaga_logic.NonagaLogic.switch_player", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
@@ -10400,49 +10371,49 @@ __Pyx_RefNannySetupContext("PyInit_nonaga_logic", 0);
   if (__Pyx_SetItemOnTypeDict(__pyx_mstate_global->__pyx_ptype_12nonaga_logic_NonagaLogic, __pyx_mstate_global->__pyx_n_u_get_current_turn_phase, __pyx_t_2) < (0)) __PYX_ERR(0, 296, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "nonaga_logic.pyx":348
+  /* "nonaga_logic.pyx":346
  *         return visited_count == piece_count
  * 
  *     cpdef bint check_win_condition_py(self, int color):             # <<<<<<<<<<<<<<
  *         return self.check_win_condition(color)
  * 
 */
-  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_12nonaga_logic_11NonagaLogic_15check_win_condition_py, __Pyx_CYFUNCTION_CCLASS, __pyx_mstate_global->__pyx_n_u_NonagaLogic_check_win_condition, NULL, __pyx_mstate_global->__pyx_n_u_nonaga_logic, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[20])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 348, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_12nonaga_logic_11NonagaLogic_15check_win_condition_py, __Pyx_CYFUNCTION_CCLASS, __pyx_mstate_global->__pyx_n_u_NonagaLogic_check_win_condition, NULL, __pyx_mstate_global->__pyx_n_u_nonaga_logic, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[20])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 346, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   #if CYTHON_COMPILING_IN_CPYTHON && PY_VERSION_HEX >= 0x030E0000
   PyUnstable_Object_EnableDeferredRefcount(__pyx_t_2);
   #endif
-  if (__Pyx_SetItemOnTypeDict(__pyx_mstate_global->__pyx_ptype_12nonaga_logic_NonagaLogic, __pyx_mstate_global->__pyx_n_u_check_win_condition_py, __pyx_t_2) < (0)) __PYX_ERR(0, 348, __pyx_L1_error)
+  if (__Pyx_SetItemOnTypeDict(__pyx_mstate_global->__pyx_ptype_12nonaga_logic_NonagaLogic, __pyx_mstate_global->__pyx_n_u_check_win_condition_py, __pyx_t_2) < (0)) __PYX_ERR(0, 346, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "nonaga_logic.pyx":351
+  /* "nonaga_logic.pyx":349
  *         return self.check_win_condition(color)
  * 
  *     cpdef int get_current_player(self):             # <<<<<<<<<<<<<<
  *         return self.current_player
  * 
 */
-  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_12nonaga_logic_11NonagaLogic_17get_current_player, __Pyx_CYFUNCTION_CCLASS, __pyx_mstate_global->__pyx_n_u_NonagaLogic_get_current_player, NULL, __pyx_mstate_global->__pyx_n_u_nonaga_logic, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[21])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 351, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_12nonaga_logic_11NonagaLogic_17get_current_player, __Pyx_CYFUNCTION_CCLASS, __pyx_mstate_global->__pyx_n_u_NonagaLogic_get_current_player, NULL, __pyx_mstate_global->__pyx_n_u_nonaga_logic, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[21])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 349, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   #if CYTHON_COMPILING_IN_CPYTHON && PY_VERSION_HEX >= 0x030E0000
   PyUnstable_Object_EnableDeferredRefcount(__pyx_t_2);
   #endif
-  if (__Pyx_SetItemOnTypeDict(__pyx_mstate_global->__pyx_ptype_12nonaga_logic_NonagaLogic, __pyx_mstate_global->__pyx_n_u_get_current_player, __pyx_t_2) < (0)) __PYX_ERR(0, 351, __pyx_L1_error)
+  if (__Pyx_SetItemOnTypeDict(__pyx_mstate_global->__pyx_ptype_12nonaga_logic_NonagaLogic, __pyx_mstate_global->__pyx_n_u_get_current_player, __pyx_t_2) < (0)) __PYX_ERR(0, 349, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "nonaga_logic.pyx":354
+  /* "nonaga_logic.pyx":352
  *         return self.current_player
  * 
  *     cpdef void switch_player(self):             # <<<<<<<<<<<<<<
  *         if self.current_player == RED:
  *             self.current_player = BLACK
 */
-  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_12nonaga_logic_11NonagaLogic_19switch_player, __Pyx_CYFUNCTION_CCLASS, __pyx_mstate_global->__pyx_n_u_NonagaLogic_switch_player, NULL, __pyx_mstate_global->__pyx_n_u_nonaga_logic, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[22])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 354, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_12nonaga_logic_11NonagaLogic_19switch_player, __Pyx_CYFUNCTION_CCLASS, __pyx_mstate_global->__pyx_n_u_NonagaLogic_switch_player, NULL, __pyx_mstate_global->__pyx_n_u_nonaga_logic, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[22])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 352, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   #if CYTHON_COMPILING_IN_CPYTHON && PY_VERSION_HEX >= 0x030E0000
   PyUnstable_Object_EnableDeferredRefcount(__pyx_t_2);
   #endif
-  if (__Pyx_SetItemOnTypeDict(__pyx_mstate_global->__pyx_ptype_12nonaga_logic_NonagaLogic, __pyx_mstate_global->__pyx_n_u_switch_player, __pyx_t_2) < (0)) __PYX_ERR(0, 354, __pyx_L1_error)
+  if (__Pyx_SetItemOnTypeDict(__pyx_mstate_global->__pyx_ptype_12nonaga_logic_NonagaLogic, __pyx_mstate_global->__pyx_n_u_switch_player, __pyx_t_2) < (0)) __PYX_ERR(0, 352, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
   /* "(tree fragment)":1
@@ -10646,25 +10617,25 @@ static int __Pyx_InitCachedConstants(__pyx_mstatetype *__pyx_mstate) {
 static int __Pyx_InitConstants(__pyx_mstatetype *__pyx_mstate) {
   CYTHON_UNUSED_VAR(__pyx_mstate);
   {
-    const struct { const unsigned int length: 9; } index[] = {{1},{27},{27},{179},{98},{1},{8},{7},{6},{2},{9},{14},{5},{11},{29},{31},{34},{37},{36},{27},{30},{34},{25},{24},{25},{13},{20},{20},{3},{12},{6},{18},{5},{19},{22},{18},{5},{14},{7},{9},{9},{8},{6},{6},{8},{7},{25},{28},{24},{27},{15},{18},{22},{35},{25},{12},{8},{12},{13},{5},{16},{8},{10},{10},{13},{9},{12},{8},{9},{25},{8},{16},{16},{12},{9},{6},{12},{12},{10},{3},{11},{14},{12},{10},{17},{13},{4},{7},{12},{10},{12},{19},{13},{8},{13},{5},{6},{4},{4},{10},{15},{14},{5},{6},{2},{52},{2},{29},{29},{29},{29},{262},{106},{201},{34},{34},{30},{335},{33},{33},{28},{258},{356},{9},{167},{14},{9},{2}};
-    #if (CYTHON_COMPRESS_STRINGS) == 2 /* compression: bz2 (2056 bytes) */
-const char* const cstring = "BZh91AY&SY\370\370\346\016\000\001j\377\377\377\177\377\377\377\373\277w\377\377\377\357\277\377\377\355@@@@@@@@@@@@@\000@\000`\007\237x\235z\321+\265\031\266\224\tU\236\001\216\360d%#P\000\001\217T\332G\251\266\230T\365=O\032\211\342#@4\332\203CF\231=@h\320\3656\240=#4\232l\240\224A\032\000\n6Bz\251\372ScR<\246\232\032z#CM\032\003A\240\000\320\3654\320\323'\244\006\200\000\"i\246\232I\000\000\000\0004\000\000\0002\000\000\320\000\006@\r\r\000\0035\"\021\245\032i\241\240\310\320\031\001\240\003CM\000\000\000\001\247\352\206\215\000\032\000h4\321\006\000\t\200\000\230&\000\000\000\000\t\200L\0040\000\004`\000\000$\210\t4G\244\3012\r\t\351&\236S\324\r4\000\006\200h\000\000\000\000\000\320\3650\202\2311\333\256\305\262\366\220r\362\362\362\263\240\200\177gP:\253\254\272\263\245Y;5*\343\220R\022\222\211U\231\231M4\327J\256\213n\232sJ\355)*\332\315\030\200@\220$\2041\214\006\000\206\r\003@\220Z\251T\252Z\026\225\271\332zI)+\264\355\326\003B\0306\010\032wI\301\022i\315\211**\200qH\321\004m\262\032\212\254\303\001 \204XfHb\016\207i\206\013\026\001\0305\225\312\345\",\246\315\245F\203B$\244\360\260\006\034'|\212$\017zE-T \220R\020Uy\031 Bt\234t\221\"L\330\246y-\016$*\240\315&a\255-T\2310&k+\346\260M^\325\200\262\267\351\302A\021-\034-l\2118V\n% ,D\352\300\251a\365\306\213\201\027\030\317\2665\373\310}\336\315\360\217g\323\021o\211^\357\257A\351F\236\316E\261\224\317\271\244\r h\221\271Y\242\213N\235\360\340-\266lN\2176\0345MZ\206\004\233\215&\212\207\311\034&\224\325\031'1c\242]>4\251-\362s%\250\304\345\031\265\377\356\353\347\335\311\324\263\246n\266\246\021\003\276\332\310\031\022\302\215\013A\242kt\225\010=\007r\217\0304S2\243\004\212\372},jAP\232\264\266Xm\ntj\274>I\022\326~m\216a\1772\033\37768+\005|0\244Za&\260\207r*\214\212\260\315W\203\265b\207\273\362\275>N\2552\020w\200\322'SG[\352\372y\035\236?\233e\230\"l\035\237\242\346\342Q\334+\354]wB\314\334s\315\305\357Y-\354\354WX'\240:\330\332U\271\300\323.Y\275\321V\235\257\356r:\270\315\221\331\263M\312\255\3149\302""\024\3048\261m-\013\204\\F\343Rzk\n\242,\243\317\265ptg5\370\032\266&*\3578\3563qY\032\023\244\351a-\261\021VY\010\250\177%\357\226X\235\177\335\000o\337<\235\313\032WJ\213\331+\227\230\022\2044\271\253\016\032X:\351\214\265\032\234\262XD\326\021\3735\271\335\\\247\033\326B\304\302v\032\013\2121\t\206\002N\375vx<\240\364\205\024\010\240j4\345\262\251\256\024$I\312\236\230e\307\362\207M0\302\332\234\313\222\256p\325y\342\020\344=\025l\006\330\035\201\251\326[}!\004gk_\352\331\323\210\202\372\327\237\\\010\013\326\354\340w\245\026\014\234\377^\355\354\301\031#s\n\331\205\022\271\267?\231\240\347\035\005\234\007\\\356C\221v\201\320\016\332S\211IF!W\225\\\234\2107\006\321\213\231\273\273\2509\256s3\024\274\260\027\345\0212\302\200\244\n\025\031\201LX\256RF\220`\274\203^\355\302K\024\352@\035B\242V\2256\207\246\365P\007\212\017e5\313j\217d\214AP\325\232\213\351\303>\2143S\271\226\316\213\365\257\246E\023\234\2479\310\234\001;\310\240\004\005\0258RB!\2326\325o2\353\344\266\255\024^\207\036\207\224T\243\200h\340\277H[;\332\247\nX*i\003\0134\212\\\205\nI\035\224J\310\032\220EQUB6\2544\351\3507\273\310\347\317r\253\346\351\313\222iy\276 \215=\355VE\337u\331\244\330\344\242k$\254\267&T\331\220\331\206\202ab\340\273\024\304\232\235\010wz\362\002I\0230\227\204h\322\361\355V'j\304j\331\226\351#++\311\242A\217\276r\225r@|7\242j%\314\244L\234MR\007%\326\342\003\021H#\356\002\264t\252\263\217e\\\301d\224\336\"\330\236-\022\233\276\364\020<\356\255\221\261\306a\201\262\241\334f\200\302\01450B\365g\000\211K\324\034\223\312\0018\376f<\324\244\231\220\323\270\253ed\331\003\202\371\342\210\270a\262\233\013R/\0070J\340rI\206l\364\200\326\220D\246\3311^0$\260\353Vx\222/\260V\016\017\235\354n-\207F<\356&ci\215\255\235\355\266\t\003\213}. \3438\303\204\343\031\3105\005Bq{\002\326F\360\334\031\356\r*w3\0322!\241[\013\021\310\257'DX=\374\373\350\252\210S\0364\2702\211\202\256N\032\335\270%\224\275\262\016u\252\212\352\340L\302}ls\322\3262(F*\212\342%\223\364P\320\370]\232\362\032\037^\247d""\306\027^\366\240\230A\332p;(\201\206\204^\301E\334\215\232\317po\242\010-\277\214\245\n\263\260\253\001\322\233\3620\"\222ppa\006]u\327me\335E}U\033`\264\r\274\335~\306\335\245\233h\310\2150'\201]\214\n\2333IC&BP[\006Y\0253\223cS\253dm\245\346\374HT\200\263Mi\321\270\037\032\223M3\023\255\204\352\254\374\032y\275\277)\312=\\\3722=\t\330\323\364\343\344\245n\032Y\306uYb\270$\361\322\301\0263e\330\375N\374p+\353\036\201\006\000\341\000\"\365a\253\010\204\276^\277\235\364\"v7\371\306\310\323\006\373'GE\340k\271P\242b\017n\246\230eW)Un\267\177Jd\266\023\031\254\373\363m\213\241&\3509\206=\001\231or\001h\276D+\3667\202\332\224\241=K\255\031\0373v\213\017\311\003\305B\373)\025\277\255L\327\024\275\003]\266\221\020)Z@\247s\253Q\023\371\237L\2739\331-\203\252)\311$\263v\344\255\271K(2\215@\216w\234\366\353\232\325\203\350\020\347\225!r\245\013\225d\252Q\255dIt_\223\"^\371\262T\014\005=* nR+SoNJ\2267\214\302\300I\240g=M\250\353\225tE\022\206\263>E\344\234\220,C\237\2620o\033\345\232\334 `\017\000\261\233\0217\320\254\350t \331\237\014'W\242~&\311\332\2149#\177\353v\002\030 \021\240Y\367\373+eV\344\363\007^\"\261\304\0041D1\362\337\312I\356\313UA\245>u~4\331\270\243\032\253\326&.,\224\361\260\375(\023\272{\017bs\025\341\207\205\204\245\002\362\363\024\345\341\372\361g\340\357\272Xg\3160\352p&q\235.\367Ji\030\314\014zl0\303\024\352\342\272\330c\315\320\304\336\317\234Sg1\371\25360\022\360\325v\265\264\221V\313+\254\252\243\206\260\244\302\247\360\2427\257\327\tf\337\332\326|e[\230\343\324\302\334\263p\231n\376\337\276Z\002_\007&m8V\321\203G\216s\310Rp!7\204GI\332S\224\237\206\016M\246\320\010Ct\241Z\247uF\235%1a\232\210\332\321\001Q\332\243A\254@\024\002Z8A\010\014H\321G\234\304\003Y\203A\3478Q\032\260i\212\030<UD\016a\255f\202,\017\361w$S\205\t\017\217\216`\340";
-    PyObject *data = __Pyx_DecompressString(cstring, 2056, 2);
+    const struct { const unsigned int length: 9; } index[] = {{1},{27},{27},{179},{98},{1},{8},{7},{6},{2},{9},{14},{5},{11},{29},{31},{34},{37},{36},{27},{30},{34},{25},{24},{25},{13},{20},{20},{3},{12},{6},{18},{5},{19},{22},{18},{5},{14},{7},{9},{9},{8},{6},{6},{8},{7},{25},{28},{24},{27},{15},{18},{22},{35},{25},{12},{8},{12},{13},{5},{16},{8},{10},{10},{13},{9},{12},{8},{9},{25},{8},{16},{16},{12},{9},{6},{12},{12},{10},{3},{11},{14},{12},{10},{17},{13},{4},{7},{12},{10},{12},{19},{13},{8},{13},{5},{6},{4},{4},{10},{15},{14},{5},{6},{2},{52},{2},{29},{29},{29},{29},{262},{106},{178},{34},{34},{30},{297},{33},{33},{28},{258},{366},{9},{167},{14},{9},{2}};
+    #if (CYTHON_COMPRESS_STRINGS) == 2 /* compression: bz2 (2087 bytes) */
+const char* const cstring = "BZh91AY&SYw\0378d\000\001`\177\377\377\177\377\377\377\373\277w\377\377\377\357\377\377\377\355@@@@@@@@@@@@@\000@\000`\007\237=\035z\321K\214f\331(%U\340\014\267\203M\024H\200h\320i\232\236ji=L\314\212z'\201F\365M2z\201\223\324z\231\032\007\246\211\240mC\010\033I\350M\033P4 \230\215\004\364\21552\237\252zF\215\rM\030h#M\r\0004\001\220\014\217C(\364\320\206\215\2422\030!\024\364\323MI\250\032\001\220\006\200\003\004\000\320\000\000\000\006\206\206\200\00044\000\r4)=F\242`i20\230&&\231\r\032\030C\001\030L\021\204a4a4i\223\004`\000\0104\304\304\304\300L\004\300\000\000\000&\000\000\230\000\004\300\000\000\000M\002D\200\204&LI\232\214\324\311\242\232y514m \001\352\000a2\032d\036\247\250\003\010\000\036\223\320\232[n\314\270\031\225?\022\017\027\213\305\342p\004\203\335?\350x\303\336^:\332\355C\265\344D\221\004\245\360|\024\2451\304\306\230*\3746\306\344\214C\341`\301\215\203`1\242\205\t(H$\024%\001(\tBD\230\010\010\th\004\247\222\224L\030i\026\030\266\320\306\233\023chZ\005\016$\2051\201K@@\250n\222:\315\016\312\355\215*\004\246\306\322\031(\010uY\360\014\340hZV\2253KUoz\235\207I\322nT\211\340\003!S14P)B\260\252$A\306\034\343\21248@\237\022\211.\r\"\241M\241\202y\326\361TE\3143\007\221\221j\225\002\246\2031\240*\261\351\316a|\326;$\2213(\014\253\242Wp4@\200\241\023\255'\335\035rd^\310\3033\355\223\021\322\037w\263<%W\364\264S\204\327\273\216\022\221\005\2176\234<G'.\364\267\201\272\207-\352\213-\346\376p\3502\312\254\263\243%&u\372\344\023\265\024'lM\217\231\320\200\320\347\236\272ML3\372\260(Z\375xT/\036\210\272\257?3k\014\177\353\374\0073\351b$|\316\256\320\332\226\244n[\225\0271:\312\262dAY\303\232l\253\t\226\373\337sZ\240\\*\255\312e]Y\005\373\370\037G\273K:\343\035\251\301\253\355G?\352\331%\200\263\006\24025Uj\0178W\032.\306\356D\242\321z#\326\360\324\360~M\030\207/\216\240\251\343\327\354\376\233\375\316\347c\"^E\214n~x\225x\217|*\275\273\245\353\331wr\2126>\333!jm\352\324\013\354\223\341-#\203\247\311\221\315\345\235\257\244\344{^\376b\334\036\341\304O\251\324""\313\343\027\322\310;!md#_T\334\273)v\316Wj\357\274\256\246\324\374\334\227G~\265?\201\323]\271\031\376/\271\254\273b\311\210D\242,\026\312\231\204\334I\005\276j[\303c'\235\253\257\272\342W\360q\177wvD\005B\024L&e\3242\202\200a\tj\200V\3269C%j9KW\027\025\307\234\370{\225M!\343\224\335\330\321B1\005\323\306\356\004\000\232\021*\364\225e\211\226\r\004`\350\001\201v\260\202\013\205\000\2624\214ryW\242$\221!P\231A\334\3144n\250#\234*\n1X$\234\001\353!\203\267\274\271\275\333\372\002\n\3373\317\343\313\375LAu\246\276\370\022\027\341\362\344|\322\313?\027\311\365\264\364q\204\350\215\372\227$\254\226\227\277\376U\007l\357-\300B\356y^R\363\003\274\036mdZv\230^)xU\241'\330\352\232\372y\271\273!\344A\330\352\026\304\316f\304K\014\261\002\220\004L\223(\245\267\236\017\230\234\200\367\343\207\301\220(6\203\016\001q2*\305J\213\013V\247\000\300`1)\256\030\2141\036\204\014\206\213\243m9t\263e\272\235L2f\3168\215c\023\273;\273\027RK\317,D\220I\212\010\241\201\005P\320\242\010\322\205:h2\273\2321\227wtRj\223\3169\347\315ie\\zk+`+o\003St-\245\031\330|\326F\010\341\240\201\031\2033\002e\033\263\347\350+}\200\347\321#6O\361\303\001\235\203L\020\013\233\361\324z\3210C6\035\254%\212H\211\363\343\310Gq\003\270\032\210\301K}\\\232\010\235\273\322\371|\024\002\211\0255\030\210\335\276'\346-p\3571\337\016-4G\023X\256\256\004SfcC\232\271K\366\271-4\266G\000\271\246f\322\203\310\236\275\300Be\3256\000\351\220\211\305\244\021\356AK\330ME\202\223m\314\306\242hQ\000\215\257;\340\310 3\006\017\215\021\003r\030\203\207\003D\262\275d\023-\225\210)\024\220V\177\324\342\344\265\250\332\035u\027|m> \350\314w\304i\030\372\207\n\351F!\330\022\322\020Q1\275\326\220\362$\212U\355\327\211\235%\253E\353\255#3\013\312\0027F\017\267\303\010\331\272\004\331\312\316\267\037G+\n\004\013\224]\265\334;\201\316w\023\202N\302\261'\200d\321\327\037G&\220\336\253\245\263v\3249_\003\004wV*\0218)N}\261\266\332_S\257\251``\324\006x,)Zn,U1O\013\\\214\215v8N\202\215T[\nH\215t\300\314\032\303M\376\023\0033\035n\\a\330\331^""\205\340\210%k\024@\254\002\035dy3\003U\211\306\002\234A<4F\220\347D\220e\233ak\027p\306\334\027\001\254\364\001\257\240\005\201\225\311)JXoY*i\032`\035\001R\034\006[\242\300\374\304lG4\212\347\\\373\000\271\307T\224\266\355)%\302qP\271\310U\2350\262\241\316\266\rf\220\250\2009\347\304=\251\000\311\214SE\024!l\345\211\232n\250{\377\277\266\263\0145\261\233[\202\360\241{^\017\334\030B\014\311\372\251\370L\230/\002\3553\350$\364\263\333\\\255C:\332\251~K\305\024\022H<\3614j\225Qp\245\275\235\310\252\013\236\324M\376\327\307\010\232\237+\026#\204\354\270\245\t\214>\032\332a\225\\P\252\325k\331\221z\302C5\254\337\260\322\006N\213\2141g\014\317\257\013\343a%\017II\215\367\027B\354:\240\352\256\327U\006\272N\310a\371\000hN\3772\240\311\340j\002\021?Hn7\354\222\024,\364\0077.\21173\350#\225\234\250\327\226\205\nT\257F\375\267\177\205\300\252=\340\304s\324;\360\210L0\211d\024\320\n\002\272\350\267\223O%\013|\332\245=\361\257J\237\023\220\335u\002\"\216\266B\017\354\361G\202\305*5\270\314\302\2602S\302cP\\\215\260\274wf!\234\273\r)\007\0162\231\202N\350\211\302.\206i{%\"\n\342o\2139\360\227H\\h4_\271.\010\023[\034Z\026F\364\340\341\233\265\272\372@\n\003w\273\005\225]\271B\253\351\004\330\022\014\271\202NT\254\243*Y$z\307R\036n\036& \216\230}\210\325\236W\251O\221\027L\214\344\217\334\217\031\345\216\"\305\212\250B\343\346\021\201\350\324~\n\267_z\017\233\320+\302z\327^ZA\023 \273\264\203&K\200\352\334z\2502\362\271h\\\013\301\214y\007|\320[q\024\200\336\342\340\235\201\346u\327UB\252\207.\260)\027|\365\267\230D\275\235\220'\243[y\2525\005\367O\007\007\311\321\027\361\260)\214\372\357b\356\357Q\257\210\360\034\227$+\007\232\373\t\203\241\307\035\ry\021\204\253\022\231\tC\245iH\321((\333\200\254\272\366/u\020\254\353jT\235(\246l`\213Gp\214\006-\005\tH\330\202\020\030\201\2403A\026@*X\030:F\304\221?\224\004b\331\203\205^@\332\315J4\021X\177\213\271\"\234(H;\217\2342\000";
+    PyObject *data = __Pyx_DecompressString(cstring, 2087, 2);
     if (unlikely(!data)) __PYX_ERR(0, 1, __pyx_L1_error)
     const char* const bytes = __Pyx_PyBytes_AsString(data);
     #if !CYTHON_ASSUME_SAFE_MACROS
     if (likely(bytes)); else { Py_DECREF(data); __PYX_ERR(0, 1, __pyx_L1_error) }
     #endif
-    #elif (CYTHON_COMPRESS_STRINGS) != 0 /* compression: zlib (1960 bytes) */
-const char* const cstring = "x\332\215UKS\333X\026\306\003I\031\232\0168\0300\235\236n\231$\320\217\032\272\234@Wg\252\037\343\360H\350N\000\203\233&5\323\271u-]\260&\262d\353\001\24625\225\245\227Z\336\245\226Zj\251\245\227^j\251\245\177\002?a\316\2712n;@\246]e\351J\367\334\363\370\316w>\255\354\030:=\241\317h\215}\243\213%\321\214\023U^\2517\225\033\267\316\233;\206\315$\273Jmi\375\334\256\032\272\244Z\222\3024\265\302Lj3\355\\\262lS\225mf\242\221.\355m\356\375m\365\273U\211\352\212d\262\1773\331\266$\313\251\310\032\265,fI\306\261TqT\315Vu\311>\2573kE\332>\226\316\rG\322\031S$\333\220\352`7x\300\2562]\262\230\215\013i\231\352\272aS[5t\002\307U\375dYRT\023\202\250\247\014OoQ\315b+{\252\374F\203M\214\006\3319\262-\325X\r\022F\317rU\242pg\332\361J\305\240\246\"\325\034\313\226*Lb\315\272\246\312\252\r%\231\254\3410\313\206\214\316T\273*\375\203:\266A\352\350\225}Q6\035\366\345OTQ\010\244\302\024\325\242\025\2151\035\257'\262j%+\345{DE?\261\014\307\224\331\217O_\024\327\177I0~\201\270\016,W\0101\231\342\310\214\310\002^B\2067\241t\013*\276~[\2562\371\r9Su\"\033\272\242\n\\\352\347\203\026'\314&T\323\310)\325T\005J`\020\250f\2342\353f#[\325n\260\021x\021\221\316\373[\262c\232L\267I]\243\347\314\274i\327vLH\260J\255\241\363\030\253\227\332p\362bC\2443\374\336\202\256\310\325^\254\275\355\315\365MR\336%/w\0177\311\336+\262\263\271\375\354\371\323\335}\262\273\265u\260Y> d\357\274\t\377\r`)\331aM{\237\035\357on\224\267_\364\217\321z\235\351\n\265\316uY5Vd\3034\034`(\263D\301\327\200|=\3562p\216\021xi\233Tf\025*\277\221\r\3150\207\241!\004\206\007.j\215\351\226\212\247\005}\r\375\3304j\244nX\342\336\020W0>vt\231\300\017Q$76\363\306\rB\325\233\232{\323\373\336\221\201^_\355\357\365=\025\371]M\001\000\351\0279`\222\364\325\260\004z\226(.!:\374T]\205rU\314\345\0226x\350\367E\265Y\315\" \020C\321I\215B(\370\325\014\305\321\360\271\317\253!\206\365Y5H/Bt\020?\2702\365\244Z1Lk`e\202\024\230\350[x\320\331\0319A[\035\2504\020\277\247\233@\010(C\267\255A\035\355\2056,\261\260z%U4\240Ho-\230\322[\203\036\324""\215:\201\254\232\244\007\t.OmT\026,\260\341P-I\267/\036\344\212\214\364_\260&\252\210v,\264\004\337\343-9\016+\205\035SG\263\007\204\206\\#:C\023G\210\r\210\220\341\016\342\203\205*i\340\265\001\177\363\017l\034]1\0068!\036\373\214\003:8\311\305\362\n\321\330b\264\270\026\255mw2qz\262\265\303\363p\213&?\345\3058}\217\027x\221\227\275\214x\365\031\247=\013\267\370\256\330\355\357\346\374\\\220\013\347\302\206\260\372+/\275\0338z\315f7\375\t\317\303\366\206\227\366\323A:\274\035\322\301\223\377oS\370\276\230\033\031\237\213f\277\366\013~\321/C\204L\270\324N\265\263\355R\373\270S\354\224\243\322~\264\177\024\035\275\212^\375\036\375\376\032\363\336tg]\3526\342\311\214;\317\377\302\227\274\224\227\365\016\301\301Fp;\240A\243\233\236\216\246\357{\005\257\350\225!\351Y|\027\246\302lX\ni\330h\217\265\213\340\234\266\033C\276\356\272\313\374\356%J^\336[\365\032~\312\317\372\245\367\274\315\203\247L\230\017W\301S\252\235i?@O\235T\202\371\237\362\346\216\363yo\302\317#\n\013<s112\376I\264\3608(\004\305\240\034\346\300g\276]ho\240\317N\276\263\332iD{%\201\302at\370[w0\312\214[p\213n\231g\000\350U\336\000\0342\361\344\264\233\002X\306\242O\277\305\272\343\364T\253\201\221>j\255\266\336\362ed\200\344\215b9\010\377\023\250\252\024\247\005GD\273.n\217\214K\334\202\224\013\335\364\235\026\305 k|\014\n)!\336Y\267\344*\374!\267\301\301\206\177\013\032\226\t\362\030\363\226\373+\036\217\247\357\361\307\274\342MB3\367\375F\220\212\357}\366\241\307\351\031\367;8P\363W\375fp\006\014\311\336K*\211\263\013\200\022\024\324\205\002,7\357>\341\353\274_\310\177\340\014\305\260w8\355&\267\336\323u\026\303\206=\213h\352s,\023\366\242\351E/\337\355\335\337\025/\356\214\214/\360T\234\316\341%\357\211\006\315Gs_\372\031?\177\231\247h~6\241Qg\014xZ\352\320N\003\035\177\357Z\300ll\315\225VmrQM\003\300\002\314?n\225ZU\027f\002\032&\202!\336\314}\004{@\237\207n\003\302Of\335\"\302\236\001\000\nW\027\335A\340s|\224?\342\377\202,\027\001\336\322\237y\221\205\224f9\345\2158;\357\236\211En\001\327\020""\233\317\000\340\247@y\254\372\261/\007s\201\035\026\302bx\320\036m\027\342\334\347\320\245[\300\235\034\3143\257z4\316I\320\265\034\240\004>\260\314\377\362\003/\205`O\266~\006\014\232`?\346=\027C>\007\3638\026n!\317\023\203_ bZ\214\361\221_\362\225`I\214\353!\214A\021\r\220w\304{\031\314\004\317p\356\220\323M\314\021\025h\316U\301\363\270\277\020\344\203'\3416\266Dt\255\0134\237\200B\327}3\000\316?\360~\366+\301h\360((]\244G\306\247Z\264\345\000\266H\361\241\305\037M;\205\272\336\370w\375B<\237\367\356zp\313u\2411y\367\007\250\023\027\321\314\222W\361o\373\324\177\033.&\325`\303\266\3040\236z%O\361\227\202T\220\351NNESK\036\005\t\030\363\237\007\033\242\2662\216y<\235\2113\313=i8\202\341\317\204\017BE8\232\006\215\356Ng\222\210k<\2118\264\350&\223\335\223\217op\234\202lp\364\236\310\331\235\202`\247\022\355\037\304i\310bH\246p\330\314a\201\202r@@?j\375\210\343\027O\316\271\264\233\356\221\243\233\234\377\312\317#\204\313\036\354\364\276/\300\303\t.\312\311\002\013\274\031\357\251w,(\366\301\307.L\377\337\371o\240D\331e\317\306\017\000\242\377\222\203\210\345\023%\273t\212\034\223\241\t\337\"\033?\374\210N\177@\201\213\263K\336\t\326\323\205O\316A\242\215S-\323\235\211\262X\006\230\375\344\335\367\366=\313\177\020\255<\027\n\236\275\237\340\200\0257\205\n]\252\347T\313v\013\375\317\326\274k\203Rf\337\223\005\007\206\003\301\267\221\266\000\276\002\352-\300G\310w\371Z\222B\242\331\257\305\367\344\265\320\374R2\317\313\\\224\3741\377\025\305\027\207\363\2457\013\004\033\205\351\003]\314{\331\350!~\332a\340\376\351\247pJ\337z\313~&\031@\005\227\200\305@\276\321\214`\326\273T<6\321\372\032t\273\361?\334\234\337#";
-    PyObject *data = __Pyx_DecompressString(cstring, 1960, 1);
+    #elif (CYTHON_COMPRESS_STRINGS) != 0 /* compression: zlib (1971 bytes) */
+const char* const cstring = "x\332\215UKS\333X\026\306\023:e\030:\340 \300t\372!\023\002\375\250\241\313\ttu\246\272\247\307\t\220\320\035\036\006\207&5\323\334\271\226\256\261&\262d\353\001vej*K/\265\274K-\265\324\322K/\275\324\322K\377\004~B\237se\3346\201\232q\225\245+\335s\317\343;\337\371\264\266g\032\364\214\276\240\025\366\255!\226D7\3174e\255ZWo\335j\324\367L\207\311N\231:\362\363\206S6\rY\263e\225\351Z\221Y\324azC\266\035KS\034f\241\221!\037l\035\374e\375\373u\231\032\252l\261\1773\305\261e\333-*:\265mf\313fI.\272\232\356h\206\3544\252\314^\223wJr\303te\2031UvL\271\nv\303\007\23423d\2339\270\220W\251a\230\016u4\323 p\\3\316VeU\263 \210v\316\360\3646\325m\266v\240)ou\330\304h\220\235\2538r\205U a\364\254\224e\nw\246\227\326\212&\265T\271\342\332\216\\d2\253WuM\321\034(\311b5\227\331\016dt\2419e\371\357\324uLRE\257\354\313\202\345\262\257~\242\252J \025\246j6-\352\214\031x=S4;^\251? *\306\231m\272\226\302\376\366\354U\356\371/1\306\257\020\327\241\345\032!\026S]\205\021E\300K\310\350&\224nC\3057o+e\246\274%\027\232A\024\323P5\201K\2651lq\306\034Bu\235\234S]S\241\004\006\201*\3469\263o7r4\375\026\033\201\027\021\351\\\337R\\\313b\206C\252:m0\353\266]\307\265 \3012\265G\316c\254~j\243\311\213\r\221\316\350{\033\272\242\224\373\261\016v\266\236o\221\302>\331\335?\336\"\007o\310\336\326\316\213\227\317\366\017\311\376\366\366\321V\341\210\220\203F\035\376\233\300R\262\307\352\316!+\035nm\026v^\r\216\321j\225\031*\265\033\206\242\231k\212i\231.0\224\331\242\340\033@\276\031w\0058\307\010\274t,\252\260\"U\336*\246nZ\243\320\020\002\303\003\027\255\302\014[\303\323\202\276\246Q\262\314\n\251\232\266\270\327\304\025\214K\256\241\020\370!\212\344\326f\336\272A\250v[so{\337?2\324\353\017\373{sOE~\037\246\000\200\014\212\0342\211\373j\332\002=[\024\027\023\035~\232\241A\271\032\346r\005\033<\014\372\2429\254b\023\020\210\221\350\244B!\024\374*\246\352\352\370<\340\325\010\303\006\254\032\246\027!\006\210\037\\\231vV.\232\226=\264\262@\n,\364-<\030\354\202\234\241\255\001T\032\212\337\327M \004\224a""8\366\260\216\366C\233\266X\330\375\222\212:P\244\277\026L\351\257A\017\252f\225@Vu\322\207\004\227\347\016*\013\026Xs\251\036\247;\020\017\362\201\214\014^\260:\252\210^\022Z\202\357\361\026\037\207\225\312J\324\325\235!\241!7\210\316\310\304\021\342\000\"d\264\203\370`\243J\232x\255\301\337\372\003\033\327P\315!N\210\307\001\343\200\016n|\261\375l4\276\024-mD\033;\235T79\325\334\343\031\270ES\237\362\\7\371\200gy\216\027\374\224x\3659\247}\013/\367>\327\033\354\246\203t\230n\315\267j\302\3523\236\177?t\364\206\315^\362\023\236\201\355M?\031$\303d\353n\213\016\237\374_\233\302\367\345\374\330\304|4\367M\220\rrA\001\"\244Z+\355D[j\347\333\245N\256S\210\362\207\321\341It\362&z\363[\364\333)\346\275\345\315y\324\253u\247R\336\002\377\023_\361\023\276\344\037\203\203\315\360nH\303Z/9\023\315<\364\263~\316/@\322s\370\256\225hI\255|\213\266j\355\361v\016\234\323vm\304\327}o\225\337\277B\311\317\370\353~-H\004R\220\277\346m\001<\245Z\231\326:xJ\264S\355e\364\324I\304\230\377_\336\274\t\276\340O\006\031Da\221\247.'\307&>\211\026\237\204\3310\027\026Zi\360\231ig\333\233\350\263\223\351\254wj\321A^\240p\034\035\377\332\033\2162\353e\275\234W\340)\000z\235\327\000\207Twj\306K\000,\343\321\247\337a\335\335\344t\263\206\221\376\334\\o\276\343\253\310\000\331\277\203\345 \374O\241\252|7)8\"\332uywlB\3466\244\234\355%\3575)\006\331\340\343PH\036\361\226\274\274\247\362G\334\021\016 \326G\336k<\326\235y\300\237\360\242?\005M<\014ja\242\373\340\363\221\307\231Y\357{\260\250\004\353A=\274\000*H\017\342\224\273\322\"\300\001\231\367 S\333\313xO\371s>\310\370?p\206b\234{\234\366\342[\377\351&\213Q\303\276E4\375\005\326\003{\321\314\222\237\351\365\357\357s\227\367\306&\026y\242\233L\343%\343\213N,D\363_\005\251 s\225\247\350\262\024\363\2453\016\204\314wh\247\206\216\177\360l\2400\366\340\203\236lqQM\r\320\001p?n\346\233e\017\310\017\235\021\301\020X\346=\206=\340\311#\257\006\341\247$/\207\370\246\000\200\354`\321\033\0068\315\357\360\307\374\237\220\334\022\240\232\277\341\205\004""\201\3478\345\265\256\264\340]\210Ez\021\327\020\201\317\002\254\347\300`\254\355I\240\204\251n\372\013\300\377#h\177\032F\222\227}\332M\313\320\2174\324\017\347\260\200\377\362#?\2010N5\177\206\352\352`?\356\277\024s:\017#5\336\332F\252\306\006\277@\224\244\230\304\223 \037\250\341\212\230\270c`r\016\r\220:\304\337\rg\303\0278:H\313:\346\205\"2\357i\340y\"X\0143\341\323\326\016\202-\372\321\003\246NBq\317\003\013\322M.\373?\007\305\360N\3708\314_&\307&\246\233\264\351\002j\310\322\221\305\037\3558\207\272\336\006\367\203lw!\343\337\367\341\226\356\001\344\031\357G\250\023\027\321\354\212_\014\356\0064x\327Z\212\253\301Vl\213y:\367\363\276\032\254\204\2110\325\233\232\216\246W|\nS<\036\274\0147Em\005\234\324\356L\252\233Z\355O\367\t\314o\252\265\334R\205\243\031\220\331\336L*\216\270\301\343\210#\213^<\234}\005\370\026\007%\224\302\223k:\345t\262\202wjtx\324MB\026#|\3031\262\2064\006P\223\274]x\261\354WPRz@\325\247\336\013`\320\324\274\007G\373\314\350\241\243n\362\353 \203X\256\n\247\361\267\00287\311E]\022\320\301\237\365\237\371%\301\257\321\307\036L\364_\371\257\240\002\322\252\357\240zcZ\273\034\024(\023\313\320\225\027d\227\002\360\177\207\334\273\366\210^~D9\352J+\376\031\020\007\206\3673d\035\272\230nZ\336l$a\242`\366\223\377\320?\364\355`9Z{)\364Vz\010%[\2025\353a\243?\246\032\312\345Qt\364:z}\032\235\222\210\374\013K\256\013\245\271\222\302\351\246\343e\007\337\240\005\317\001\331\223\256\215\276\333\312\21168H`\360\253\202\024\2136 \327\367\371F\234a,\300\247\342\343p*\004<\037\017\357*\027\020|\314_\243\222\342h\356\372s@\265;0{\240}\031_\212\036\341w\032F\357\037A\002g\364\235\277\032\244\342QTq\tP\r\345\033\315\n\216\275Ot\307'\233\337\200\010\327~\007nW\314\273";
+    PyObject *data = __Pyx_DecompressString(cstring, 1971, 1);
     if (unlikely(!data)) __PYX_ERR(0, 1, __pyx_L1_error)
     const char* const bytes = __Pyx_PyBytes_AsString(data);
     #if !CYTHON_ASSUME_SAFE_MACROS
     if (likely(bytes)); else { Py_DECREF(data); __PYX_ERR(0, 1, __pyx_L1_error) }
     #endif
-    #else /* compression: none (3782 bytes) */
-const char* const bytes = ".NonagaGame/nonaga_logic.pxdNonagaGame/nonaga_logic.pyxNote that Cython is deliberately stricter than PEP-484 and rejects subclasses of builtin types. If you need to pass subclasses then set the 'annotation_typing' directive to False.Pickling of struct members such as self.board must be explicitly requested with @auto_pickle(True)?add_notedisableenablegcisenabled<stringsource>BLACKNonagaLogicNonagaLogic.__reduce_cython__NonagaLogic.__setstate_cython__NonagaLogic.check_win_condition_pyNonagaLogic.get_all_valid_piece_movesNonagaLogic.get_all_valid_tile_movesNonagaLogic.get_board_stateNonagaLogic.get_current_playerNonagaLogic.get_current_turn_phaseNonagaLogic.move_piece_pyNonagaLogic.move_tile_pyNonagaLogic.switch_playerPIECE_TO_MOVE_PY_NEIGHBOR_OFFSETS__Pyx_PyDict_NextRefREDTILE_TO_MOVEappendasyncio.coroutinesboardcheck_win_conditioncheck_win_condition_pycline_in_tracebackcolorcurrent_player__del__dimensiondirectionfrom_posfrom_qfrom_r__func____get__get_all_valid_piece_movesget_all_valid_piece_moves_aiget_all_valid_tile_movesget_all_valid_tile_moves_aiget_board_stateget_current_playerget_current_turn_phase_get_valid_piece_moves_in_direction_get_valid_tile_positions__getstate____init__is_ai_player_is_coroutineitems_last_turn_phase__main____module__move_piecemove_piece_pymove_tilemove_tile_py__name__neighbors_neighbors_restrain_piecenew_game_next_turn_phasenonaga_constantsnonaga_logicpiece_pospiecesplayer_blackplayer_colorplayer_redpop__pyx_state__pyx_vtable____qualname____reduce____reduce_cython____reduce_ex__self__set____set_name__setdefault__setstate____setstate_cython__switch_player__test__tile_positiontilesto_posto_qto_rturn_phaseundo_piece_moveundo_tile_movevaluevalues\2401\320\004\"\320\"5\3205I\310\021\330\010\014\210N\230!\330\010\014\320\014\034\230A\330\010\033\2301\230A\230T\240\021\330\010\014\320\014\036\230a\330\010\014\210N\230!\220A\200A\340\010\033\2301\230A\230T\240\030\250\030\260\030\270\026\270q\330\010\014\320\014\035\230Q\200A\330\010\033\2301""\230A\230T\240\030\250\030\260\030\270\026\270q\330\010\014\320\014\035\230Q\200A\340\010\032\230!\2301\230D\240\010\250\010\260\010\270\006\270a\330\010\014\320\014\035\230Q\200A\330\010\032\230!\2301\230D\240\010\250\010\260\010\270\006\270a\330\010\014\320\014\035\230Q\200A\330\010\032\230!\330\010\033\2301\360\026\000\t\026\320\025+\2501\250A\250T\260\030\270\021\270&\300\001\300\024\300Q\300f\310A\310T\320QR\320RX\320XY\320Y]\320]^\330\010\014\210E\220\025\220a\220q\330\014\021\220\027\230\002\230&\240\001\240\024\240V\2501\250D\260\006\260a\260q\340\010\020\320\020#\2401\240A\240T\250\030\260\025\260a\260q\270\001\270\024\270Q\270a\270q\300\004\300A\300Q\300a\300q\330\010\014\210E\220\025\220a\220q\330\014\022\220'\230\022\2301\230A\230T\240\021\240!\2404\240q\250\001\250\024\250Q\340\010\020\320\020#\2401\240A\240T\250\030\260\027\270\001\270\021\270!\2704\270q\300\001\300\021\300$\300a\300q\310\001\310\021\330\010\014\210E\220\025\220a\220q\330\014\022\220'\230\022\2301\230A\230T\240\021\240!\2404\240q\250\001\250\024\250Q\340\010\020\220\t\230\027\240\n\250!\200A\330\010\031\230\021\360\n\000\t\032\320\0313\2601\260A\260T\270\030\300\021\300!\3001\300D\310\001\310\021\310!\3104\310q\320PQ\320QR\320RV\320VW\340\010\014\210E\220\025\220a\220q\330\014\023\2201\220A\220T\230\021\230!\2304\230q\240\001\240\021\330\014\020\220\001\220\027\230\004\320\0346\260a\260q\330\010\017\210q\200A\330\010\013\2104\210{\230'\240\021\330\010 \240\003\2401\240A\330\010\033\2309\240A\240Q\330\010\034\230A\330\010\032\230!\2301\360\006\000\t \230s\240!\2401\340\010\016\210a\330\014\023\2205\230\004\230A\230Q\330\014\021\220\024\220Q\220d\230%\230t\2401\240D\250\005\250T\260\021\260!\330\014\020\220\005\220U\230!\2301\330\020\033\2303\230b\240\014\250A\250R\250q\260\001\330\033\036\230b\240\014\250A\250R\250q\260\001\330\033\036\230b\240\014\250A\250R\250q\260\001\330\020\023\2208\2303\230m\2504\250x\260w\270a\330\024\033\2304\230q\240\001\330\024\031\230\027\240\001\240\021\340""\010\017\210s\220!\2209\230C\230q\200A\330\010\013\2104\210|\2303\230a\330\014\020\220\016\230a\340\014\020\220\016\230a\330\014\020\220\016\230a\200A\330\010\013\2104\210|\2303\230a\330\014\020\220\016\230a\330\014\020\220\016\230a\340\014\020\220\016\230a\200A\330\010\013\2104\320\017\037\230s\240!\330\014\020\320\020\"\240!\340\014\020\320\020\"\240!\200A\360\016\000\t\031\230\001\330\010\030\230\001\330\010!\240\021\360\n\000\t\027\320\026)\250\021\250!\2504\250x\260w\270a\270q\300\001\300\024\300Q\300a\300q\310\004\310A\310Q\310a\310q\330\010\013\210<\220s\230!\330\014\023\2201\340\010\014\210E\220\025\220a\220q\330\014\023\2201\220E\230\021\340\010\017\210q\220\005\220Q\330\010\r\210Q\210h\220a\330\010\020\220\001\330\010\030\230\001\340\010\016\210e\2202\220Q\330\014\022\220%\220q\230\001\330\014\024\220A\330\014\021\220\021\220!\2201\330\014\021\220\021\220!\2201\330\014\021\220\021\220!\2201\340\014\020\220\005\220U\230!\2301\330\020\030\230\003\2302\230\\\250\021\250\"\250A\250Q\330\020\030\230\003\2302\230\\\250\021\250\"\250A\250Q\330\020\030\230\003\2302\230\\\250\021\250\"\250A\250Q\330\020\024\220E\230\025\230a\230q\330\024\027\220w\230a\230q\330\030\031\330\024\027\220q\230\001\230\023\230C\230v\240T\250\021\250!\2503\250c\260\026\260t\2701\270A\270S\300\003\3001\330\030\037\230q\240\005\240Q\330\030\035\230Q\230h\240a\330\030 \240\001\330\030)\250\021\330\030\031\340\010\017\210~\230S\240\001\200A\330\010\014\210J\220a\220x\230q\240\004\240H\250A\250T\260\026\260q\270\004\270F\300!\3001\200A\330\010\014\210K\220q\230\010\240\001\240\024\240X\250Q\250d\260&\270\001\270\024\270V\3001\300A\200A\330\010\021\220\024\220_\240M\260\023\260G\2704\270q\330\010\017\210x\220q\230\001\200A\340\010\026\220i\230q\240\t\250\031\260!\2609\270I\300Q\300a\330\010!\240\021\340\010 \240\n\250\"\250C\250r\260\021\330\010$\240J\250b\260\003\2602\260Q\360\010\000\t\017\210a\210u\220A\330\010\016\210a\210u\220A\330\010\016\210a\210u\220A\340\010\014\210E\220\025\220a\220v""\230Q\230k\250\022\2501\330\027!\240\022\2401\330\027\030\340\014\022\220!\220=\240\001\330\014\022\220!\320\023&\240b\250\006\250a\250{\270\"\270F\300!\3001\330\014\024\220F\230!\2304\230v\240Q\240d\250&\260\001\260\021\340\014\017\320\017&\240a\240q\250\004\250H\260D\270\001\270\024\270T\300\021\300!\330\020\021\330\021'\240q\250\001\250\024\250X\260T\270\021\270$\270d\300!\3001\330\020\036\230a\340\020\021\340\014\022\220!\2205\230\001\330\014\022\220!\2205\230\001\330\014\022\220!\2205\230\001\340\010\017\210q\200A\360\n\000\t\032\320\031/\250q\260\001\260\024\260X\270Q\270a\270q\300\004\300A\300Q\300a\300t\3101\310A\310Q\310d\320RS\330\010&\240a\330\010\014\210E\220\025\220a\220q\330\014\033\2304\230r\240\021\240!\2404\240q\250\001\250\024\250Q\250a\250q\340\010\013\210>\230\027\240\001\330\014\026\220a\340\010\027\220w\230a\230q\340\010&\240a\330\010*\250!\360\010\000\t'\240a\340\010\014\320\014\034\230A\330\014\020\220\n\230!\330\020\021\330\024 \240\001\240\023\240B\240f\250A\250Q\330\024 \240\001\240\023\240B\240f\250A\250Q\330\024 \240\001\240\023\240B\240f\250A\250Q\340\020\023\220:\230W\240A\330\024'\240t\2501\250A\340\010\014\210M\230\021\330\014!\240\021\330\014\020\220\n\230!\330\020\021\330\024\035\230Q\230c\240\022\2406\250\021\250!\330\024\035\230Q\230c\240\022\2406\250\021\250!\330\024\035\230Q\230c\240\022\2406\250\021\250!\340\020\023\220=\240\003\2401\330\024&\240g\250Q\250a\340\014\035\230S\240\001\240\021\330\014\017\210r\220\023\320\024&\240a\330\020\023\220?\240#\240R\240s\250$\320.H\310\001\310\021\330\024#\2404\240q\250\001\340\010\027\220x\230q\240\001\330\010\017\210q\200A\330\010\017\210t\2201\200A\330\010\032\230!\330\010\027\220t\2301\360\024\000\t\027\320\026)\250\021\250!\2504\250x\260u\270A\270Q\270a\270t\3001\300A\300Q\300d\310!\3101\310A\310Q\330\010\014\210O\2305\240\001\240\021\330\014\023\2201\220A\220^\2401\240A\240^\2601\260A\260Q\330\014\021\220\021\220'\230\021\330\014\020\220\r\230U\240!\2401\330\020\024\220M\240\025""\240b\250\003\2503\250a\330\024!\240\024\320%I\310\021\330\030\035\230[\250\001\330\024\027\220{\240'\250\021\330\030\035\230Q\230d\240'\250\021\250!\330\010\017\210q\200A\330\010\017\210t\320\023'\240q\250\001\200\001\330\004\n\210+\220Q\220q";
+    #else /* compression: none (3731 bytes) */
+const char* const bytes = ".NonagaGame/nonaga_logic.pxdNonagaGame/nonaga_logic.pyxNote that Cython is deliberately stricter than PEP-484 and rejects subclasses of builtin types. If you need to pass subclasses then set the 'annotation_typing' directive to False.Pickling of struct members such as self.board must be explicitly requested with @auto_pickle(True)?add_notedisableenablegcisenabled<stringsource>BLACKNonagaLogicNonagaLogic.__reduce_cython__NonagaLogic.__setstate_cython__NonagaLogic.check_win_condition_pyNonagaLogic.get_all_valid_piece_movesNonagaLogic.get_all_valid_tile_movesNonagaLogic.get_board_stateNonagaLogic.get_current_playerNonagaLogic.get_current_turn_phaseNonagaLogic.move_piece_pyNonagaLogic.move_tile_pyNonagaLogic.switch_playerPIECE_TO_MOVE_PY_NEIGHBOR_OFFSETS__Pyx_PyDict_NextRefREDTILE_TO_MOVEappendasyncio.coroutinesboardcheck_win_conditioncheck_win_condition_pycline_in_tracebackcolorcurrent_player__del__dimensiondirectionfrom_posfrom_qfrom_r__func____get__get_all_valid_piece_movesget_all_valid_piece_moves_aiget_all_valid_tile_movesget_all_valid_tile_moves_aiget_board_stateget_current_playerget_current_turn_phase_get_valid_piece_moves_in_direction_get_valid_tile_positions__getstate____init__is_ai_player_is_coroutineitems_last_turn_phase__main____module__move_piecemove_piece_pymove_tilemove_tile_py__name__neighbors_neighbors_restrain_piecenew_game_next_turn_phasenonaga_constantsnonaga_logicpiece_pospiecesplayer_blackplayer_colorplayer_redpop__pyx_state__pyx_vtable____qualname____reduce____reduce_cython____reduce_ex__self__set____set_name__setdefault__setstate____setstate_cython__switch_player__test__tile_positiontilesto_posto_qto_rturn_phaseundo_piece_moveundo_tile_movevaluevalues\2401\320\004\"\320\"5\3205I\310\021\330\010\014\210N\230!\330\010\014\320\014\034\230A\330\010\033\2301\230A\230T\240\021\330\010\014\320\014\036\230a\330\010\014\210N\230!\220A\200A\340\010\033\2301\230A\230T\240\030\250\030\260\030\270\026\270q\330\010\014\320\014\035\230Q\200A\330\010\033\2301""\230A\230T\240\030\250\030\260\030\270\026\270q\330\010\014\320\014\035\230Q\200A\340\010\032\230!\2301\230D\240\010\250\010\260\010\270\006\270a\330\010\014\320\014\035\230Q\200A\330\010\032\230!\2301\230D\240\010\250\010\260\010\270\006\270a\330\010\014\320\014\035\230Q\200A\330\010\032\230!\330\010\033\2301\360\026\000\t\026\320\025+\2501\250A\250T\260\030\270\021\270&\300\001\300\024\300Q\300f\310A\310T\320QR\320RX\320XY\320Y]\320]^\330\010\014\210E\220\025\220a\220q\330\014\021\220\027\230\002\230&\240\001\240\024\240V\2501\250D\260\006\260a\260q\340\010\020\320\020#\2401\240A\240T\250\030\260\025\260a\260q\270\001\270\024\270Q\270a\270q\300\004\300A\300Q\300a\300q\330\010\014\210E\220\025\220a\220q\330\014\022\220'\230\022\2301\230A\230T\240\021\240!\2404\240q\250\001\250\024\250Q\340\010\020\320\020#\2401\240A\240T\250\030\260\027\270\001\270\021\270!\2704\270q\300\001\300\021\300$\300a\300q\310\001\310\021\330\010\014\210E\220\025\220a\220q\330\014\022\220'\230\022\2301\230A\230T\240\021\240!\2404\240q\250\001\250\024\250Q\340\010\020\220\t\230\027\240\n\250!\200A\330\010\031\230\021\360\n\000\t\032\320\0313\2601\260A\260T\270\030\300\021\300!\3001\300D\310\001\310\021\310!\3104\310q\320PQ\320QR\320RV\320VW\340\010\014\210E\220\025\220a\220q\330\014\023\2201\220A\220T\230\021\230!\2304\230q\240\001\240\021\330\014\020\220\001\220\027\230\004\320\0346\260a\260q\330\010\017\210q\200A\330\010\013\2104\210{\230'\240\021\330\010 \240\003\2401\240A\330\010\033\2309\240A\240Q\330\010\034\230A\330\010\032\230!\2301\360\006\000\t \230s\240!\2401\340\010\016\210a\330\014\023\2205\230\004\230A\230Q\330\014\021\220\024\220Q\220d\230%\230t\2401\240A\330\014\020\220\005\220U\230!\2301\330\020\033\2303\230b\240\014\250A\250R\250q\260\001\330\033\036\230b\240\014\250A\250R\250q\260\001\330\020\023\2208\2303\230m\2504\250x\260w\270a\330\024\033\2304\230q\240\001\330\024\031\230\027\240\001\240\021\340\010\017\210s\220!\2209\230C\230q\200A\330\010\013\2104\210|\2303\230a\330""\014\020\220\016\230a\340\014\020\220\016\230a\330\014\020\220\016\230a\200A\330\010\013\2104\210|\2303\230a\330\014\020\220\016\230a\330\014\020\220\016\230a\340\014\020\220\016\230a\200A\330\010\013\2104\320\017\037\230s\240!\330\014\020\320\020\"\240!\340\014\020\320\020\"\240!\200A\360\016\000\t\031\230\001\330\010\030\230\001\330\010!\240\021\360\n\000\t\027\320\026)\250\021\250!\2504\250x\260w\270a\270q\300\001\300\024\300Q\300a\300q\310\004\310A\310Q\310a\310q\330\010\013\210<\220s\230!\330\014\023\2201\340\010\014\210E\220\025\220a\220q\330\014\023\2201\220E\230\021\340\010\017\210q\220\005\220Q\330\010\r\210Q\210h\220a\330\010\020\220\001\330\010\030\230\001\340\010\016\210e\2202\220Q\330\014\022\220%\220q\230\001\330\014\024\220A\330\014\021\220\021\220!\2201\330\014\021\220\021\220!\2201\340\014\020\220\005\220U\230!\2301\330\020\030\230\003\2302\230\\\250\021\250\"\250A\250Q\330\020\030\230\003\2302\230\\\250\021\250\"\250A\250Q\330\020\024\220E\230\025\230a\230q\330\024\027\220w\230a\230q\330\030\031\330\024\027\220q\230\001\230\023\230C\230v\240T\250\021\250!\2503\250c\260\021\330\030\037\230q\240\005\240Q\330\030\035\230Q\230h\240a\330\030 \240\001\330\030)\250\021\330\030\031\340\010\017\210~\230S\240\001\200A\330\010\014\210J\220a\220x\230q\240\004\240H\250A\250T\260\026\260q\270\004\270F\300!\3001\200A\330\010\014\210K\220q\230\010\240\001\240\024\240X\250Q\250d\260&\270\001\270\024\270V\3001\300A\200A\330\010\021\220\024\220_\240M\260\023\260G\2704\270q\330\010\017\210x\220q\230\001\200A\340\010\026\220i\230q\240\t\250\031\260!\2609\270I\300Q\300a\330\010!\240\021\340\010 \240\n\250\"\250C\250r\260\021\330\010$\240J\250b\260\003\2602\260Q\360\010\000\t\017\210a\210u\220A\330\010\016\210a\210u\220A\330\010\016\210a\210u\220A\340\010\014\210E\220\025\220a\220v\230Q\230k\250\022\2501\330\027!\240\022\2401\330\027\030\340\014\022\220!\220=\240\001\330\014\022\220!\320\023&\240b\250\006\250a\250{\270\"\270F\300!\3001\330\014\024\220F\230!\2304\230v""\240Q\240d\250&\260\001\260\021\340\014\017\320\017&\240a\240q\250\004\250H\260D\270\001\270\024\270T\300\021\300!\330\020\021\330\021'\240q\250\001\250\024\250X\260T\270\021\270$\270d\300!\3001\330\020\036\230a\340\020\021\340\014\022\220!\2205\230\001\330\014\022\220!\2205\230\001\330\014\022\220!\2205\230\001\340\010\017\210q\200A\360\n\000\t\032\320\031/\250q\260\001\260\024\260X\270Q\270a\270q\300\004\300A\300Q\300a\300t\3101\310A\310Q\310d\320RS\330\010&\240a\340\010\014\210E\220\025\220a\220q\330\014\033\2304\230r\240\021\240!\2404\240q\250\001\250\021\340\010\024\220M\240\021\240$\240m\2601\260A\340\010\013\2109\220G\2301\330\014\026\220a\340\010\027\220w\230a\230q\340\010&\240a\330\010*\250!\360\010\000\t'\240a\340\010\014\320\014\034\230A\330\014\020\220\n\230!\330\020\021\330\024 \240\001\240\023\240B\240f\250A\250Q\330\024 \240\001\240\023\240B\240f\250A\250Q\340\020\023\220:\230W\240A\330\024'\240t\2501\250A\340\010\014\210M\230\021\330\014!\240\021\330\014\020\220\n\230!\330\020\021\330\024\035\230Q\230c\240\022\2406\250\021\250!\330\024\035\230Q\230c\240\022\2406\250\021\250!\340\020\023\220=\240\003\2401\330\024&\240g\250Q\250a\340\014\035\230S\240\001\240\021\330\014\017\210r\220\023\320\024&\240a\330\020\023\220?\240#\240R\240s\250$\320.H\310\001\310\021\330\024#\2404\240r\250\031\260!\2604\260y\300\001\300\024\300Q\300i\310q\320PS\320SU\320U^\320^_\320_`\340\010\027\220x\230q\240\001\330\010\017\210q\200A\330\010\017\210t\2201\200A\330\010\032\230!\330\010\027\220t\2301\360\024\000\t\027\320\026)\250\021\250!\2504\250x\260u\270A\270Q\270a\270t\3001\300A\300Q\300d\310!\3101\310A\310Q\330\010\014\210O\2305\240\001\240\021\330\014\023\2201\220A\220^\2401\240A\240^\2601\260A\260Q\330\014\021\220\021\220'\230\021\330\014\020\220\r\230U\240!\2401\330\020\024\220M\240\025\240b\250\003\2503\250a\330\024!\240\024\320%I\310\021\330\030\035\230[\250\001\330\024\027\220{\240'\250\021\330\030\035\230Q\230d\240'\250\021\250!\330\010\017\210q\200A\330\010\017""\210t\320\023'\240q\250\001\200\001\330\004\n\210+\220Q\220q";
     PyObject *data = NULL;
     CYTHON_UNUSED_VAR(__Pyx_DecompressString);
     #endif
@@ -10802,9 +10773,9 @@ static int __Pyx_CreateCodeObjects(__pyx_mstatetype *__pyx_mstate) {
     __pyx_mstate_global->__pyx_codeobj_tab[5] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_NonagaGame_nonaga_logic_pyx, __pyx_mstate->__pyx_n_u_get_valid_tile_positions, __pyx_mstate->__pyx_kp_b_iso88591_A_q_XQaq_AQat1AQdRS_a_E_aq_4r_4q, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[5])) goto bad;
   }
   {
-    const __Pyx_PyCode_New_function_description descr = {2, 0, 0, 7, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 152};
+    const __Pyx_PyCode_New_function_description descr = {2, 0, 0, 7, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 153};
     PyObject* const varnames[] = {__pyx_mstate->__pyx_n_u_self, __pyx_mstate->__pyx_n_u_neighbors, __pyx_mstate->__pyx_n_u_player_red, __pyx_mstate->__pyx_n_u_player_black, __pyx_mstate->__pyx_n_u_board, __pyx_mstate->__pyx_n_u_current_player, __pyx_mstate->__pyx_n_u_turn_phase};
-    __pyx_mstate_global->__pyx_codeobj_tab[6] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_NonagaGame_nonaga_logic_pyx, __pyx_mstate->__pyx_n_u_neighbors_restrain_piece, __pyx_mstate->__pyx_kp_b_iso88591_A_4_1A_9AQ_A_1_s_1_a_5_AQ_Qd_t1D, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[6])) goto bad;
+    __pyx_mstate_global->__pyx_codeobj_tab[6] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_NonagaGame_nonaga_logic_pyx, __pyx_mstate->__pyx_n_u_neighbors_restrain_piece, __pyx_mstate->__pyx_kp_b_iso88591_A_4_1A_9AQ_A_1_s_1_a_5_AQ_Qd_t1A, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[6])) goto bad;
   }
   {
     const __Pyx_PyCode_New_function_description descr = {1, 0, 0, 6, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 175};
@@ -10872,17 +10843,17 @@ static int __Pyx_CreateCodeObjects(__pyx_mstatetype *__pyx_mstate) {
     __pyx_mstate_global->__pyx_codeobj_tab[19] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_NonagaGame_nonaga_logic_pyx, __pyx_mstate->__pyx_n_u_check_win_condition, __pyx_mstate->__pyx_kp_b_iso88591_A_4xwaq_Qaq_AQaq_s_1_E_aq_1E_q_Q, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[19])) goto bad;
   }
   {
-    const __Pyx_PyCode_New_function_description descr = {2, 0, 0, 2, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 348};
+    const __Pyx_PyCode_New_function_description descr = {2, 0, 0, 2, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 346};
     PyObject* const varnames[] = {__pyx_mstate->__pyx_n_u_self, __pyx_mstate->__pyx_n_u_color};
     __pyx_mstate_global->__pyx_codeobj_tab[20] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_NonagaGame_nonaga_logic_pyx, __pyx_mstate->__pyx_n_u_check_win_condition_py, __pyx_mstate->__pyx_kp_b_iso88591_A_t_q, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[20])) goto bad;
   }
   {
-    const __Pyx_PyCode_New_function_description descr = {1, 0, 0, 1, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 351};
+    const __Pyx_PyCode_New_function_description descr = {1, 0, 0, 1, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 349};
     PyObject* const varnames[] = {__pyx_mstate->__pyx_n_u_self};
     __pyx_mstate_global->__pyx_codeobj_tab[21] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_NonagaGame_nonaga_logic_pyx, __pyx_mstate->__pyx_n_u_get_current_player, __pyx_mstate->__pyx_kp_b_iso88591_A_t1, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[21])) goto bad;
   }
   {
-    const __Pyx_PyCode_New_function_description descr = {1, 0, 0, 1, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 354};
+    const __Pyx_PyCode_New_function_description descr = {1, 0, 0, 1, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 352};
     PyObject* const varnames[] = {__pyx_mstate->__pyx_n_u_self};
     __pyx_mstate_global->__pyx_codeobj_tab[22] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_NonagaGame_nonaga_logic_pyx, __pyx_mstate->__pyx_n_u_switch_player, __pyx_mstate->__pyx_kp_b_iso88591_A_4_s, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[22])) goto bad;
   }

@@ -6,6 +6,13 @@
         "depends": [
             "NonagaGame\\nonaga_bitboard.h"
         ],
+        "extra_compile_args": [
+            "/Zi",
+            "/Od"
+        ],
+        "extra_link_args": [
+            "/DEBUG"
+        ],
         "include_dirs": [
             "NonagaGame"
         ],
@@ -6135,7 +6142,7 @@ __Pyx_RefNannySetupContext("PyInit_nonaga_bitboard_wrapper", 0);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
   /* "nonaga_bitboard_wrapper.pyx":1
- * # cython: language_level=3, boundscheck=False, wraparound=False             # <<<<<<<<<<<<<<
+ * # cython: language_level=3, boundscheck=False, wraparound=False, Profile = True             # <<<<<<<<<<<<<<
  * from nonaga_bitboard cimport (
  *     NonagaBitBoard,
 */
