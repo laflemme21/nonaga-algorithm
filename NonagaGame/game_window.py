@@ -48,6 +48,7 @@ class Game:
         self.btn_back_rect = None
         self.btn_fwd_rect = None
         self.btn_current_rect = None
+        self.btn_bot_move_rect = None
 
     def setup(self):
         """Set up the game window and resources."""
@@ -174,6 +175,20 @@ class Game:
                                     self.current_history_index -= 1
                                     self._rebuild_state_from_history()
                         return
+                    if self.btn_bot_move_rect and self.btn_bot_move_rect.collidepoint(event.pos):
+                        # Force current player's history pointer to end if we are in past, or ignore
+                        if self.current_history_index < len(self.move_history):
+                            pass
+                        else:
+                            # Revert human piece move if they started their turn but didn't finish
+                            if self.game_logic.get_current_turn_phase() == TILE_TO_MOVE:
+                                if len(self.move_history) > 0 and self.move_history[-1]['type'] == 'piece':
+                                    self.move_history.pop()
+                                    self.current_history_index -= 1
+                                    self._rebuild_state_from_history()
+                            # Perform the AI move
+                            self._make_bot_move()
+                        return
 
                     self.last_clicked_piece = self.hovered_piece
                     self.last_clicked_tile = self.hovered_tile
@@ -182,33 +197,36 @@ class Game:
     def ai_plays(self):
 
         if self.ai_playing and self.game_logic.get_current_player() == BLACK:
-            self.title = "AI is thinking..."
-            self.render_frame()
+            self._make_bot_move()
 
-            best_piece_move, best_tile_move = self.ai.get_best_move(
-                self.game_logic)
+    def _make_bot_move(self):
+        self.title = "AI is thinking..."
+        self.render_frame()
 
-            # Debug output for AI move ===================================
-            print("Best piece move:", best_piece_move)
-            print("Best tile move:", best_tile_move)
-            # end debug
+        best_piece_move, best_tile_move = self.ai.get_best_move(
+            self.game_logic)
 
-            if best_piece_move is not None and best_tile_move is not None:
-                if self.current_history_index < len(self.move_history):
-                    self.move_history = self.move_history[:self.current_history_index]
-                self.move_history.append({'type': 'piece', 'from': best_piece_move[0], 'to': best_piece_move[1]})
-                self.current_history_index += 1
+        # Debug output for AI move ===================================
+        print("Best piece move:", best_piece_move)
+        print("Best tile move:", best_tile_move)
+        # end debug
 
-                self.game_logic.move_piece_py(
-                    best_piece_move[0], best_piece_move[1])
+        if best_piece_move is not None and best_tile_move is not None:
+            if self.current_history_index < len(self.move_history):
+                self.move_history = self.move_history[:self.current_history_index]
+            self.move_history.append({'type': 'piece', 'from': best_piece_move[0], 'to': best_piece_move[1]})
+            self.current_history_index += 1
 
-                self.move_history.append({'type': 'tile', 'from': best_tile_move[0], 'to': best_tile_move[1]})
-                self.current_history_index += 1
+            self.game_logic.move_piece_py(
+                best_piece_move[0], best_piece_move[1])
 
-                self.game_logic.move_tile_py(
-                    best_tile_move[0], best_tile_move[1])
+            self.move_history.append({'type': 'tile', 'from': best_tile_move[0], 'to': best_tile_move[1]})
+            self.current_history_index += 1
 
-            # Debug output for board state after AI move ==================
+            self.game_logic.move_tile_py(
+                best_tile_move[0], best_tile_move[1])
+
+        self.update_game_state()
             # pieces = self.game_logic.board.get_pieces(BLACK)
             # d1 = pieces[0].distance_to(pieces[1])
             # d2 = pieces[1].distance_to(pieces[2])
@@ -493,6 +511,16 @@ class Game:
             screen.blit(text_current, text_current.get_rect(center=self.btn_current_rect.center))
         else:
             self.btn_current_rect = None
+
+        # Draw "Bot Move" button (only visible in 2 player mode and not viewing history)
+        if not self.ai_playing and self.current_history_index == len(self.move_history):
+            self.btn_bot_move_rect = pygame.Rect(125, 10, 100, 40)
+            pygame.draw.rect(screen, (200, 200, 255), self.btn_bot_move_rect)
+            pygame.draw.rect(screen, (0, 0, 0), self.btn_bot_move_rect, 2)
+            text_bot = font.render("Bot Move", True, (0, 0, 0))
+            screen.blit(text_bot, text_bot.get_rect(center=self.btn_bot_move_rect.center))
+        else:
+            self.btn_bot_move_rect = None
 
     def _point_in_circle(self, px, py, cx, cy, radius):
         """Check if a point is inside a circle.
