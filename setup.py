@@ -5,10 +5,10 @@ import os
 import sys
 
 if os.name == "nt":
-    comp_args = ["/Zi", "/Od"]
-    link_args = ["/DEBUG"]
+    comp_args = ['/O2', '/Ob2', '/Zi']
+    link_args = ['/DEBUG', '/OPT:REF', '/OPT:ICF']
 else:
-    comp_args = ["-g"]
+    comp_args = ["-O3", "-march=native"]
     link_args = []
 
 setup(

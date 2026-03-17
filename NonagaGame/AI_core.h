@@ -57,6 +57,18 @@ extern "C"
         int max_color,
         const int *params);
 
+    MinimaxResult ai_search_iterative_deepening(
+        NonagaBitBoard *board,
+        int current_player,
+        int turn_phase,
+        int max_depth,
+        int maximizing_player,
+        int color,
+        int max_color,
+        const int *params);
+
+    void ai_init_tt(void);
+
     int ai_cost_function(
         NonagaBitBoard *board,
         int maximizing_player,

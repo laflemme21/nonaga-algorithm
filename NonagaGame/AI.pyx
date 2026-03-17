@@ -23,8 +23,9 @@ cdef extern from "AI_core.h":
 
     Move2D ai_empty_move()
     MinimaxResult ai_new_result(int cost)
-    MinimaxResult ai_minimax_piece(NonagaBitBoard* board, int* current_player, int* turn_phase, int depth, int maximizing_player, int color, int alpha, int beta, int max_color, const int* params)
-    MinimaxResult ai_minimax_tile(NonagaBitBoard* board, int* current_player, int* turn_phase, int depth, int maximizing_player, int color, int alpha, int beta, int max_color, const int* params)
+    void ai_init_tt()
+    MinimaxResult ai_search_iterative_deepening(NonagaBitBoard* board, int current_player, int turn_phase, int max_depth, int maximizing_player, int color, int max_color, const int* params)
+
     int ai_cost_function(NonagaBitBoard* board, int maximizing_player, int max_color, const int* params)
     int ai_distance_to(int q1, int r1, int s1, int q2, int r2, int s2)
     MissingInfo ai_missing_tiles_and_enemy_pieces_from_board(NonagaBitBoard* board, int p0q, int p0r, int p0s, int p1q, int p1r, int p1s, int p2q, int p2r, int p2s, int color)
@@ -46,11 +47,8 @@ cdef class AI:
         for i in range(8):
             self.parameter[i] = <int>parameter[i]
 
-    cdef MinimaxResult minimax_piece(self, NonagaLogic game_state, int depth, bint maximizingPlayer, int color, int alpha, int beta):
-        return ai_minimax_piece(&game_state.board, &game_state.current_player, &game_state.turn_phase, depth, 1 if maximizingPlayer else 0, color, alpha, beta, self.max_color, &self.parameter[0])
-
-    cdef MinimaxResult minimax_tile(self, NonagaLogic game_state, int depth, bint maximizingPlayer, int color, int alpha, int beta):
-        return ai_minimax_tile(&game_state.board, &game_state.current_player, &game_state.turn_phase, depth, 1 if maximizingPlayer else 0, color, alpha, beta, self.max_color, &self.parameter[0])
+    cdef MinimaxResult search_iterative_deepening(self, NonagaLogic game_state, int max_depth, bint maximizingPlayer, int color):
+        return ai_search_iterative_deepening(&game_state.board, game_state.current_player, game_state.turn_phase, max_depth, 1 if maximizingPlayer else 0, color, self.max_color, &self.parameter[0])
 
     cdef int cost_function(self, NonagaLogic game_state, bint maximizingPlayer, int color, int[8] params):
         return ai_cost_function(&game_state.board, 1 if maximizingPlayer else 0, color, &params[0])
@@ -79,13 +77,13 @@ cdef class AI:
         cdef object best_piece_move = None
         cdef object best_tile_move = None
 
-        result = self.minimax_piece(
+        ai_init_tt()
+
+        result = self.search_iterative_deepening(
             game_state,
             self.depth,
             True,
-            game_state.get_current_player(),
-            NEG_INF,
-            POS_INF,
+            game_state.get_current_player()
         )
 
         if result.piece_move.is_set:
@@ -105,6 +103,7 @@ cdef class AI:
         cdef object best_piece_move
         cdef object best_tile_move
         best_piece_move, best_tile_move = self.get_best_move(game_state)
+        print(best_piece_move, best_tile_move)
         if best_piece_move is not None and best_tile_move is not None:
             game_state.move_piece_py(best_piece_move[0], best_piece_move[1])
             game_state.move_tile_py(best_tile_move[0], best_tile_move[1])

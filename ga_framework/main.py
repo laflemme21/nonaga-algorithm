@@ -33,7 +33,7 @@ if __name__ == '__main__':
     crossover = strategies.ArithmeticCrossover()
     mutation = strategies.RandomIntMutation(
         mutation_rate=0.5, min_val=-100, max_val=100)
-    fitness = strategies.NonagaTournamentFitness(k_opponents=50, max_moves=30)
+    fitness = strategies.NonagaTournamentFitness(k_opponents=5, max_moves=30, depth=2)
 
     # 2. Initialize parallel backend
     if args.mode == "slurm":
@@ -69,6 +69,6 @@ if __name__ == '__main__':
 
     # 4. Run the GA for n generations as MVP
     print("Running GA optimization...")
-    final_population = ga.run(generations=300, pop_size=100, genome_length=8)
+    final_population = ga.run(generations=10, pop_size=20, genome_length=8)
 
     print("\nOptimization Complete. View ga_metrics.csv for generation logs.")
