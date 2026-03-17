@@ -682,7 +682,7 @@ MinimaxResult ai_minimax_piece(
 
     if (ai_check_any_win(board))
     {
-        return maximizing_player ? ai_new_result(NEG_INF+depth) : ai_new_result(POS_INF-depth);
+        return maximizing_player ? ai_new_result(NEG_INF-depth) : ai_new_result(POS_INF+depth);
     }
 
     if (depth == 0)
