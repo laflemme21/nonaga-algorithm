@@ -42,6 +42,13 @@ class Game:
         self.board_center_x = None
         self.board_center_y = None
 
+        self.move_history = []
+        self.current_history_index = 0
+
+        self.btn_back_rect = None
+        self.btn_fwd_rect = None
+        self.btn_current_rect = None
+
     def setup(self):
         """Set up the game window and resources."""
         pygame.init()
@@ -50,6 +57,9 @@ class Game:
         pygame.display.set_caption("Nonaga")
         self.clock = pygame.time.Clock()
 
+    def _is_game_over(self):
+        return self.game_logic.check_win_condition_py(RED) or self.game_logic.check_win_condition_py(BLACK)
+
     def run(self):
         """Main game loop."""
         self.setup()
@@ -57,31 +67,58 @@ class Game:
 
         while self.running:
             self.render_frame()
-            self.ai_plays()
-            self.update_game_state()
-            self.update_moves()
-            self.handle_events()
 
-            self.handle_moves()
-        self.running = True
+            winning = self._is_game_over()
+            if not winning and self.current_history_index == len(self.move_history):
+                self.ai_plays()
+                self.update_game_state()
+                self.update_moves()
+                self.handle_events()
+                self.handle_moves()
+            else:
+                self.last_clicked_piece_moves = []
+                self.last_clicked_tile_moves = []
+                # Also reset selection when navigating history
+                if self.current_history_index != len(self.move_history):
+                    self.last_clicked_piece = None
+                    self.last_clicked_tile = None
+                    self.piece_moving = None
+                    self.tile_moving = None
 
-        while self.running and (self.game_logic.check_win_condition_py(RED) or self.game_logic.check_win_condition_py(BLACK)):
-            self.render_frame()
-            self.handle_events()
+                self.update_game_state()
+                self.handle_events()
+
             self.clock.tick(self.fps)
+
+    def _rebuild_state_from_history(self):
+        self.game_logic = NonagaLogic(None, self.ai_playing)
+        for i in range(self.current_history_index):
+            move = self.move_history[i]
+            if move['type'] == 'piece':
+                self.game_logic.move_piece_py(move['from'], move['to'])
+            elif move['type'] == 'tile':
+                self.game_logic.move_tile_py(move['from'], move['to'])
+        self.update_game_state()
+        self.last_clicked_piece = None
+        self.last_clicked_tile = None
+        self.piece_moving = None
+        self.tile_moving = None
+        self.last_clicked_piece_moves = []
+        self.last_clicked_tile_moves = []
 
     def update_game_state(self):
         """Check if there's a winner, update the title and stop the game if so."""
         if self.game_logic.check_win_condition_py(RED):
             self.title = "Red won!"
-            self.running = False
         elif self.game_logic.check_win_condition_py(BLACK):
             self.title = "Black won!"
-            self.running = False
         else:
-            current_player = "Red" if self.game_logic.get_current_player() == RED else "Black"
-            phase = "Piece" if self.game_logic.get_current_turn_phase() == PIECE_TO_MOVE else "Tile"
-            self.title = f"{current_player} has to move a {phase}"
+            if self.current_history_index < len(self.move_history):
+                self.title = f"Viewing past move ({self.current_history_index}/{len(self.move_history)})"
+            else:
+                current_player = "Red" if self.game_logic.get_current_player() == RED else "Black"
+                phase = "Piece" if self.game_logic.get_current_turn_phase() == PIECE_TO_MOVE else "Tile"
+                self.title = f"{current_player} has to move a {phase}"
 
     def render_frame(self):
         """Clear screen and render game state."""
@@ -92,6 +129,7 @@ class Game:
         self.render(self.screen, state["tiles"], state["pieces"], self.last_clicked_tile_moves, self.last_clicked_piece_moves,
                     self.board_center_x, self.board_center_y)
         self._draw_title(self.screen)
+        self._draw_buttons(self.screen)
         pygame.display.flip()
 
     def handle_events(self):
@@ -112,6 +150,31 @@ class Game:
                     hovered_tile_pos = self.hovered_tile if self.hovered_tile else None
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:  # Left mouse button click
+                    if self.btn_back_rect and self.btn_back_rect.collidepoint(event.pos):
+                        if self.current_history_index > 0:
+                            self.current_history_index -= 1
+                            self._rebuild_state_from_history()
+                        return
+                    if self.btn_fwd_rect and self.btn_fwd_rect.collidepoint(event.pos):
+                        if self.current_history_index < len(self.move_history):
+                            self.current_history_index += 1
+                            self._rebuild_state_from_history()
+                        return
+                    if self.btn_current_rect and self.btn_current_rect.collidepoint(event.pos):
+                        if self.current_history_index < len(self.move_history):
+                            self.move_history = self.move_history[:self.current_history_index]
+                            self._rebuild_state_from_history()
+
+                            # If AI is black, and AI is supposed to move a tile (meaning human mid-turn quit/resume),
+                            # rollback the last piece move so AI plays its full piece+tile turn.
+                            if self.ai_playing and self.game_logic.get_current_player() == BLACK \
+                                    and self.game_logic.get_current_turn_phase() == TILE_TO_MOVE:
+                                if len(self.move_history) > 0 and self.move_history[-1]['type'] == 'piece':
+                                    self.move_history.pop()
+                                    self.current_history_index -= 1
+                                    self._rebuild_state_from_history()
+                        return
+
                     self.last_clicked_piece = self.hovered_piece
                     self.last_clicked_tile = self.hovered_tile
                     self.tile_move_to = self.hovered_tile_move_pos
@@ -131,8 +194,17 @@ class Game:
             # end debug
 
             if best_piece_move is not None and best_tile_move is not None:
+                if self.current_history_index < len(self.move_history):
+                    self.move_history = self.move_history[:self.current_history_index]
+                self.move_history.append({'type': 'piece', 'from': best_piece_move[0], 'to': best_piece_move[1]})
+                self.current_history_index += 1
+
                 self.game_logic.move_piece_py(
                     best_piece_move[0], best_piece_move[1])
+
+                self.move_history.append({'type': 'tile', 'from': best_tile_move[0], 'to': best_tile_move[1]})
+                self.current_history_index += 1
+
                 self.game_logic.move_tile_py(
                     best_tile_move[0], best_tile_move[1])
 
@@ -217,11 +289,21 @@ class Game:
 
         if self.last_clicked_piece_moves is not [] and self.piece_moving is not None and self.last_clicked_tile is not None and self.last_clicked_tile in self.last_clicked_piece_moves:
 
+            if self.current_history_index < len(self.move_history):
+                self.move_history = self.move_history[:self.current_history_index]
+            self.move_history.append({'type': 'piece', 'from': self.piece_moving, 'to': self.last_clicked_tile})
+            self.current_history_index += 1
+
             self.game_logic.move_piece_py(
                 self.piece_moving, self.last_clicked_tile)
             # to prevent highlighting possibe tile moves
             self.last_clicked_tile = None
         if self.tile_move_to is not None and self.tile_moving is not None and self.tile_move_to in self.last_clicked_tile_moves:
+
+            if self.current_history_index < len(self.move_history):
+                self.move_history = self.move_history[:self.current_history_index]
+            self.move_history.append({'type': 'tile', 'from': self.tile_moving, 'to': self.tile_move_to})
+            self.current_history_index += 1
 
             self.game_logic.move_tile_py(self.tile_moving, self.tile_move_to)
 
@@ -382,6 +464,35 @@ class Game:
         text_surface = font.render(self.title, True, color)
         text_rect = text_surface.get_rect(center=(screen.get_width() // 2, 32))
         screen.blit(text_surface, text_rect)
+
+    def _draw_buttons(self, screen):
+        """Draw the forward and backward buttons."""
+        # Draw "Backward" button
+        self.btn_back_rect = pygame.Rect(10, 10, 50, 30)
+        color_back = (200, 200, 200) if self.current_history_index > 0 else (240, 240, 240)
+        pygame.draw.rect(screen, color_back, self.btn_back_rect)
+        pygame.draw.rect(screen, (0, 0, 0), self.btn_back_rect, 2)
+        font = pygame.font.Font(None, 24)
+        text_back = font.render("<<", True, (0, 0, 0))
+        screen.blit(text_back, text_back.get_rect(center=self.btn_back_rect.center))
+
+        # Draw "Forward" button
+        self.btn_fwd_rect = pygame.Rect(65, 10, 50, 30)
+        color_fwd = (200, 200, 200) if self.current_history_index < len(self.move_history) else (240, 240, 240)
+        pygame.draw.rect(screen, color_fwd, self.btn_fwd_rect)
+        pygame.draw.rect(screen, (0, 0, 0), self.btn_fwd_rect, 2)
+        text_fwd = font.render(">>", True, (0, 0, 0))
+        screen.blit(text_fwd, text_fwd.get_rect(center=self.btn_fwd_rect.center))
+
+        # Draw "Play Here" button
+        if self.current_history_index < len(self.move_history):
+            self.btn_current_rect = pygame.Rect(125, 10, 100, 40)
+            pygame.draw.rect(screen, (200, 200, 200), self.btn_current_rect)
+            pygame.draw.rect(screen, (0, 0, 0), self.btn_current_rect, 2)
+            text_current = font.render("Play Here", True, (0, 0, 0))
+            screen.blit(text_current, text_current.get_rect(center=self.btn_current_rect.center))
+        else:
+            self.btn_current_rect = None
 
     def _point_in_circle(self, px, py, cx, cy, radius):
         """Check if a point is inside a circle.

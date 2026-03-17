@@ -19,6 +19,9 @@ cdef extern from "AI_core.h":
         Move2D piece_move
         Move2D tile_move
 
+    void ai_init_tt()
+    MinimaxResult ai_search_iterative_deepening(NonagaBitBoard* board, int current_player, int turn_phase, int max_depth, int maximizing_player, int color, int max_color, const int* params)
+
 cdef class AI:
     
     cdef public int[8] parameter
@@ -27,8 +30,7 @@ cdef class AI:
     cdef public int min_color
     cdef public int depth_0_color
 
-    cdef MinimaxResult minimax_piece(self, NonagaLogic game_state, int depth, bint maximizingPlayer, int color, int alpha, int beta)
-    cdef MinimaxResult minimax_tile(self, NonagaLogic game_state, int depth, bint maximizingPlayer, int color, int alpha, int beta)
+    cdef MinimaxResult search_iterative_deepening(self, NonagaLogic game_state, int max_depth, bint maximizingPlayer, int color)
     cdef int cost_function(self, NonagaLogic game_state, bint maximizingPlayer, int color, int[8] params)
     cdef MissingInfo missing_tiles_and_enemy_pieces(self, NonagaBitBoard* board, int p0q, int p0r, int p0s, int p1q, int p1r, int p1s, int p2q, int p2r, int p2s, int color)
     cdef int distance_to(self, int q1, int r1, int s1, int q2, int r2, int s2)

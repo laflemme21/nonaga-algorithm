@@ -39,6 +39,9 @@ static unsigned long long FORBIDDEN_MASKS[BOARD_BITS][FORBIDDEN_PATTERN_COUNT][A
 static unsigned char FORBIDDEN_VALID[BOARD_BITS][FORBIDDEN_PATTERN_COUNT];
 static int FORBIDDEN_READY = 0;
 static int NEIGHBOR_FLATS[BOARD_BITS][6];
+static unsigned char NEIGHBOR_WORD[BOARD_BITS][6];
+static unsigned char NEIGHBOR_SHIFT[BOARD_BITS][6];
+static unsigned char NEIGHBOR_VALID[BOARD_BITS][6];
 static unsigned char LEGAL_NEIGHBOR_MASK[64];
 static int TOPOLOGY_READY = 0;
 
@@ -224,10 +227,16 @@ static void init_topology_tables(void)
             if ((unsigned int)nflat >= BOARD_BITS)
             {
                 NEIGHBOR_FLATS[flat][d] = -1;
+                NEIGHBOR_WORD[flat][d] = 0;
+                NEIGHBOR_SHIFT[flat][d] = 0;
+                NEIGHBOR_VALID[flat][d] = 0;
             }
             else
             {
                 NEIGHBOR_FLATS[flat][d] = nflat;
+                NEIGHBOR_WORD[flat][d] = (unsigned char)(nflat >> BITS_PER_LONG_SHIFT);
+                NEIGHBOR_SHIFT[flat][d] = (unsigned char)(nflat & BITS_PER_LONG_MASK);
+                NEIGHBOR_VALID[flat][d] = 1;
             }
         }
     }
@@ -334,21 +343,19 @@ static inline int has_forbidden_subset(const unsigned long long *all_tiles, int 
 static int candidate_is_legal_for_tiles(const unsigned long long *all_tiles, int cflat)
 {
     unsigned int mask = 0U;
-    int d;
 
     if (!TOPOLOGY_READY)
     {
         init_topology_tables();
     }
 
-    for (d = 0; d < 6; ++d)
-    {
-        int nflat = NEIGHBOR_FLATS[cflat][d];
-        if (nflat >= 0 && check_bit_flat(all_tiles, nflat))
-        {
-            mask |= (1U << d);
-        }
-    }
+    /* Branchless: extract bits and map directly into mask using precomputed variables. */
+    mask |= (unsigned int)(((all_tiles[NEIGHBOR_WORD[cflat][0]] >> NEIGHBOR_SHIFT[cflat][0]) & NEIGHBOR_VALID[cflat][0]) << 0);
+    mask |= (unsigned int)(((all_tiles[NEIGHBOR_WORD[cflat][1]] >> NEIGHBOR_SHIFT[cflat][1]) & NEIGHBOR_VALID[cflat][1]) << 1);
+    mask |= (unsigned int)(((all_tiles[NEIGHBOR_WORD[cflat][2]] >> NEIGHBOR_SHIFT[cflat][2]) & NEIGHBOR_VALID[cflat][2]) << 2);
+    mask |= (unsigned int)(((all_tiles[NEIGHBOR_WORD[cflat][3]] >> NEIGHBOR_SHIFT[cflat][3]) & NEIGHBOR_VALID[cflat][3]) << 3);
+    mask |= (unsigned int)(((all_tiles[NEIGHBOR_WORD[cflat][4]] >> NEIGHBOR_SHIFT[cflat][4]) & NEIGHBOR_VALID[cflat][4]) << 4);
+    mask |= (unsigned int)(((all_tiles[NEIGHBOR_WORD[cflat][5]] >> NEIGHBOR_SHIFT[cflat][5]) & NEIGHBOR_VALID[cflat][5]) << 5);
 
     return LEGAL_NEIGHBOR_MASK[mask] != 0;
 }
