@@ -16,7 +16,7 @@ extern "C"
         unsigned long long tile_dest_candidates[7];
     } NonagaBitBoard;
 
-    void bitboard_initialize(NonagaBitBoard *board);
+    void bitboard_set_board_state(NonagaBitBoard *board, const int *tiles_q, const int *tiles_r, int num_tiles, const int *red_q, const int *red_r, int num_red, const int *black_q, const int *black_r, int num_black);
     int bitboard_get_number_of_tiles(NonagaBitBoard *board);
     int bitboard_get_all_tiles(NonagaBitBoard *board, int *out_q, int *out_r, int *out_s, int max_count);
     int bitboard_get_movable_tiles(NonagaBitBoard *board, int *out_q, int *out_r, int *out_s, int max_count);

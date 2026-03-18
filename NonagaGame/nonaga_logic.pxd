@@ -9,6 +9,7 @@ cdef class NonagaLogic:
     cdef public int turn_phase
 
     cpdef object get_board_state(self)
+    cpdef void load_board_state(self, list tiles, list red_pieces, list black_pieces, int current_player, int turn_phase)
     cdef dict get_all_valid_tile_moves_ai(self)
     cpdef dict get_all_valid_tile_moves(self)
     cdef dict get_all_valid_piece_moves_ai(self)
@@ -22,8 +23,6 @@ cdef class NonagaLogic:
     cdef void move_piece(self, int from_q, int from_r, int to_q, int to_r)
     cpdef void move_piece_py(self, tuple from_pos, tuple to_pos)
     cpdef void move_tile_py(self, tuple from_pos, tuple to_pos)
-    cdef void undo_tile_move(self, int from_q, int from_r, int to_q, int to_r)
-    cdef void undo_piece_move(self, int from_q, int from_r, int to_q, int to_r)
     cdef bint _neighbors_restrain_piece(self, list neighbors)
 
     cdef void _next_turn_phase(self)

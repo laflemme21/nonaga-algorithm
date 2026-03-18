@@ -642,6 +642,38 @@ void bitboard_initialize(NonagaBitBoard *board)
     recompute_all_tiles(board);
 }
 
+void bitboard_set_board_state(
+    NonagaBitBoard *board,
+    const int *tiles_q, const int *tiles_r, int num_tiles,
+    const int *red_q, const int *red_r, int num_red,
+    const int *black_q, const int *black_r, int num_black)
+{
+    int i;
+    
+    init_forbidden_masks();
+
+    memset(board->red_pieces, 0, sizeof(board->red_pieces));
+    memset(board->black_pieces, 0, sizeof(board->black_pieces));
+    memset(board->movable_tiles, 0, sizeof(board->movable_tiles));
+    memset(board->unmovable_tiles, 0, sizeof(board->unmovable_tiles));
+    memset(board->all_tiles, 0, sizeof(board->all_tiles));
+    memset(board->tile_dest_candidates, 0, sizeof(board->tile_dest_candidates));
+
+    for (i = 0; i < num_tiles; ++i) {
+        set_bit(board->movable_tiles, tiles_q[i], tiles_r[i]);
+    }
+    
+    for (i = 0; i < num_red; ++i) {
+        set_bit(board->red_pieces, red_q[i], red_r[i]);
+    }
+
+    for (i = 0; i < num_black; ++i) {
+        set_bit(board->black_pieces, black_q[i], black_r[i]);
+    }
+
+    recompute_all_tiles(board);
+}
+
 int bitboard_get_number_of_tiles(NonagaBitBoard *board)
 {
     int i;

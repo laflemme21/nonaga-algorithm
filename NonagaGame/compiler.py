@@ -24,11 +24,16 @@ def compile_cython_files():
         cwd=project_root,
         env=_get_clean_build_env(),
     )
-    # Move compiled extension files (.pyd on Windows, .so on Linux/macOS) from project root into NonagaGame/
+    # Copy compiled extension files into NonagaGame. On Windows a loaded .pyd can be locked,
+    # so we avoid hard failures and keep the fresh build artifact in project root as fallback.
     for ext_file in glob.glob(os.path.join(project_root, "*.pyd")) + glob.glob(os.path.join(project_root, "*.so")):
         dest = os.path.join(nonaga_dir, os.path.basename(ext_file))
-        if os.path.exists(dest):
-            os.remove(dest)
-        shutil.move(ext_file, dest)
-        print(f"Moved {os.path.basename(ext_file)} -> NonagaGame/")
+        try:
+            shutil.copy2(ext_file, dest)
+            print(f"Copied {os.path.basename(ext_file)} -> NonagaGame/")
+        except PermissionError:
+            print(
+                f"Warning: could not overwrite {os.path.basename(dest)} (file is in use). "
+                "Using existing NonagaGame binary for this run."
+            )
     print("Cython files compiled successfully.")

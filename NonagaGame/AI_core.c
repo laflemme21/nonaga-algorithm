@@ -407,6 +407,7 @@ static int ai_check_win_condition(NonagaBitBoard *board, int color)
     int head = 0;
     int tail = 0;
     int visited_count = 0;
+    int i, j;
 
     piece_count = bitboard_get_pieces(board, color, &q[0], &r[0], &s[0]);
     if (piece_count <= 0)
@@ -424,13 +425,11 @@ static int ai_check_win_condition(NonagaBitBoard *board, int color)
         int idx = queue[head++];
         int cq = q[idx];
         int cr = r[idx];
-        int i;
 
         for (i = 0; i < 6; ++i)
         {
             int adj_q = cq + WIN_OFFSETS[i][0];
             int adj_r = cr + WIN_OFFSETS[i][1];
-            int j;
             for (j = 0; j < piece_count; ++j)
             {
                 if (visited[j])
@@ -679,9 +678,10 @@ MinimaxResult ai_minimax_piece(
 
     (void)color;
 
-
+    /* Check for win condition any, since only the last player to play could have won */
     if (ai_check_any_win(board))
     {
+        /*Returns NEG_INF-depth and POS_INF+depth to prevent infinite recursion and to delay an inevatible loss*/
         return maximizing_player ? ai_new_result(NEG_INF-depth) : ai_new_result(POS_INF+depth);
     }
 
@@ -737,7 +737,7 @@ MinimaxResult ai_minimax_piece(
         ai_restore_state(board, current_player, turn_phase, &snapshot);
 
         if (maximizing_player) {
-            if (result.cost >= value) {
+            if (result.cost > value) {
                 value = result.cost;
                 best_piece_move = tt_piece_move;
                 best_piece_move.is_set = 1;
@@ -745,7 +745,7 @@ MinimaxResult ai_minimax_piece(
             }
             if (value > alpha) alpha = value;
         } else {
-            if (result.cost <= value) {
+            if (result.cost < value) {
                 value = result.cost;
                 best_piece_move = tt_piece_move;
                 best_piece_move.is_set = 1;
@@ -818,7 +818,7 @@ MinimaxResult ai_minimax_piece(
 
         if (maximizing_player)
         {
-            if (result.cost >= value)
+            if (result.cost > value)
             {
                 value = result.cost;
                 best_piece_move.from_q = candidates[i].piece_q;
@@ -832,7 +832,7 @@ MinimaxResult ai_minimax_piece(
         }
         else
         {
-            if (result.cost <= value)
+            if (result.cost < value)
             {
                 value = result.cost;
                 best_piece_move.from_q = candidates[i].piece_q;
@@ -953,14 +953,14 @@ MinimaxResult ai_minimax_tile(
         ai_restore_state(board, current_player, turn_phase, &snapshot);
 
         if (maximizing_player) {
-            if (result.cost >= value) {
+            if (result.cost > value) {
                 value = result.cost;
                 best_tile_move = tt_tile_move;
                 best_tile_move.is_set = 1;
             }
             if (value > alpha) alpha = value;
         } else {
-            if (result.cost <= value) {
+            if (result.cost < value) {
                 value = result.cost;
                 best_tile_move = tt_tile_move;
                 best_tile_move.is_set = 1;
@@ -1021,7 +1021,7 @@ MinimaxResult ai_minimax_tile(
 
         if (maximizing_player)
         {
-            if (result.cost >= value)
+            if (result.cost > value)
             {
                 value = result.cost;
                 best_tile_move.from_q = candidates[i].tile_q;
@@ -1034,7 +1034,7 @@ MinimaxResult ai_minimax_tile(
         }
         else
         {
-            if (result.cost <= value)
+            if (result.cost < value)
             {
                 value = result.cost;
                 best_tile_move.from_q = candidates[i].tile_q;
