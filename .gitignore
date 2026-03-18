@@ -4,4 +4,16 @@ elm-stuff
 __pycache__/
 *.pyc
 *.pyd 
+*.so
 build/
+conda_env/
+*.db*
+v17/
+*.sqlite
+FileContentIndex/
+.vscode/
+.vs/
+PythonSettings.json
+CppProperties.json
+*.diagsession
+*.pdb
