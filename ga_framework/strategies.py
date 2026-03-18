@@ -117,10 +117,11 @@ class NonagaTournamentFitness(FitnessFunction):
     opponents from the current generation. Points are awarded based on wins.
     """
 
-    def __init__(self, k_opponents: int, max_moves: int):
+    def __init__(self, k_opponents: int, max_moves: int, depth: int):
         self.k_opponents = k_opponents
         self.max_moves = max_moves
         self.population = []  # Will be dynamically injected by ModularGA
+        self.depth = depth
 
     def evaluate(self, individual: List[int]) -> float:
         import sys
@@ -153,9 +154,8 @@ class NonagaTournamentFitness(FitnessFunction):
             # but ideally it should alternate.
             color_ind, color_opp = RED, BLACK
 
-            # Using depth=1 to keep GA evaluations reasonably fast
-            ai_ind = AI(parameter=individual, depth=1, color=color_ind)
-            ai_opp = AI(parameter=opponent, depth=1, color=color_opp)
+            ai_ind = AI(parameter=individual, depth=self.depth, color=color_ind)
+            ai_opp = AI(parameter=opponent, depth=self.depth, color=color_opp)
 
             game = NonagaLogic(player_red=ai_ind,
                                player_black=ai_opp, new_game=True)
@@ -169,20 +169,20 @@ class NonagaTournamentFitness(FitnessFunction):
                     # get_best_move determines what the AI does without executing it directly
                     best_piece_move, best_tile_move = active_ai.get_best_move(
                         game)
-                    # Excute in the real logic board
-                    game.move_piece(best_piece_move[0], best_piece_move[1])
-                    game.move_tile(best_tile_move[0], best_tile_move[1])
+                    # Execute in the real logic board
+                    game.move_piece_py(best_piece_move[0], best_piece_move[1])
+                    game.move_tile_py(best_tile_move[0], best_tile_move[1])
                 except Exception as e:
                     # Invalid move or AI crashed, break and count as a loss/draw
-                    break
+                    raise e
 
-                if game.check_win_condition(color_ind):
+                if game.check_win_condition_py(color_ind):
                     score += 1.0
                     break
-                elif game.check_win_condition(color_opp):
+                elif game.check_win_condition_py(color_opp):
                     score -= 1.0  # Penalize for losing
                     break
 
                 moves += 1
-
+        print("Score: ", score)
         return score
