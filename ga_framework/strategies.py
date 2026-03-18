@@ -172,7 +172,6 @@ class NonagaTournamentFitness(FitnessFunction):
                     # Execute in the real logic board
                     game.move_piece_py(best_piece_move[0], best_piece_move[1])
                     game.move_tile_py(best_tile_move[0], best_tile_move[1])
-                    print("Move: ", best_piece_move, best_tile_move)
                 except Exception as e:
                     # Invalid move or AI crashed, break and count as a loss/draw
                     raise e

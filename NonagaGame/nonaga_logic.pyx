@@ -3,6 +3,7 @@ from nonaga_constants import RED, BLACK, PIECE_TO_MOVE, TILE_TO_MOVE
 from nonaga_bitboard cimport (
     NonagaBitBoard,
     bitboard_initialize,
+    bitboard_set_board_state,
     bitboard_get_all_tiles,
     bitboard_get_movable_tiles,
     bitboard_get_pieces,
@@ -67,6 +68,36 @@ cdef class NonagaLogic:
             pieces.append((q[i], r[i], s[i], BLACK))
         
         return {"tiles": tiles, "pieces": pieces}
+
+    cpdef void load_board_state(self, list tiles, list red_pieces, list black_pieces, int current_player, int turn_phase):
+        cdef int tile_q[448]
+        cdef int tile_r[448]
+        cdef int rq[3]
+        cdef int rr[3]
+        cdef int bq[3]
+        cdef int br[3]
+        cdef int i
+
+        for i in range(len(tiles)):
+            tile_q[i] = tiles[i][0]
+            tile_r[i] = tiles[i][1]
+
+        for i in range(len(red_pieces)):
+            rq[i] = red_pieces[i][0]
+            rr[i] = red_pieces[i][1]
+
+        for i in range(len(black_pieces)):
+            bq[i] = black_pieces[i][0]
+            br[i] = black_pieces[i][1]
+
+        bitboard_set_board_state(
+            &self.board,
+            &tile_q[0], &tile_r[0], len(tiles),
+            &rq[0], &rr[0], len(red_pieces),
+            &bq[0], &br[0], len(black_pieces)
+        )
+        self.current_player = current_player
+        self.turn_phase = turn_phase
 
     cdef is_ai_player(self, int player_color):
         player = self.player_red if player_color == 1 else self.player_black
@@ -265,19 +296,12 @@ cdef class NonagaLogic:
         bitboard_move_piece(&self.board, from_q, from_r, to_q, to_r)
         self._next_turn_phase()
 
-    cdef void undo_tile_move(self, int from_q, int from_r, int to_q, int to_r):
-        bitboard_move_tile(&self.board, from_q, from_r, to_q, to_r)
-        self._last_turn_phase()
-    
     cpdef void move_piece_py(self, tuple from_pos, tuple to_pos):
         self.move_piece(from_pos[0], from_pos[1], to_pos[0], to_pos[1])
 
     cpdef void move_tile_py(self, tuple from_pos, tuple to_pos):
         self.move_tile(from_pos[0], from_pos[1], to_pos[0], to_pos[1])
 
-    cdef void undo_piece_move(self, int from_q, int from_r, int to_q, int to_r):
-        bitboard_move_piece(&self.board, from_q, from_r, to_q, to_r)
-        self._last_turn_phase()
 
     cdef void _next_turn_phase(self):
         if self.turn_phase == PIECE_TO_MOVE:

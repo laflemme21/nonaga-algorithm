@@ -6,6 +6,8 @@ from nonaga_constants import *
 from nonaga_logic import NonagaLogic
 from AI import AI
 import cProfile
+import json
+import os
 
 
 class Game:
@@ -49,6 +51,10 @@ class Game:
         self.btn_fwd_rect = None
         self.btn_current_rect = None
         self.btn_bot_move_rect = None
+        self.btn_free_rect = None
+        self.btn_save_rect = None
+        self.btn_load_rect = None
+        self.free_move_mode = False
 
     def setup(self):
         """Set up the game window and resources."""
@@ -92,13 +98,20 @@ class Game:
             self.clock.tick(self.fps)
 
     def _rebuild_state_from_history(self):
-        self.game_logic = NonagaLogic(None, self.ai_playing)
-        for i in range(self.current_history_index):
-            move = self.move_history[i]
-            if move['type'] == 'piece':
-                self.game_logic.move_piece_py(move['from'], move['to'])
-            elif move['type'] == 'tile':
-                self.game_logic.move_tile_py(move['from'], move['to'])
+        """Restore board state from the snapshot stored at current_history_index."""
+        ai_player = self.ai if self.ai_playing else None
+        self.game_logic = NonagaLogic(None, ai_player)
+        if self.current_history_index == 0:
+            pass  # fresh default board is already correct
+        else:
+            snap = self.move_history[self.current_history_index - 1]['snapshot']
+            tiles = [(t[0], t[1]) for t in snap['tiles']]
+            red_pieces = [(p[0], p[1]) for p in snap['pieces'] if p[3] == RED]
+            black_pieces = [(p[0], p[1]) for p in snap['pieces'] if p[3] == BLACK]
+            self.game_logic.load_board_state(
+                tiles, red_pieces, black_pieces,
+                snap['current_player'], snap['turn_phase']
+            )
         self.update_game_state()
         self.last_clicked_piece = None
         self.last_clicked_tile = None
@@ -107,6 +120,16 @@ class Game:
         self.last_clicked_piece_moves = []
         self.last_clicked_tile_moves = []
 
+    def _take_snapshot(self):
+        """Return a compact snapshot of the current board state."""
+        state = self.game_logic.get_board_state()
+        return {
+            'tiles': list(state['tiles']),
+            'pieces': list(state['pieces']),
+            'current_player': self.game_logic.get_current_player(),
+            'turn_phase': self.game_logic.get_current_turn_phase(),
+        }
+
     def update_game_state(self):
         """Check if there's a winner, update the title and stop the game if so."""
         if self.game_logic.check_win_condition_py(RED):
@@ -114,7 +137,9 @@ class Game:
         elif self.game_logic.check_win_condition_py(BLACK):
             self.title = "Black won!"
         else:
-            if self.current_history_index < len(self.move_history):
+            if getattr(self, 'free_move_mode', False):
+                self.title = "Free Move Mode (State Configuration)"
+            elif self.current_history_index < len(self.move_history):
                 self.title = f"Viewing past move ({self.current_history_index}/{len(self.move_history)})"
             else:
                 current_player = "Red" if self.game_logic.get_current_player() == RED else "Black"
@@ -189,6 +214,25 @@ class Game:
                             # Perform the AI move
                             self._make_bot_move()
                         return
+                    if self.btn_free_rect and self.btn_free_rect.collidepoint(event.pos):
+                        self.free_move_mode = not getattr(self, 'free_move_mode', False)
+                        self.last_clicked_piece = None
+                        self.last_clicked_tile = None
+                        return
+                    if getattr(self, 'btn_red_turn_rect', None) and self.btn_red_turn_rect.collidepoint(event.pos):
+                        self.game_logic.current_player = RED
+                        self.game_logic.turn_phase = PIECE_TO_MOVE
+                        return
+                    if getattr(self, 'btn_black_turn_rect', None) and self.btn_black_turn_rect.collidepoint(event.pos):
+                        self.game_logic.current_player = BLACK
+                        self.game_logic.turn_phase = PIECE_TO_MOVE
+                        return
+                    if getattr(self, 'btn_save_rect', None) and self.btn_save_rect.collidepoint(event.pos):
+                        self._save_board_state()
+                        return
+                    if getattr(self, 'btn_load_rect', None) and self.btn_load_rect.collidepoint(event.pos):
+                        self._load_board_state()
+                        return
 
                     self.last_clicked_piece = self.hovered_piece
                     self.last_clicked_tile = self.hovered_tile
@@ -214,93 +258,93 @@ class Game:
         if best_piece_move is not None and best_tile_move is not None:
             if self.current_history_index < len(self.move_history):
                 self.move_history = self.move_history[:self.current_history_index]
-            self.move_history.append({'type': 'piece', 'from': best_piece_move[0], 'to': best_piece_move[1]})
-            self.current_history_index += 1
 
             self.game_logic.move_piece_py(
                 best_piece_move[0], best_piece_move[1])
-
-            self.move_history.append({'type': 'tile', 'from': best_tile_move[0], 'to': best_tile_move[1]})
+            self.move_history.append({'type': 'piece', 'from': best_piece_move[0], 'to': best_piece_move[1], 'snapshot': self._take_snapshot()})
             self.current_history_index += 1
 
             self.game_logic.move_tile_py(
                 best_tile_move[0], best_tile_move[1])
+            self.move_history.append({'type': 'tile', 'from': best_tile_move[0], 'to': best_tile_move[1], 'snapshot': self._take_snapshot()})
+            self.current_history_index += 1
 
         self.update_game_state()
-            # pieces = self.game_logic.board.get_pieces(BLACK)
-            # d1 = pieces[0].distance_to(pieces[1])
-            # d2 = pieces[1].distance_to(pieces[2])
-            # d3 = pieces[2].distance_to(pieces[0])
-            # if d1 > d2 and d1 > d3:
-            #     print("Distance sum:", d2+d3)
-            # elif d2 > d1 and d2 > d3:
-            #     print("Distance sum:", d3+d1)
-            # else:
-            #     print("Distance sum:", d1+d2)
-            # missing_count = 0
 
-            # p1 = pieces[0]
-            # p2 = pieces[1]
-            # p3 = pieces[2]
+    def _save_board_state(self):
+        """Save the current board state to a JSON file."""
+        state = self.game_logic.get_board_state()
+        data = {
+            "board": {
+                "tiles": list(state["tiles"]),
+                "pieces": list(state["pieces"]),
+            },
+            "current_player": self.game_logic.get_current_player(),
+        }
+        with open("saved_board.json", "w") as f:
+            json.dump(data, f, indent=2)
+        print("Board state saved to saved_board.json")
 
-            # q_min = min(p1[0], p2[0], p3[0])
-            # q_max = max(p1[0], p2[0], p3[0])
-            # r_min = min(p1[1], p2[1], p3[1])
-            # r_max = max(p1[1], p2[1], p3[1])
-            # s_min = min(p1[2], p2[2], p3[2])
-            # s_max = max(p1[2], p2[2], p3[2])
-            # enemy_count = 0
-            # for q in range(q_min, q_max + 1):
-            #     for r in range(r_min, r_max + 1):
-            #         s = -q - r
-            #         if s < s_min or s > s_max:
-            #             continue
-            #         if self.game_logic.board.get_tile((q, r, s)) is None:
-            #             missing_count += 1
+    def _load_board_state(self):
+        """Load a board state from saved_board.json."""
+        if not os.path.exists("saved_board.json"):
+            print("No saved state found.")
+            return
 
-            #         elif self.game_logic.board.get_piece((q, r, s)) is not None and self.game_logic.board.get_piece((q, r, s))[3] != BLACK:
-            #             enemy_count += 1
-            # print("Missing pieces black:", missing_count)
-            # print("Enemy pieces:", enemy_count)
-            # pieces = [piece for piece in pieces]
-            # aligned_count = 0
-            # for i in range(3):
-            #     if pieces[0][i] == pieces[1][i]:
-            #         aligned_count += 1
-            #     if pieces[1][i] == pieces[2][i]:
-            #         aligned_count += 1
-            #     if pieces[2][i] == pieces[0][i]:
-            #         aligned_count += 1
-            # print("Black Aligned pieces:", aligned_count)
-            # pieces = self.game_logic.board.get_pieces(RED)
-            # pieces = [piece for piece in pieces]
-            # aligned_count = 0
-            # for i in range(3):
-            #     if pieces[0][i] == pieces[1][i]:
-            #         aligned_count += 1
-            #     if pieces[1][i] == pieces[2][i]:
-            #         aligned_count += 1
-            #     if pieces[2][i] == pieces[0][i]:
-            #         aligned_count += 1
-            # print("Red Aligned pieces:", aligned_count)
-            # end debug
+        with open("saved_board.json", "r") as f:
+            data = json.load(f)
+
+        ai_player = self.ai if self.ai_playing else None
+        self.game_logic = NonagaLogic(None, ai_player)
+        tiles = [(t[0], t[1]) for t in data.get("board", {}).get("tiles", [])]
+        red_pieces = [(p[0], p[1]) for p in data.get("board", {}).get("pieces", []) if p[3] == RED]
+        black_pieces = [(p[0], p[1]) for p in data.get("board", {}).get("pieces", []) if p[3] == BLACK]
+        current_player = data.get("current_player", RED)
+
+        self.game_logic.load_board_state(tiles, red_pieces, black_pieces, current_player, PIECE_TO_MOVE)
+        self.move_history = []
+        self.current_history_index = 0
         self.update_game_state()
+        print("Board state loaded successfully.")
 
     def update_moves(self):
         """Update game state."""
-        if self.last_clicked_piece is not None and self.last_clicked_piece[3] == self.game_logic.get_current_player() and self.game_logic.get_current_turn_phase() == PIECE_TO_MOVE:
-            self.last_clicked_piece_moves = self.game_logic.get_all_valid_piece_moves().get(
-                (self.last_clicked_piece[0], self.last_clicked_piece[1], self.last_clicked_piece[2]), [])
-            self.piece_moving = self.last_clicked_piece
+        if getattr(self, 'free_move_mode', False):
+            state = self.game_logic.get_board_state()
+            if self.last_clicked_piece is not None:
+                occupied_tiles = set((p[0], p[1], p[2]) for p in state["pieces"])
+                self.last_clicked_piece_moves = [(t[0], t[1], t[2]) for t in state["tiles"] if (t[0], t[1], t[2]) not in occupied_tiles]
+                self.piece_moving = self.last_clicked_piece
+            else:
+                self.last_clicked_piece_moves = []
+                self.piece_moving = None
+
+            if self.last_clicked_tile is not None:
+                tiles = set((t[0], t[1], t[2]) for t in state["tiles"])
+                valid_spots = set()
+                for t in tiles:
+                    for offset in [(1,-1,0), (1,0,-1), (0,1,-1), (-1,1,0), (-1,0,1), (0,-1,1)]:
+                        cand = (t[0]+offset[0], t[1]+offset[1], t[2]+offset[2])
+                        if cand not in tiles:
+                            valid_spots.add(cand)
+                self.last_clicked_tile_moves = list(valid_spots)
+                self.tile_moving = self.last_clicked_tile
+            else:
+                self.last_clicked_tile_moves = []
         else:
-            self.last_clicked_piece_moves = []
-            self.piece_moving = None
-        if self.last_clicked_tile is not None and self.game_logic.get_current_turn_phase() == TILE_TO_MOVE:
-            self.last_clicked_tile_moves = self.game_logic.get_all_valid_tile_moves().get(
-                self.last_clicked_tile, [])
-            self.tile_moving = self.last_clicked_tile
-        else:
-            self.last_clicked_tile_moves = []
+            if self.last_clicked_piece is not None and self.last_clicked_piece[3] == self.game_logic.get_current_player() and self.game_logic.get_current_turn_phase() == PIECE_TO_MOVE:
+                self.last_clicked_piece_moves = self.game_logic.get_all_valid_piece_moves().get(
+                    (self.last_clicked_piece[0], self.last_clicked_piece[1], self.last_clicked_piece[2]), [])
+                self.piece_moving = self.last_clicked_piece
+            else:
+                self.last_clicked_piece_moves = []
+                self.piece_moving = None
+            if self.last_clicked_tile is not None and self.game_logic.get_current_turn_phase() == TILE_TO_MOVE:
+                self.last_clicked_tile_moves = self.game_logic.get_all_valid_tile_moves().get(
+                    self.last_clicked_tile, [])
+                self.tile_moving = self.last_clicked_tile
+            else:
+                self.last_clicked_tile_moves = []
 
     def handle_moves(self):
         """Handle move execution based on last clicked piece/tile and valid moves."""
@@ -309,21 +353,21 @@ class Game:
 
             if self.current_history_index < len(self.move_history):
                 self.move_history = self.move_history[:self.current_history_index]
-            self.move_history.append({'type': 'piece', 'from': self.piece_moving, 'to': self.last_clicked_tile})
-            self.current_history_index += 1
 
             self.game_logic.move_piece_py(
                 self.piece_moving, self.last_clicked_tile)
-            # to prevent highlighting possibe tile moves
+            self.move_history.append({'type': 'piece', 'from': self.piece_moving, 'to': self.last_clicked_tile, 'snapshot': self._take_snapshot()})
+            self.current_history_index += 1
+            # to prevent highlighting possible tile moves
             self.last_clicked_tile = None
         if self.tile_move_to is not None and self.tile_moving is not None and self.tile_move_to in self.last_clicked_tile_moves:
 
             if self.current_history_index < len(self.move_history):
                 self.move_history = self.move_history[:self.current_history_index]
-            self.move_history.append({'type': 'tile', 'from': self.tile_moving, 'to': self.tile_move_to})
-            self.current_history_index += 1
 
             self.game_logic.move_tile_py(self.tile_moving, self.tile_move_to)
+            self.move_history.append({'type': 'tile', 'from': self.tile_moving, 'to': self.tile_move_to, 'snapshot': self._take_snapshot()})
+            self.current_history_index += 1
 
     def render(self, screen, tiles, pieces, tile_moves, piece_moves,
                center_x=None, center_y=None):
@@ -519,8 +563,58 @@ class Game:
             pygame.draw.rect(screen, (0, 0, 0), self.btn_bot_move_rect, 2)
             text_bot = font.render("Bot Move", True, (0, 0, 0))
             screen.blit(text_bot, text_bot.get_rect(center=self.btn_bot_move_rect.center))
+            
+            # Draw "Free Move" button next to it
+            self.btn_free_rect = pygame.Rect(235, 10, 100, 40)
+            color_free = (200, 255, 200) if getattr(self, 'free_move_mode', False) else (240, 240, 240)
+            pygame.draw.rect(screen, color_free, self.btn_free_rect)
+            pygame.draw.rect(screen, (0, 0, 0), self.btn_free_rect, 2)
+            text_free = font.render("Free Move", True, (0, 0, 0))
+            screen.blit(text_free, text_free.get_rect(center=self.btn_free_rect.center))
+
+            if getattr(self, 'free_move_mode', False):
+                # Draw Red Turn
+                self.btn_red_turn_rect = pygame.Rect(345, 10, 100, 40)
+                color_red = (255, 150, 150) if self.game_logic.get_current_player() == RED else (240, 240, 240)
+                pygame.draw.rect(screen, color_red, self.btn_red_turn_rect)
+                pygame.draw.rect(screen, (0, 0, 0), self.btn_red_turn_rect, 2)
+                text_red = font.render("Red Turn", True, (0, 0, 0))
+                screen.blit(text_red, text_red.get_rect(center=self.btn_red_turn_rect.center))
+
+                # Draw Black Turn
+                self.btn_black_turn_rect = pygame.Rect(455, 10, 110, 40)
+                color_black = (150, 150, 255) if self.game_logic.get_current_player() == BLACK else (240, 240, 240)
+                pygame.draw.rect(screen, color_black, self.btn_black_turn_rect)
+                pygame.draw.rect(screen, (0, 0, 0), self.btn_black_turn_rect, 2)
+                text_black = font.render("Black Turn", True, (0, 0, 0))
+                screen.blit(text_black, text_black.get_rect(center=self.btn_black_turn_rect.center))
+
+                # Draw Save
+                self.btn_save_rect = pygame.Rect(575, 10, 70, 40)
+                pygame.draw.rect(screen, (200, 200, 200), self.btn_save_rect)
+                pygame.draw.rect(screen, (0, 0, 0), self.btn_save_rect, 2)
+                text_save = font.render("Save", True, (0, 0, 0))
+                screen.blit(text_save, text_save.get_rect(center=self.btn_save_rect.center))
+
+                # Draw Load
+                self.btn_load_rect = pygame.Rect(655, 10, 70, 40)
+                pygame.draw.rect(screen, (200, 200, 200), self.btn_load_rect)
+                pygame.draw.rect(screen, (0, 0, 0), self.btn_load_rect, 2)
+                text_load = font.render("Load", True, (0, 0, 0))
+                screen.blit(text_load, text_load.get_rect(center=self.btn_load_rect.center))
+
+            else:
+                self.btn_red_turn_rect = None
+                self.btn_black_turn_rect = None
+                self.btn_save_rect = None
+                self.btn_load_rect = None
         else:
             self.btn_bot_move_rect = None
+            self.btn_free_rect = None
+            self.btn_red_turn_rect = None
+            self.btn_black_turn_rect = None
+            self.btn_save_rect = None
+            self.btn_load_rect = None
 
     def _point_in_circle(self, px, py, cx, cy, radius):
         """Check if a point is inside a circle.

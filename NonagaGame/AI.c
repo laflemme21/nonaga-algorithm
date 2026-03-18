@@ -1645,6 +1645,7 @@ struct __pyx_obj_2AI_AI {
 
 struct __pyx_vtabstruct_12nonaga_logic_NonagaLogic {
   PyObject *(*get_board_state)(struct __pyx_obj_12nonaga_logic_NonagaLogic *, int __pyx_skip_dispatch);
+  void (*load_board_state)(struct __pyx_obj_12nonaga_logic_NonagaLogic *, PyObject *, PyObject *, PyObject *, int, int, int __pyx_skip_dispatch);
   PyObject *(*get_all_valid_tile_moves_ai)(struct __pyx_obj_12nonaga_logic_NonagaLogic *);
   PyObject *(*get_all_valid_tile_moves)(struct __pyx_obj_12nonaga_logic_NonagaLogic *, int __pyx_skip_dispatch);
   PyObject *(*get_all_valid_piece_moves_ai)(struct __pyx_obj_12nonaga_logic_NonagaLogic *);
@@ -1656,8 +1657,6 @@ struct __pyx_vtabstruct_12nonaga_logic_NonagaLogic {
   void (*move_piece)(struct __pyx_obj_12nonaga_logic_NonagaLogic *, int, int, int, int);
   void (*move_piece_py)(struct __pyx_obj_12nonaga_logic_NonagaLogic *, PyObject *, PyObject *, int __pyx_skip_dispatch);
   void (*move_tile_py)(struct __pyx_obj_12nonaga_logic_NonagaLogic *, PyObject *, PyObject *, int __pyx_skip_dispatch);
-  void (*undo_tile_move)(struct __pyx_obj_12nonaga_logic_NonagaLogic *, int, int, int, int);
-  void (*undo_piece_move)(struct __pyx_obj_12nonaga_logic_NonagaLogic *, int, int, int, int);
   int (*_neighbors_restrain_piece)(struct __pyx_obj_12nonaga_logic_NonagaLogic *, PyObject *);
   void (*_next_turn_phase)(struct __pyx_obj_12nonaga_logic_NonagaLogic *);
   void (*_last_turn_phase)(struct __pyx_obj_12nonaga_logic_NonagaLogic *);
