@@ -1,4 +1,4 @@
-from typing import List, Callable
+from typing import List, Callable, Any
 import concurrent.futures
 from interfaces import ParallelBackend
 
@@ -13,3 +13,8 @@ class MasterSlaveBackend(ParallelBackend):
         with concurrent.futures.ProcessPoolExecutor(max_workers=self.max_workers) as executor:
             fitnesses = list(executor.map(evaluate_func, population))
         return fitnesses
+
+    def map_tasks(self, task_func: Callable[[Any], Any], tasks: List[Any]) -> List[Any]:
+        # Generic parallel mapper used by generation-level tournament fixtures.
+        with concurrent.futures.ProcessPoolExecutor(max_workers=self.max_workers) as executor:
+            return list(executor.map(task_func, tasks))

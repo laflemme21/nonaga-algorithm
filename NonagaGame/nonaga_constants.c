@@ -4,11 +4,14 @@
 {
     "distutils": {
         "extra_compile_args": [
-            "/Zi",
-            "/Od"
+            "/O2",
+            "/Ob2",
+            "/Zi"
         ],
         "extra_link_args": [
-            "/DEBUG"
+            "/DEBUG",
+            "/OPT:REF",
+            "/OPT:ICF"
         ],
         "name": "nonaga_constants",
         "sources": [

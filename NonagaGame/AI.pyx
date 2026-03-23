@@ -72,8 +72,43 @@ cdef class AI:
     ):
         return ai_missing_tiles_and_enemy_pieces_from_board(board, p0q, p0r, p0s, p1q, p1r, p1s, p2q, p2r, p2s, color)
 
+    cdef tuple _get_fallback_move(self, game_state):
+        """Return an arbitrary legal (piece_move, tile_move) pair for the current player."""
+        cdef object best_piece_move = None
+        cdef object best_tile_move = None
+        cdef dict piece_moves = game_state.get_all_valid_piece_moves()
+        cdef dict tile_moves = game_state.get_all_valid_tile_moves()
+        cdef object from_pos
+        cdef object destinations
+        cdef object to_pos
+
+        if piece_moves is None or tile_moves is None:
+            return (None, None)
+
+        for from_pos, destinations in piece_moves.items():
+            if destinations:
+                to_pos = destinations[0]
+                best_piece_move = (
+                    (from_pos[0], from_pos[1]),
+                    (to_pos[0], to_pos[1]),
+                )
+                break
+
+        for from_pos, destinations in tile_moves.items():
+            if destinations:
+                to_pos = next(iter(destinations))
+                best_tile_move = (
+                    (from_pos[0], from_pos[1]),
+                    (to_pos[0], to_pos[1]),
+                )
+                break
+
+        return (best_piece_move, best_tile_move)
+
     cpdef tuple get_best_move(self, game_state):
         cdef MinimaxResult result
+        cdef tuple fallback_piece_move
+        cdef tuple fallback_tile_move
         cdef object best_piece_move = None
         cdef object best_tile_move = None
 
@@ -96,6 +131,17 @@ cdef class AI:
                 (result.tile_move.from_q, result.tile_move.from_r),
                 (result.tile_move.to_q, result.tile_move.to_r),
             )
+
+        if best_piece_move is None or best_tile_move is None:
+            fallback_piece_move, fallback_tile_move = self._get_fallback_move(game_state)
+            if best_piece_move is None:
+                best_piece_move = fallback_piece_move
+            if best_tile_move is None:
+                best_tile_move = fallback_tile_move
+
+        # Keep the no-move outcome explicit and consistent for callers.
+        if best_piece_move is None or best_tile_move is None:
+            return (None, None)
 
         return (best_piece_move, best_tile_move)
 
