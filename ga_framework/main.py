@@ -72,7 +72,7 @@ if __name__ == '__main__':
     fitness = strategies.NonagaTournamentFitness(
         k_opponents=4,
         max_moves=30,
-        depth=3,
+        depth=2,
         schedule_seed=args.schedule_seed,
     )
     ga = ModularGA(
@@ -86,10 +86,10 @@ if __name__ == '__main__':
 
     # 4. Run the GA for n generations as MVP
     print("Running GA optimization...")
-    population_1 = ga.run(generations=10, pop_size=5, genome_length=8,min_gene_val=0, max_gene_val=50, mutation_prob=0.4)
-    population_2 = ga.run(generations=10, pop_size=5, genome_length=8,min_gene_val=0, max_gene_val=50, mutation_prob=0.4)
-    population_3 = ga.run(generations=10, pop_size=5, genome_length=8,min_gene_val=0, max_gene_val=50, mutation_prob=0.4)
-    population_4 = ga.run(generations=10, pop_size=5, genome_length=8,min_gene_val=0, max_gene_val=50, mutation_prob=0.4)
+    population_1 = ga.run(generations=10, pop_size=5, genome_length=8,min_gene_val=0, max_gene_val=13, mutation_prob=0.4)
+    population_2 = ga.run(generations=10, pop_size=5, genome_length=8,min_gene_val=13, max_gene_val=25, mutation_prob=0.4)
+    population_3 = ga.run(generations=10, pop_size=5, genome_length=8,min_gene_val=25, max_gene_val=37, mutation_prob=0.4)
+    population_4 = ga.run(generations=10, pop_size=5, genome_length=8,min_gene_val=37, max_gene_val=50, mutation_prob=0.4)
     all_pops = population_1+ population_2 + population_3 + population_4
     fitness = strategies.NonagaTournamentFitness(
         k_opponents=6,

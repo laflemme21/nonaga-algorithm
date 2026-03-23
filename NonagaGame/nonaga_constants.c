@@ -4,12 +4,14 @@
 {
     "distutils": {
         "extra_compile_args": [
-            "/O2",
+            "/Ox",
             "/Ob2",
-            "/Zi"
+            "/Ot",
+            "/GL",
+            "/DNDEBUG"
         ],
         "extra_link_args": [
-            "/DEBUG",
+            "/LTCG",
             "/OPT:REF",
             "/OPT:ICF"
         ],
@@ -2702,7 +2704,7 @@ typedef struct {
   PyObject *__pyx_tuple[4];
   PyObject *__pyx_codeobj_tab[3];
   PyObject *__pyx_string_tab[43];
-  PyObject *__pyx_number_tab[21];
+  PyObject *__pyx_number_tab[20];
 /* #### Code section: module_state_contents ### */
 
 #if CYTHON_USE_FREELISTS
@@ -2805,23 +2807,22 @@ static __pyx_mstatetype * const __pyx_mstate_global = &__pyx_mstate_global_stati
 #define __pyx_int_0 __pyx_number_tab[1]
 #define __pyx_int_1 __pyx_number_tab[2]
 #define __pyx_int_2 __pyx_number_tab[3]
-#define __pyx_int_neg_11 __pyx_number_tab[4]
-#define __pyx_int_neg_15 __pyx_number_tab[5]
-#define __pyx_int_15 __pyx_number_tab[6]
-#define __pyx_int_20 __pyx_number_tab[7]
-#define __pyx_int_neg_23 __pyx_number_tab[8]
-#define __pyx_int_30 __pyx_number_tab[9]
-#define __pyx_int_31 __pyx_number_tab[10]
-#define __pyx_int_neg_32 __pyx_number_tab[11]
+#define __pyx_int_14 __pyx_number_tab[4]
+#define __pyx_int_15 __pyx_number_tab[5]
+#define __pyx_int_20 __pyx_number_tab[6]
+#define __pyx_int_30 __pyx_number_tab[7]
+#define __pyx_int_34 __pyx_number_tab[8]
+#define __pyx_int_35 __pyx_number_tab[9]
+#define __pyx_int_39 __pyx_number_tab[10]
+#define __pyx_int_40 __pyx_number_tab[11]
 #define __pyx_int_50 __pyx_number_tab[12]
-#define __pyx_int_56 __pyx_number_tab[13]
-#define __pyx_int_106 __pyx_number_tab[14]
-#define __pyx_int_158 __pyx_number_tab[15]
-#define __pyx_int_188 __pyx_number_tab[16]
-#define __pyx_int_200 __pyx_number_tab[17]
-#define __pyx_int_255 __pyx_number_tab[18]
-#define __pyx_int_500 __pyx_number_tab[19]
-#define __pyx_int_800 __pyx_number_tab[20]
+#define __pyx_int_106 __pyx_number_tab[13]
+#define __pyx_int_158 __pyx_number_tab[14]
+#define __pyx_int_188 __pyx_number_tab[15]
+#define __pyx_int_200 __pyx_number_tab[16]
+#define __pyx_int_255 __pyx_number_tab[17]
+#define __pyx_int_500 __pyx_number_tab[18]
+#define __pyx_int_800 __pyx_number_tab[19]
 /* #### Code section: module_state_clear ### */
 #if CYTHON_USE_MODULE_STATE
 static CYTHON_SMALL_CODE int __pyx_m_clear(PyObject *m) {
@@ -2845,7 +2846,7 @@ static CYTHON_SMALL_CODE int __pyx_m_clear(PyObject *m) {
   for (int i=0; i<4; ++i) { Py_CLEAR(clear_module_state->__pyx_tuple[i]); }
   for (int i=0; i<3; ++i) { Py_CLEAR(clear_module_state->__pyx_codeobj_tab[i]); }
   for (int i=0; i<43; ++i) { Py_CLEAR(clear_module_state->__pyx_string_tab[i]); }
-  for (int i=0; i<21; ++i) { Py_CLEAR(clear_module_state->__pyx_number_tab[i]); }
+  for (int i=0; i<20; ++i) { Py_CLEAR(clear_module_state->__pyx_number_tab[i]); }
 /* #### Code section: module_state_clear_contents ### */
 /* CommonTypesMetaclass.module_state_clear */
 Py_CLEAR(clear_module_state->__pyx_CommonTypesMetaclassType);
@@ -2877,7 +2878,7 @@ static CYTHON_SMALL_CODE int __pyx_m_traverse(PyObject *m, visitproc visit, void
   for (int i=0; i<4; ++i) { __Pyx_VISIT_CONST(traverse_module_state->__pyx_tuple[i]); }
   for (int i=0; i<3; ++i) { __Pyx_VISIT_CONST(traverse_module_state->__pyx_codeobj_tab[i]); }
   for (int i=0; i<43; ++i) { __Pyx_VISIT_CONST(traverse_module_state->__pyx_string_tab[i]); }
-  for (int i=0; i<21; ++i) { __Pyx_VISIT_CONST(traverse_module_state->__pyx_number_tab[i]); }
+  for (int i=0; i<20; ++i) { __Pyx_VISIT_CONST(traverse_module_state->__pyx_number_tab[i]); }
 /* #### Code section: module_state_traverse_contents ### */
 /* CommonTypesMetaclass.module_state_traverse */
 Py_VISIT(traverse_module_state->__pyx_CommonTypesMetaclassType);
@@ -4567,24 +4568,24 @@ __Pyx_RefNannySetupContext("PyInit_nonaga_constants", 0);
  * RED = 0
  * BLACK = 1             # <<<<<<<<<<<<<<
  * 
- * AI_PARAM = [-11, 56, -15, 31, -23, -32, -15, -15]
+ * AI_PARAM = [35, 14, 40, 20, 35, 40, 39, 34]
 */
   if (PyDict_SetItem(__pyx_mstate_global->__pyx_d, __pyx_mstate_global->__pyx_n_u_BLACK, __pyx_mstate_global->__pyx_int_1) < (0)) __PYX_ERR(0, 5, __pyx_L1_error)
 
   /* "nonaga_constants.pyx":7
  * BLACK = 1
  * 
- * AI_PARAM = [-11, 56, -15, 31, -23, -32, -15, -15]             # <<<<<<<<<<<<<<
+ * AI_PARAM = [35, 14, 40, 20, 35, 40, 39, 34]             # <<<<<<<<<<<<<<
  * 
  * PIECE_TO_MOVE = 0
 */
-  __pyx_t_2 = __Pyx_PyList_Pack(8, __pyx_mstate_global->__pyx_int_neg_11, __pyx_mstate_global->__pyx_int_56, __pyx_mstate_global->__pyx_int_neg_15, __pyx_mstate_global->__pyx_int_31, __pyx_mstate_global->__pyx_int_neg_23, __pyx_mstate_global->__pyx_int_neg_32, __pyx_mstate_global->__pyx_int_neg_15, __pyx_mstate_global->__pyx_int_neg_15); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 7, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyList_Pack(8, __pyx_mstate_global->__pyx_int_35, __pyx_mstate_global->__pyx_int_14, __pyx_mstate_global->__pyx_int_40, __pyx_mstate_global->__pyx_int_20, __pyx_mstate_global->__pyx_int_35, __pyx_mstate_global->__pyx_int_40, __pyx_mstate_global->__pyx_int_39, __pyx_mstate_global->__pyx_int_34); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 7, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   if (PyDict_SetItem(__pyx_mstate_global->__pyx_d, __pyx_mstate_global->__pyx_n_u_AI_PARAM, __pyx_t_2) < (0)) __PYX_ERR(0, 7, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
   /* "nonaga_constants.pyx":9
- * AI_PARAM = [-11, 56, -15, 31, -23, -32, -15, -15]
+ * AI_PARAM = [35, 14, 40, 20, 35, 40, 39, 34]
  * 
  * PIECE_TO_MOVE = 0             # <<<<<<<<<<<<<<
  * TILE_TO_MOVE = 1
@@ -4984,17 +4985,17 @@ const char* const bytes = "?NonagaGame/nonaga_constants.pyxdisableenablegcisenab
   }
   {
     PyObject **numbertab = __pyx_mstate->__pyx_number_tab + 1;
-    int8_t const cint_constants_1[] = {0,1,2,-11,-15,15,20,-23,30,31,-32,50,56,106};
+    int8_t const cint_constants_1[] = {0,1,2,14,15,20,30,34,35,39,40,50,106};
     int16_t const cint_constants_2[] = {158,188,200,255,500,800};
-    for (int i = 0; i < 20; i++) {
-      numbertab[i] = PyLong_FromLong((i < 14 ? cint_constants_1[i - 0] : cint_constants_2[i - 14]));
+    for (int i = 0; i < 19; i++) {
+      numbertab[i] = PyLong_FromLong((i < 13 ? cint_constants_1[i - 0] : cint_constants_2[i - 13]));
       if (unlikely(!numbertab[i])) __PYX_ERR(0, 1, __pyx_L1_error)
     }
   }
   #if CYTHON_IMMORTAL_CONSTANTS
   {
     PyObject **table = __pyx_mstate->__pyx_number_tab;
-    for (Py_ssize_t i=0; i<21; ++i) {
+    for (Py_ssize_t i=0; i<20; ++i) {
       #if CYTHON_COMPILING_IN_CPYTHON_FREETHREADING
       #if PY_VERSION_HEX < 0x030E0000
       if (_Py_IsOwnedByCurrentThread(table[i]) && Py_REFCNT(table[i]) == 1)

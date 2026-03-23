@@ -4,7 +4,7 @@
 RED = 0
 BLACK = 1
 
-AI_PARAM = [-11, 56, -15, 31, -23, -32, -15, -15]
+AI_PARAM = [35, 14, 40, 20, 35, 40, 39, 34]
 
 PIECE_TO_MOVE = 0
 TILE_TO_MOVE = 1

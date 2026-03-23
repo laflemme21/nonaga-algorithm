@@ -48,7 +48,8 @@ class ModularGA:
                 self.fitness.set_generation_index(generation)
 
             # 1. Map Evaluation (Delegated to Backend)
-            fitnesses = self.fitness.evaluate_population(population, self.backend)
+            fitnesses = self.fitness.evaluate_population(
+                population, self.backend)
 
             # 2. Extract metrics
             best_fitness = max(fitnesses)
