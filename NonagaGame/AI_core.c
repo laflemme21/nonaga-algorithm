@@ -569,7 +569,7 @@ static int ai_neighbors_restrain_piece(const int *nq, const int *nr, int neighbo
 
 int ai_cost_function(NonagaBitBoard *board, int maximizing_player, int max_color, const int *params)
 {
-    int min_color = (max_color + 1) % 2;
+    int min_color = !max_color;
     int max_q[3];
     int max_r[3];
     int max_s[3];
@@ -674,7 +674,7 @@ MinimaxResult ai_minimax_piece(
     };
     struct Candidate candidates[18]; /* 3 pieces * 6 directions = max 18 candidate slide destinations */
     int num_candidates = 0;
-    int i, j;
+    int i;
 
     (void)color;
 

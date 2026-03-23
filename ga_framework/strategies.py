@@ -295,8 +295,13 @@ class NonagaTournamentFitness(FitnessFunction):
 
             matches[idx_red] += 1
             matches[idx_black] += 1
+            # Win
             if winner >= 0:
                 wins[winner] += 1
+            # Draw
+            else:
+                wins[idx_red] += 0.5
+                wins[idx_black] += 0.5
 
         return [wins[i] / matches[i] if matches[i] > 0 else 0.0 for i in range(n)]
 
