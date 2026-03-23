@@ -1,8 +1,4 @@
 
-from compiler import compile_cython_files
-from AI import AI
-from nonaga_logic import NonagaLogic
-from nonaga_constants import RED, BLACK
 import json
 import csv
 import sys
@@ -16,32 +12,52 @@ my_nonaga_path = os.path.abspath("NonagaGame")
 if my_nonaga_path not in sys.path:
     sys.path.append(my_nonaga_path)
 
+from nonaga_constants import RED, BLACK
+from nonaga_logic import NonagaLogic
+from AI import AI
+from compiler import compile_cython_files
+
+def _has_any_destinations(move_map: object) -> bool:
+    """Return True when a move map contains at least one legal destination."""
+    if not move_map:
+        return False
+    if not isinstance(move_map, dict):
+        return False
+    for destinations in move_map.values():
+        if destinations:
+            return True
+    return False
+
 
 def load_parameters(filepath: str) -> List[List[int]]:
     with open(filepath, "r") as f:
         return json.load(f)
 
 
-def run_match(ai_1_params: List[int], ai_2_params: List[int], max_moves: int = 150) -> tuple[int, int]:
+def run_match(ai_1_params: List[int], ai_2_params: List[int], max_moves: int = 150) -> tuple[float, float]:
     """
     Simulates a match between two AI parameter sets.
     Returns a tuple of points (score1, score2) where:
     Win = 1, Draw/Timeout = 0, Loss = 0
     """
-    ai_red = AI(parameter=ai_1_params, depth=2, color=RED)
-    ai_black = AI(parameter=ai_2_params, depth=2, color=BLACK)
+    ai_red = AI(parameter=ai_1_params, depth=3, color=RED)
+    ai_black = AI(parameter=ai_2_params, depth=3, color=BLACK)
 
     game = NonagaLogic(player_red=ai_red, player_black=ai_black, new_game=True)
 
     moves = 0
     while moves < max_moves:
+        piece_moves = game.get_all_valid_piece_moves()
+        tile_moves = game.get_all_valid_tile_moves()
+        if not _has_any_destinations(piece_moves) or not _has_any_destinations(tile_moves):
+            return 0.5, 0.5  # Draw
         current_color = game.get_current_player()
         active_ai = ai_red if current_color == RED else ai_black
 
         try:
             best_piece_move, best_tile_move = active_ai.get_best_move(game)
-            game.move_piece(best_piece_move[0], best_piece_move[1])
-            game.move_tile(best_tile_move[0], best_tile_move[1])
+            game.move_piece_py(best_piece_move[0], best_piece_move[1])
+            game.move_tile_py(best_tile_move[0], best_tile_move[1])
         except Exception as e:
             # If an AI crashes or makes an invalid move, print it so we know!
             print(f"Match error: {e}")
@@ -55,10 +71,10 @@ def run_match(ai_1_params: List[int], ai_2_params: List[int], max_moves: int = 1
         moves += 1
 
     # Draw limits reached
-    return 0, 0
+    return 0.5, 0.5
 
 
-def evaluate_matchup(task: tuple[int, int, List[int], List[int], int]) -> tuple[int, int, int, int]:
+def evaluate_matchup(task: tuple[int, int, List[int], List[int], int]) -> tuple[int, int, float, float]:
     idx1, idx2, ai_1_params, ai_2_params, max_moves = task
     score1, score2 = run_match(ai_1_params, ai_2_params, max_moves=max_moves)
     return idx1, idx2, score1, score2
@@ -72,7 +88,7 @@ def tournament():
         print(f"Error: {param_file} does not exist.")
         return
 
-    genomes = load_parameters(param_file)
+    genomes = load_parameters(param_file)[0]
     num_genomes = len(genomes)
     print(f"Loaded {num_genomes} AI parameters from {param_file}.")
 

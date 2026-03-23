@@ -3,13 +3,15 @@ from setuptools.extension import Extension
 from Cython.Build import cythonize
 import os
 import sys
-
+# Windows args
 if os.name == "nt":
-    comp_args = ['/O2', '/Ob2', '/Zi']
-    link_args = ['/DEBUG', '/OPT:REF', '/OPT:ICF']
+    comp_args = ['/Ox', '/Ob2', '/Ot', '/GL', '/DNDEBUG']
+    link_args = ['/LTCG', '/OPT:REF', '/OPT:ICF']
+# Linux args
 else:
-    comp_args = ["-O3", "-march=native"]
-    link_args = []
+    comp_args = ["-O3", "-march=native", "-flto",
+                 "-fomit-frame-pointer", "-DNDEBUG"]
+    link_args = ["-flto"]
 
 setup(
     name="nonaga",
