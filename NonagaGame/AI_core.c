@@ -330,6 +330,165 @@ MinimaxResult ai_new_result(int cost)
     return result;
 }
 
+static int ai_piece_destination_in_direction(
+    NonagaBitBoard *board,
+    int q,
+    int r,
+    int s,
+    int dimension,
+    int direction,
+    int *out_q,
+    int *out_r,
+    int *out_s);
+
+static int ai_is_legal_piece_move(const NonagaBitBoard *board, int current_player, const Move2D *move)
+{
+    int from_s;
+    int dim;
+
+    if (!move->is_set)
+    {
+        return 0;
+    }
+
+    if (!bitboard_is_there_piece((NonagaBitBoard *)board, move->from_q, move->from_r))
+    {
+        return 0;
+    }
+
+    if (bitboard_get_color((NonagaBitBoard *)board, move->from_q, move->from_r) != current_player)
+    {
+        return 0;
+    }
+
+    if (bitboard_is_there_piece((NonagaBitBoard *)board, move->to_q, move->to_r))
+    {
+        return 0;
+    }
+
+    from_s = -move->from_q - move->from_r;
+
+    for (dim = 0; dim < 3; ++dim)
+    {
+        int dir;
+        for (dir = -1; dir <= 1; dir += 2)
+        {
+            int dest_q;
+            int dest_r;
+            int dest_s;
+            if (!ai_piece_destination_in_direction(
+                    (NonagaBitBoard *)board,
+                    move->from_q,
+                    move->from_r,
+                    from_s,
+                    dim,
+                    dir,
+                    &dest_q,
+                    &dest_r,
+                    &dest_s))
+            {
+                continue;
+            }
+
+            if (dest_q == move->to_q && dest_r == move->to_r)
+            {
+                return 1;
+            }
+        }
+    }
+
+    return 0;
+}
+
+static int ai_is_legal_tile_move(const NonagaBitBoard *board, const Move2D *move)
+{
+    int tile_q[MAX_TILES];
+    int tile_r[MAX_TILES];
+    int tile_s[MAX_TILES];
+    int tile_count;
+    int tile_idx;
+    int valid_q[MAX_TILE_CANDIDATES];
+    int valid_r[MAX_TILE_CANDIDATES];
+    int valid_s[MAX_TILE_CANDIDATES];
+    int valid_count;
+    int d_idx;
+    int found_source = 0;
+
+    if (!move->is_set)
+    {
+        return 0;
+    }
+
+    tile_count = bitboard_get_movable_tiles((NonagaBitBoard *)board, &tile_q[0], &tile_r[0], &tile_s[0], MAX_TILES);
+    if (tile_count <= 0)
+    {
+        return 0;
+    }
+
+    for (tile_idx = 0; tile_idx < tile_count; ++tile_idx)
+    {
+        if (tile_q[tile_idx] == move->from_q && tile_r[tile_idx] == move->from_r)
+        {
+            found_source = 1;
+            break;
+        }
+    }
+
+    if (!found_source)
+    {
+        return 0;
+    }
+
+    valid_count = bitboard_get_valid_tile_positions_for_tile(
+        (NonagaBitBoard *)board,
+        move->from_q,
+        move->from_r,
+        -move->from_q - move->from_r,
+        &valid_q[0],
+        &valid_r[0],
+        &valid_s[0],
+        MAX_TILE_CANDIDATES);
+
+    for (d_idx = 0; d_idx < valid_count; ++d_idx)
+    {
+        if (valid_q[d_idx] == move->to_q && valid_r[d_idx] == move->to_r)
+        {
+            return 1;
+        }
+    }
+
+    return 0;
+}
+
+static int ai_is_legal_piece_tile_pair(const NonagaBitBoard *board, int current_player, const Move2D *piece_move, const Move2D *tile_move)
+{
+    NonagaBitBoard probe_board;
+    int probe_player = current_player;
+    int probe_phase = PIECE_TO_MOVE;
+
+    if (!ai_is_legal_piece_move(board, current_player, piece_move))
+    {
+        return 0;
+    }
+
+    if (!tile_move->is_set)
+    {
+        return 0;
+    }
+
+    probe_board = *board;
+    ai_move_piece_state(
+        &probe_board,
+        &probe_player,
+        &probe_phase,
+        piece_move->from_q,
+        piece_move->from_r,
+        piece_move->to_q,
+        piece_move->to_r);
+
+    return ai_is_legal_tile_move(&probe_board, tile_move);
+}
+
 int ai_distance_to(int q1, int r1, int s1, int q2, int r2, int s2)
 {
     /* Cube-coordinate hex distance. */
@@ -897,6 +1056,9 @@ MinimaxResult ai_minimax_piece(
     Move2D tt_piece_move = ai_empty_move();
     Move2D tt_tile_move = ai_empty_move();
     int alpha_orig = alpha;
+    int beta_orig = beta;
+    int tt_piece_move_valid = 0;
+    int tt_pair_valid = 0;
 
     /* Candidate move structs for ordering */
     struct Candidate
@@ -932,9 +1094,27 @@ MinimaxResult ai_minimax_piece(
         tt_hit = 1;
         tt_piece_move = tt_entry->best_piece_move;
         tt_tile_move = tt_entry->best_tile_move;
+
+        if (tt_piece_move.is_set)
+        {
+            tt_piece_move_valid = ai_is_legal_piece_move(board, *current_player, &tt_piece_move);
+            if (!tt_piece_move_valid)
+            {
+                tt_piece_move = ai_empty_move();
+            }
+        }
+        if (tt_piece_move.is_set && tt_tile_move.is_set)
+        {
+            tt_pair_valid = ai_is_legal_piece_tile_pair(board, *current_player, &tt_piece_move, &tt_tile_move);
+            if (!tt_pair_valid)
+            {
+                tt_tile_move = ai_empty_move();
+            }
+        }
+
         if (tt_entry->depth >= depth)
         {
-            if (tt_entry->flag == TT_EXACT)
+            if (tt_entry->flag == TT_EXACT && tt_pair_valid)
             {
                 out = ai_new_result(tt_entry->value);
                 out.piece_move = tt_piece_move;
@@ -954,8 +1134,11 @@ MinimaxResult ai_minimax_piece(
             if (alpha >= beta)
             {
                 out = ai_new_result(tt_entry->value);
-                out.piece_move = tt_piece_move;
-                out.tile_move = tt_tile_move;
+                if (tt_pair_valid)
+                {
+                    out.piece_move = tt_piece_move;
+                    out.tile_move = tt_tile_move;
+                }
                 return out;
             }
         }
@@ -1128,7 +1311,7 @@ store_and_return:
     {
         tt_entry->flag = TT_UPPER;
     }
-    else if (value >= beta)
+    else if (value >= beta_orig)
     {
         tt_entry->flag = TT_LOWER;
     }
@@ -1169,6 +1352,8 @@ MinimaxResult ai_minimax_tile(
     int tt_hit = 0;
     Move2D tt_tile_move = ai_empty_move();
     int alpha_orig = alpha;
+    int beta_orig = beta;
+    int tt_tile_move_valid = 0;
 
     struct Candidate
     {
@@ -1195,9 +1380,19 @@ MinimaxResult ai_minimax_tile(
     {
         tt_hit = 1;
         tt_tile_move = tt_entry->best_tile_move;
+
+        if (tt_tile_move.is_set)
+        {
+            tt_tile_move_valid = ai_is_legal_tile_move(board, &tt_tile_move);
+            if (!tt_tile_move_valid)
+            {
+                tt_tile_move = ai_empty_move();
+            }
+        }
+
         if (tt_entry->depth >= depth)
         {
-            if (tt_entry->flag == TT_EXACT)
+            if (tt_entry->flag == TT_EXACT && tt_tile_move_valid)
             {
                 out = ai_new_result(tt_entry->value);
                 out.tile_move = tt_tile_move;
@@ -1216,7 +1411,10 @@ MinimaxResult ai_minimax_tile(
             if (alpha >= beta)
             {
                 out = ai_new_result(tt_entry->value);
-                out.tile_move = tt_tile_move;
+                if (tt_tile_move_valid)
+                {
+                    out.tile_move = tt_tile_move;
+                }
                 return out;
             }
         }
@@ -1365,7 +1563,7 @@ store_and_return_tile:
     {
         tt_entry->flag = TT_UPPER;
     }
-    else if (value >= beta)
+    else if (value >= beta_orig)
     {
         tt_entry->flag = TT_LOWER;
     }

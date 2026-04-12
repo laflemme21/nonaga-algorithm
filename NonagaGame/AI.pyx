@@ -45,7 +45,7 @@ cdef int POS_INF = 99999999
 cdef class AI:
     """Minimax AI with alpha-beta pruning for Nonaga."""
 
-    def __init__(self, parameter, int depth=3, int color=BLACK):
+    def __init__(self, parameter, int depth=4, int color=BLACK):
         cdef int i
         self.depth = depth
         self.max_color = color
@@ -85,13 +85,34 @@ cdef class AI:
         cdef object best_piece_move = None
         cdef object best_tile_move = None
         cdef dict piece_moves = game_state.get_all_valid_piece_moves()
-        cdef dict tile_moves = game_state.get_all_valid_tile_moves()
+        cdef dict tile_moves
         cdef object from_pos
         cdef object destinations
         cdef object to_pos
+        cdef dict state
+        cdef list tiles
+        cdef list pieces
+        cdef list red_pieces = []
+        cdef list black_pieces = []
+        cdef tuple p
+        cdef int current_player
+        cdef int turn_phase
+        cdef NonagaLogic probe
 
-        if piece_moves is None or tile_moves is None:
+        if piece_moves is None:
             return (None, None)
+
+        state = game_state.get_board_state()
+        tiles = state["tiles"]
+        pieces = state["pieces"]
+        for p in pieces:
+            if p[3] == RED:
+                red_pieces.append((p[0], p[1], p[2]))
+            else:
+                black_pieces.append((p[0], p[1], p[2]))
+
+        current_player = game_state.get_current_player()
+        turn_phase = game_state.get_current_turn_phase()
 
         for from_pos, destinations in piece_moves.items():
             if destinations:
@@ -100,18 +121,82 @@ cdef class AI:
                     (from_pos[0], from_pos[1]),
                     (to_pos[0], to_pos[1]),
                 )
-                break
 
-        for from_pos, destinations in tile_moves.items():
-            if destinations:
-                to_pos = next(iter(destinations))
-                best_tile_move = (
-                    (from_pos[0], from_pos[1]),
-                    (to_pos[0], to_pos[1]),
-                )
-                break
+                probe = NonagaLogic(None, None)
+                probe.load_board_state(tiles, red_pieces, black_pieces, current_player, turn_phase)
+                probe.move_piece_py(best_piece_move[0], best_piece_move[1])
+
+                tile_moves = probe.get_all_valid_tile_moves()
+                if tile_moves is None:
+                    continue
+                for from_pos, destinations in tile_moves.items():
+                    if destinations:
+                        to_pos = next(iter(destinations))
+                        best_tile_move = (
+                            (from_pos[0], from_pos[1]),
+                            (to_pos[0], to_pos[1]),
+                        )
+                        break
+
+                if best_tile_move is not None:
+                    return (best_piece_move, best_tile_move)
+
+                best_piece_move = None
 
         return (best_piece_move, best_tile_move)
+
+    cdef bint _is_move_pair_legal(self, NonagaLogic game_state, object piece_move, object tile_move):
+        cdef dict piece_moves
+        cdef dict tile_moves
+        cdef tuple piece_from
+        cdef tuple piece_to
+        cdef tuple tile_from
+        cdef tuple tile_to
+        cdef dict state
+        cdef list tiles
+        cdef list pieces
+        cdef list red_pieces = []
+        cdef list black_pieces = []
+        cdef tuple p
+        cdef int current_player
+        cdef int turn_phase
+        cdef NonagaLogic probe
+
+        if piece_move is None or tile_move is None:
+            return False
+
+        piece_moves = game_state.get_all_valid_piece_moves()
+        piece_from = (piece_move[0][0], piece_move[0][1], -piece_move[0][0] - piece_move[0][1])
+        piece_to = (piece_move[1][0], piece_move[1][1], -piece_move[1][0] - piece_move[1][1])
+        if piece_from not in piece_moves:
+            return False
+        if piece_to not in piece_moves[piece_from]:
+            return False
+
+        state = game_state.get_board_state()
+        tiles = state["tiles"]
+        pieces = state["pieces"]
+        for p in pieces:
+            if p[3] == RED:
+                red_pieces.append((p[0], p[1], p[2]))
+            else:
+                black_pieces.append((p[0], p[1], p[2]))
+
+        current_player = game_state.get_current_player()
+        turn_phase = game_state.get_current_turn_phase()
+        probe = NonagaLogic(None, None)
+        probe.load_board_state(tiles, red_pieces, black_pieces, current_player, turn_phase)
+        probe.move_piece_py(piece_move[0], piece_move[1])
+
+        tile_moves = probe.get_all_valid_tile_moves()
+        tile_from = (tile_move[0][0], tile_move[0][1], -tile_move[0][0] - tile_move[0][1])
+        tile_to = (tile_move[1][0], tile_move[1][1], -tile_move[1][0] - tile_move[1][1])
+        if tile_from not in tile_moves:
+            return False
+        if tile_to not in tile_moves[tile_from]:
+            return False
+
+        return True
 
     cpdef tuple get_best_move(self, game_state):
         cdef MinimaxResult result
@@ -146,6 +231,11 @@ cdef class AI:
                 best_piece_move = fallback_piece_move
             if best_tile_move is None:
                 best_tile_move = fallback_tile_move
+
+        if not self._is_move_pair_legal(game_state, best_piece_move, best_tile_move):
+            fallback_piece_move, fallback_tile_move = self._get_fallback_move(game_state)
+            best_piece_move = fallback_piece_move
+            best_tile_move = fallback_tile_move
 
         # Keep the no-move outcome explicit and consistent for callers.
         if best_piece_move is None or best_tile_move is None:

@@ -35,6 +35,7 @@ cdef class AI:
     cdef MissingInfo missing_tiles_and_enemy_pieces(self, NonagaBitBoard* board, int p0q, int p0r, int p0s, int p1q, int p1r, int p1s, int p2q, int p2r, int p2s, int color)
     cdef int distance_to(self, int q1, int r1, int s1, int q2, int r2, int s2)
     cdef tuple _get_fallback_move(self, game_state)
+    cdef bint _is_move_pair_legal(self, NonagaLogic game_state, object piece_move, object tile_move)
     cpdef tuple get_best_move(self, game_state)
     cpdef void reset_search_counters(self)
     cpdef dict get_search_counters(self)
