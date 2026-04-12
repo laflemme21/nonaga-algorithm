@@ -30,8 +30,25 @@ extern "C"
         Move2D tile_move;
     } MinimaxResult;
 
+    typedef struct AiSearchCounters
+    {
+        unsigned long long evaluated_nodes;
+        unsigned long long leaf_nodes;
+    } AiSearchCounters;
+
     Move2D ai_empty_move(void);
     MinimaxResult ai_new_result(int cost);
+    void ai_reset_search_counters(void);
+    AiSearchCounters ai_get_search_counters(void);
+    unsigned long long ai_count_total_nodes_iterative_deepening(
+        NonagaBitBoard *board,
+        int current_player,
+        int turn_phase,
+        int max_depth,
+        int maximizing_player,
+        int color,
+        int max_color,
+        const int *params);
 
     MinimaxResult ai_minimax_piece(
         NonagaBitBoard *board,

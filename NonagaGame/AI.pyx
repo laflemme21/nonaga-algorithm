@@ -21,9 +21,16 @@ cdef extern from "AI_core.h":
         Move2D piece_move
         Move2D tile_move
 
+    ctypedef struct AiSearchCounters:
+        unsigned long long evaluated_nodes
+        unsigned long long leaf_nodes
+
     Move2D ai_empty_move()
     MinimaxResult ai_new_result(int cost)
     void ai_init_tt()
+    void ai_reset_search_counters()
+    AiSearchCounters ai_get_search_counters()
+    unsigned long long ai_count_total_nodes_iterative_deepening(NonagaBitBoard* board, int current_player, int turn_phase, int max_depth, int maximizing_player, int color, int max_color, const int* params)
     MinimaxResult ai_search_iterative_deepening(NonagaBitBoard* board, int current_player, int turn_phase, int max_depth, int maximizing_player, int color, int max_color, const int* params)
 
     int ai_cost_function(NonagaBitBoard* board, int maximizing_player, int max_color, const int* params)
@@ -46,6 +53,7 @@ cdef class AI:
         self.depth_0_color = (color + depth) % 2
         for i in range(8):
             self.parameter[i] = <int>parameter[i]
+        ai_init_tt() 
 
     cdef MinimaxResult search_iterative_deepening(self, NonagaLogic game_state, int max_depth, bint maximizingPlayer, int color):
         return ai_search_iterative_deepening(&game_state.board, game_state.current_player, game_state.turn_phase, max_depth, 1 if maximizingPlayer else 0, color, self.max_color, &self.parameter[0])
@@ -112,7 +120,7 @@ cdef class AI:
         cdef object best_piece_move = None
         cdef object best_tile_move = None
 
-        ai_init_tt()
+        # ai_init_tt() 
 
         result = self.search_iterative_deepening(
             game_state,
@@ -144,6 +152,29 @@ cdef class AI:
             return (None, None)
 
         return (best_piece_move, best_tile_move)
+
+    cpdef void reset_search_counters(self):
+        ai_reset_search_counters()
+
+    cpdef dict get_search_counters(self):
+        cdef AiSearchCounters counters = ai_get_search_counters()
+        return {
+            "evaluated_nodes": int(counters.evaluated_nodes),
+            "leaf_nodes": int(counters.leaf_nodes),
+        }
+
+    cpdef unsigned long long count_total_nodes(self, game_state):
+        cdef NonagaLogic logic = game_state
+        return ai_count_total_nodes_iterative_deepening(
+            &logic.board,
+            logic.current_player,
+            logic.turn_phase,
+            self.depth,
+            1,
+            logic.get_current_player(),
+            self.max_color,
+            &self.parameter[0],
+        )
 
     def execute_best_move(self, game_state: object):
         cdef object best_piece_move

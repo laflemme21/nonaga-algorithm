@@ -36,3 +36,6 @@ cdef class AI:
     cdef int distance_to(self, int q1, int r1, int s1, int q2, int r2, int s2)
     cdef tuple _get_fallback_move(self, game_state)
     cpdef tuple get_best_move(self, game_state)
+    cpdef void reset_search_counters(self)
+    cpdef dict get_search_counters(self)
+    cpdef unsigned long long count_total_nodes(self, game_state)
