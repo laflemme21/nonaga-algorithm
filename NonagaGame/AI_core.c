@@ -23,7 +23,8 @@
 #define TT_LOWER 1
 #define TT_UPPER 2
 
-typedef struct {
+typedef struct
+{
     unsigned long long hash;
     int depth;
     int flag;
@@ -39,6 +40,18 @@ static unsigned long long Z_TILE[AI_BOARD_BITS];
 static unsigned long long Z_TURN_PHASE[2];
 static unsigned long long Z_CURRENT_PLAYER[2];
 static int ai_tt_initialized = 0;
+static AiSearchCounters ai_search_counters = {0ULL, 0ULL};
+
+void ai_reset_search_counters(void)
+{
+    ai_search_counters.evaluated_nodes = 0ULL;
+    ai_search_counters.leaf_nodes = 0ULL;
+}
+
+AiSearchCounters ai_get_search_counters(void)
+{
+    return ai_search_counters;
+}
 
 /* Simple pseudo-random generator for Zobrist keys */
 static unsigned long long ai_rand64(void)
@@ -54,8 +67,9 @@ void ai_init_tt(void)
 {
     int i;
     int len = sizeof(ai_tt) / sizeof(ai_tt[0]);
-    
-    for (i = 0; i < len; i++) {
+
+    for (i = 0; i < len; i++)
+    {
         ai_tt[i].hash = 0;
         ai_tt[i].depth = -1;
         ai_tt[i].flag = 0;
@@ -64,8 +78,10 @@ void ai_init_tt(void)
         ai_tt[i].best_tile_move.is_set = 0;
     }
 
-    if (!ai_tt_initialized) {
-        for (i = 0; i < AI_BOARD_BITS; ++i) {
+    if (!ai_tt_initialized)
+    {
+        for (i = 0; i < AI_BOARD_BITS; ++i)
+        {
             Z_RED[i] = ai_rand64();
             Z_BLACK[i] = ai_rand64();
             Z_TILE[i] = ai_rand64();
@@ -78,27 +94,34 @@ void ai_init_tt(void)
     }
 }
 
+/* Zobrist hashing for board states. */
 static unsigned long long ai_compute_hash(const NonagaBitBoard *board, int current_player, int turn_phase)
 {
     unsigned long long h = 0;
     int w, b;
-    
-    for (w = 0; w < 7; ++w) {
+
+    for (w = 0; w < 7; ++w)
+    {
         unsigned long long rp = board->red_pieces[w];
         unsigned long long bp = board->black_pieces[w];
         unsigned long long tl = board->all_tiles[w];
-        for (b = 0; b < 64; ++b) {
+        for (b = 0; b < 64; ++b)
+        {
             int flat = w * 64 + b;
-            if (flat >= AI_BOARD_BITS) break;
-            if ((rp >> b) & 1ULL) h ^= Z_RED[flat];
-            if ((bp >> b) & 1ULL) h ^= Z_BLACK[flat];
-            if ((tl >> b) & 1ULL) h ^= Z_TILE[flat];
+            if (flat >= AI_BOARD_BITS)
+                break;
+            if ((rp >> b) & 1ULL)
+                h ^= Z_RED[flat];
+            if ((bp >> b) & 1ULL)
+                h ^= Z_BLACK[flat];
+            if ((tl >> b) & 1ULL)
+                h ^= Z_TILE[flat];
         }
     }
-    
+
     h ^= Z_CURRENT_PLAYER[current_player & 1];
     h ^= Z_TURN_PHASE[turn_phase & 1];
-    
+
     return h;
 }
 
@@ -637,6 +660,212 @@ MinimaxResult ai_minimax_tile(
     int max_color,
     const int *params);
 
+static unsigned long long ai_count_nodes_piece(
+    NonagaBitBoard *board,
+    int *current_player,
+    int *turn_phase,
+    int depth,
+    int maximizing_player,
+    int color,
+    int max_color,
+    const int *params);
+
+static unsigned long long ai_count_nodes_tile(
+    NonagaBitBoard *board,
+    int *current_player,
+    int *turn_phase,
+    int depth,
+    int maximizing_player,
+    int color,
+    int max_color,
+    const int *params);
+
+static unsigned long long ai_count_nodes_piece(
+    NonagaBitBoard *board,
+    int *current_player,
+    int *turn_phase,
+    int depth,
+    int maximizing_player,
+    int color,
+    int max_color,
+    const int *params)
+{
+    unsigned long long total = 1ULL;
+    int piece_q[3];
+    int piece_r[3];
+    int piece_s[3];
+    int piece_count;
+    int piece_idx;
+    AiSearchState snapshot;
+
+    (void)maximizing_player;
+    (void)color;
+    (void)max_color;
+    (void)params;
+
+    if (ai_check_any_win(board) || depth == 0)
+    {
+        return total;
+    }
+
+    piece_count = bitboard_get_pieces(board, *current_player, &piece_q[0], &piece_r[0], &piece_s[0]);
+    if (piece_count <= 0)
+    {
+        return total;
+    }
+
+    for (piece_idx = 0; piece_idx < piece_count; ++piece_idx)
+    {
+        int dim;
+        for (dim = 0; dim < 3; ++dim)
+        {
+            int dir;
+            for (dir = -1; dir <= 1; dir += 2)
+            {
+                int dest_q;
+                int dest_r;
+                int dest_s;
+
+                if (!ai_piece_destination_in_direction(
+                        board,
+                        piece_q[piece_idx],
+                        piece_r[piece_idx],
+                        piece_s[piece_idx],
+                        dim,
+                        dir,
+                        &dest_q,
+                        &dest_r,
+                        &dest_s))
+                {
+                    continue;
+                }
+
+                ai_save_state(&snapshot, board, *current_player, *turn_phase);
+                ai_move_piece_state(
+                    board,
+                    current_player,
+                    turn_phase,
+                    piece_q[piece_idx],
+                    piece_r[piece_idx],
+                    dest_q,
+                    dest_r);
+                total += ai_count_nodes_tile(
+                    board,
+                    current_player,
+                    turn_phase,
+                    depth,
+                    maximizing_player,
+                    color,
+                    max_color,
+                    params);
+                ai_restore_state(board, current_player, turn_phase, &snapshot);
+            }
+        }
+    }
+
+    return total;
+}
+
+static unsigned long long ai_count_nodes_tile(
+    NonagaBitBoard *board,
+    int *current_player,
+    int *turn_phase,
+    int depth,
+    int maximizing_player,
+    int color,
+    int max_color,
+    const int *params)
+{
+    unsigned long long total = 1ULL;
+    int tile_q[MAX_TILES];
+    int tile_r[MAX_TILES];
+    int tile_s[MAX_TILES];
+    int tile_count;
+    int tile_idx;
+    AiSearchState snapshot;
+
+    tile_count = bitboard_get_movable_tiles(board, &tile_q[0], &tile_r[0], &tile_s[0], MAX_TILES);
+    if (tile_count <= 0)
+    {
+        return total;
+    }
+
+    for (tile_idx = 0; tile_idx < tile_count; ++tile_idx)
+    {
+        int valid_q[MAX_TILE_CANDIDATES];
+        int valid_r[MAX_TILE_CANDIDATES];
+        int valid_s[MAX_TILE_CANDIDATES];
+        int valid_count;
+        int d_idx;
+
+        valid_count = bitboard_get_valid_tile_positions_for_tile(
+            board,
+            tile_q[tile_idx],
+            tile_r[tile_idx],
+            tile_s[tile_idx],
+            &valid_q[0],
+            &valid_r[0],
+            &valid_s[0],
+            MAX_TILE_CANDIDATES);
+
+        for (d_idx = 0; d_idx < valid_count; ++d_idx)
+        {
+            ai_save_state(&snapshot, board, *current_player, *turn_phase);
+            ai_move_tile_state(
+                board,
+                current_player,
+                turn_phase,
+                tile_q[tile_idx],
+                tile_r[tile_idx],
+                valid_q[d_idx],
+                valid_r[d_idx]);
+            total += ai_count_nodes_piece(
+                board,
+                current_player,
+                turn_phase,
+                depth - 1,
+                !maximizing_player,
+                (color + 1) % 2,
+                max_color,
+                params);
+            ai_restore_state(board, current_player, turn_phase, &snapshot);
+        }
+    }
+
+    return total;
+}
+
+unsigned long long ai_count_total_nodes_iterative_deepening(
+    NonagaBitBoard *board,
+    int current_player,
+    int turn_phase,
+    int max_depth,
+    int maximizing_player,
+    int color,
+    int max_color,
+    const int *params)
+{
+    unsigned long long total = 0ULL;
+    int d;
+
+    for (d = 1; d <= max_depth; ++d)
+    {
+        int current_player_copy = current_player;
+        int turn_phase_copy = turn_phase;
+        total += ai_count_nodes_piece(
+            board,
+            &current_player_copy,
+            &turn_phase_copy,
+            d,
+            maximizing_player,
+            color,
+            max_color,
+            params);
+    }
+
+    return total;
+}
+
 MinimaxResult ai_minimax_piece(
     NonagaBitBoard *board,
     int *current_player,
@@ -649,6 +878,8 @@ MinimaxResult ai_minimax_piece(
     int max_color,
     const int *params)
 {
+    ai_search_counters.evaluated_nodes += 1ULL;
+
     MinimaxResult result;
     MinimaxResult out;
     Move2D best_piece_move = ai_empty_move();
@@ -666,11 +897,12 @@ MinimaxResult ai_minimax_piece(
     Move2D tt_piece_move = ai_empty_move();
     Move2D tt_tile_move = ai_empty_move();
     int alpha_orig = alpha;
-    
+
     /* Candidate move structs for ordering */
-    struct Candidate {
+    struct Candidate
+    {
         int piece_q, piece_r, dest_q, dest_r;
-        int score;    
+        int score;
     };
     struct Candidate candidates[18]; /* 3 pieces * 6 directions = max 18 candidate slide destinations */
     int num_candidates = 0;
@@ -682,33 +914,45 @@ MinimaxResult ai_minimax_piece(
     if (ai_check_any_win(board))
     {
         /*Returns NEG_INF-depth and POS_INF+depth to prevent infinite recursion and to delay an inevatible loss*/
-        return maximizing_player ? ai_new_result(NEG_INF-depth) : ai_new_result(POS_INF+depth);
+        ai_search_counters.leaf_nodes += 1ULL;
+        return maximizing_player ? ai_new_result(NEG_INF - depth) : ai_new_result(POS_INF + depth);
     }
 
     if (depth == 0)
     {
+        ai_search_counters.leaf_nodes += 1ULL;
         return ai_new_result(ai_cost_function(board, maximizing_player, max_color, params));
     }
     /* TT Lookup */
     current_hash = ai_compute_hash(board, *current_player, *turn_phase);
     tt_entry = &ai_tt[current_hash & (TT_SIZE - 1)];
 
-    if (tt_entry->hash == current_hash) {
+    if (tt_entry->hash == current_hash)
+    {
         tt_hit = 1;
         tt_piece_move = tt_entry->best_piece_move;
         tt_tile_move = tt_entry->best_tile_move;
-        if (tt_entry->depth >= depth) {
-            if (tt_entry->flag == TT_EXACT) {
+        if (tt_entry->depth >= depth)
+        {
+            if (tt_entry->flag == TT_EXACT)
+            {
                 out = ai_new_result(tt_entry->value);
                 out.piece_move = tt_piece_move;
                 out.tile_move = tt_tile_move;
                 return out;
-            } else if (tt_entry->flag == TT_LOWER) {
-                if (tt_entry->value > alpha) alpha = tt_entry->value;
-            } else if (tt_entry->flag == TT_UPPER) {
-                if (tt_entry->value < beta) beta = tt_entry->value;
             }
-            if (alpha >= beta) {
+            else if (tt_entry->flag == TT_LOWER)
+            {
+                if (tt_entry->value > alpha)
+                    alpha = tt_entry->value;
+            }
+            else if (tt_entry->flag == TT_UPPER)
+            {
+                if (tt_entry->value < beta)
+                    beta = tt_entry->value;
+            }
+            if (alpha >= beta)
+            {
                 out = ai_new_result(tt_entry->value);
                 out.piece_move = tt_piece_move;
                 out.tile_move = tt_tile_move;
@@ -720,42 +964,52 @@ MinimaxResult ai_minimax_piece(
     piece_count = bitboard_get_pieces(board, *current_player, &piece_q[0], &piece_r[0], &piece_s[0]);
     if (piece_count <= 0)
     {
+        ai_search_counters.leaf_nodes += 1ULL;
         return ai_new_result(ai_cost_function(board, maximizing_player, max_color, params));
     }
 
     value = maximizing_player ? NEG_INF - 1000 : POS_INF + 1000;
 
-    /* 
-     * Move Ordering: Try TT move FIRST 
-     * By attempting the 'best move' cached from a previous shallow depth search, 
-     * we are statistically highly likely to cause an immediate beta-cutoff. 
+    /*
+     * Move Ordering: Try TT move FIRST
+     * By attempting the 'best move' cached from a previous shallow depth search,
+     * we are statistically highly likely to cause an immediate beta-cutoff.
      */
-    if (tt_hit && tt_piece_move.is_set) {
+    if (tt_hit && tt_piece_move.is_set)
+    {
         ai_save_state(&snapshot, board, *current_player, *turn_phase);
         ai_move_piece_state(board, current_player, turn_phase, tt_piece_move.from_q, tt_piece_move.from_r, tt_piece_move.to_q, tt_piece_move.to_r);
         result = ai_minimax_tile(board, current_player, turn_phase, depth, maximizing_player, color, alpha, beta, max_color, params);
         ai_restore_state(board, current_player, turn_phase, &snapshot);
 
-        if (maximizing_player) {
-            if (result.cost > value) {
+        if (maximizing_player)
+        {
+            if (result.cost > value)
+            {
                 value = result.cost;
                 best_piece_move = tt_piece_move;
                 best_piece_move.is_set = 1;
                 best_tile_move = result.tile_move;
             }
-            if (value > alpha) alpha = value;
-        } else {
-            if (result.cost < value) {
+            if (value > alpha)
+                alpha = value;
+        }
+        else
+        {
+            if (result.cost < value)
+            {
                 value = result.cost;
                 best_piece_move = tt_piece_move;
                 best_piece_move.is_set = 1;
                 best_tile_move = result.tile_move;
             }
-            if (value < beta) beta = value;
+            if (value < beta)
+                beta = value;
         }
 
-        if (alpha >= beta) {
-            /* Alpha-Beta Pruning: The cached TT move successfully bounded the search. 
+        if (alpha >= beta)
+        {
+            /* Alpha-Beta Pruning: The cached TT move successfully bounded the search.
                We can completely skip generating other destination candidates! */
             goto store_and_return;
         }
@@ -780,9 +1034,10 @@ MinimaxResult ai_minimax_piece(
                 }
 
                 /* Skip the TT move we already evaluated */
-                if (tt_hit && tt_piece_move.is_set && 
+                if (tt_hit && tt_piece_move.is_set &&
                     piece_q[piece_idx] == tt_piece_move.from_q && piece_r[piece_idx] == tt_piece_move.from_r &&
-                    dest_q == tt_piece_move.to_q && dest_r == tt_piece_move.to_r) {
+                    dest_q == tt_piece_move.to_q && dest_r == tt_piece_move.to_r)
+                {
                     continue;
                 }
 
@@ -790,19 +1045,20 @@ MinimaxResult ai_minimax_piece(
                 candidates[num_candidates].piece_r = piece_r[piece_idx];
                 candidates[num_candidates].dest_q = dest_q;
                 candidates[num_candidates].dest_r = dest_r;
-                /* Note: Candidates are initialized with a neutral score. In deeper extensions, 
+                /* Note: Candidates are initialized with a neutral score. In deeper extensions,
                    History Heuristics or static piece compactness weights would update this score. */
-                candidates[num_candidates].score = 0; 
+                candidates[num_candidates].score = 0;
                 num_candidates++;
             }
         }
     }
 
-    /* 
-     * Standard Alpha-Beta Loop: Enumerate through the newly generated candidates. 
+    /*
+     * Standard Alpha-Beta Loop: Enumerate through the newly generated candidates.
      * The TT move is naturally handled due to the generation skip rules above.
      */
-    for (i = 0; i < num_candidates; ++i) {
+    for (i = 0; i < num_candidates; ++i)
+    {
         ai_save_state(&snapshot, board, *current_player, *turn_phase);
 
         ai_move_piece_state(
@@ -828,7 +1084,8 @@ MinimaxResult ai_minimax_piece(
                 best_piece_move.is_set = 1;
                 best_tile_move = result.tile_move;
             }
-            if (value > alpha) alpha = value;
+            if (value > alpha)
+                alpha = value;
         }
         else
         {
@@ -842,15 +1099,18 @@ MinimaxResult ai_minimax_piece(
                 best_piece_move.is_set = 1;
                 best_tile_move = result.tile_move;
             }
-            if (value < beta) beta = value;
+            if (value < beta)
+                beta = value;
         }
 
-        if (alpha >= beta) break;
+        if (alpha >= beta)
+            break;
     }
 
 store_and_return:
     if (!best_piece_move.is_set || !best_tile_move.is_set)
     {
+        ai_search_counters.leaf_nodes += 1ULL;
         return ai_new_result(ai_cost_function(board, maximizing_player, max_color, params));
     }
 
@@ -864,11 +1124,16 @@ store_and_return:
     tt_entry->value = value;
     tt_entry->best_piece_move = best_piece_move;
     tt_entry->best_tile_move = best_tile_move;
-    if (value <= alpha_orig) {
+    if (value <= alpha_orig)
+    {
         tt_entry->flag = TT_UPPER;
-    } else if (value >= beta) {
+    }
+    else if (value >= beta)
+    {
         tt_entry->flag = TT_LOWER;
-    } else {
+    }
+    else
+    {
         tt_entry->flag = TT_EXACT;
     }
 
@@ -887,6 +1152,8 @@ MinimaxResult ai_minimax_tile(
     int max_color,
     const int *params)
 {
+    ai_search_counters.evaluated_nodes += 1ULL;
+
     MinimaxResult result = ai_new_result(0);
     MinimaxResult out;
     Move2D best_tile_move = ai_empty_move();
@@ -903,7 +1170,8 @@ MinimaxResult ai_minimax_tile(
     Move2D tt_tile_move = ai_empty_move();
     int alpha_orig = alpha;
 
-    struct Candidate {
+    struct Candidate
+    {
         int tile_q, tile_r, dest_q, dest_r;
         int score;
     };
@@ -915,6 +1183,7 @@ MinimaxResult ai_minimax_tile(
     tile_count = bitboard_get_movable_tiles(board, &tile_q[0], &tile_r[0], &tile_s[0], MAX_TILES);
     if (tile_count <= 0)
     {
+        ai_search_counters.leaf_nodes += 1ULL;
         return ai_new_result(ai_cost_function(board, maximizing_player, max_color, params));
     }
 
@@ -922,20 +1191,30 @@ MinimaxResult ai_minimax_tile(
     current_hash = ai_compute_hash(board, *current_player, *turn_phase);
     tt_entry = &ai_tt[current_hash & (TT_SIZE - 1)];
 
-    if (tt_entry->hash == current_hash) {
+    if (tt_entry->hash == current_hash)
+    {
         tt_hit = 1;
         tt_tile_move = tt_entry->best_tile_move;
-        if (tt_entry->depth >= depth) {
-            if (tt_entry->flag == TT_EXACT) {
+        if (tt_entry->depth >= depth)
+        {
+            if (tt_entry->flag == TT_EXACT)
+            {
                 out = ai_new_result(tt_entry->value);
                 out.tile_move = tt_tile_move;
                 return out;
-            } else if (tt_entry->flag == TT_LOWER) {
-                if (tt_entry->value > alpha) alpha = tt_entry->value;
-            } else if (tt_entry->flag == TT_UPPER) {
-                if (tt_entry->value < beta) beta = tt_entry->value;
             }
-            if (alpha >= beta) {
+            else if (tt_entry->flag == TT_LOWER)
+            {
+                if (tt_entry->value > alpha)
+                    alpha = tt_entry->value;
+            }
+            else if (tt_entry->flag == TT_UPPER)
+            {
+                if (tt_entry->value < beta)
+                    beta = tt_entry->value;
+            }
+            if (alpha >= beta)
+            {
                 out = ai_new_result(tt_entry->value);
                 out.tile_move = tt_tile_move;
                 return out;
@@ -946,29 +1225,38 @@ MinimaxResult ai_minimax_tile(
     value = maximizing_player ? NEG_INF - 1000 : POS_INF + 1000;
 
     /* Move Ordering: Evaluate the TT cache's best tile move first to maximize beta-cutoff speed. */
-    if (tt_hit && tt_tile_move.is_set) {
+    if (tt_hit && tt_tile_move.is_set)
+    {
         ai_save_state(&snapshot, board, *current_player, *turn_phase);
         ai_move_tile_state(board, current_player, turn_phase, tt_tile_move.from_q, tt_tile_move.from_r, tt_tile_move.to_q, tt_tile_move.to_r);
         result = ai_minimax_piece(board, current_player, turn_phase, depth - 1, !maximizing_player, (color + 1) % 2, alpha, beta, max_color, params);
         ai_restore_state(board, current_player, turn_phase, &snapshot);
 
-        if (maximizing_player) {
-            if (result.cost > value) {
+        if (maximizing_player)
+        {
+            if (result.cost > value)
+            {
                 value = result.cost;
                 best_tile_move = tt_tile_move;
                 best_tile_move.is_set = 1;
             }
-            if (value > alpha) alpha = value;
-        } else {
-            if (result.cost < value) {
+            if (value > alpha)
+                alpha = value;
+        }
+        else
+        {
+            if (result.cost < value)
+            {
                 value = result.cost;
                 best_tile_move = tt_tile_move;
                 best_tile_move.is_set = 1;
             }
-            if (value < beta) beta = value;
+            if (value < beta)
+                beta = value;
         }
 
-        if (alpha >= beta) {
+        if (alpha >= beta)
+        {
             /* Alpha-Beta Pruning: Found immediate tile move cutoff. */
             goto store_and_return_tile;
         }
@@ -990,10 +1278,12 @@ MinimaxResult ai_minimax_tile(
         {
             if (tt_hit && tt_tile_move.is_set &&
                 tile_q[tile_idx] == tt_tile_move.from_q && tile_r[tile_idx] == tt_tile_move.from_r &&
-                valid_q[d_idx] == tt_tile_move.to_q && valid_r[d_idx] == tt_tile_move.to_r) {
+                valid_q[d_idx] == tt_tile_move.to_q && valid_r[d_idx] == tt_tile_move.to_r)
+            {
                 continue;
             }
-            if (num_candidates >= MAX_TILE_CANDIDATES) break;
+            if (num_candidates >= MAX_TILE_CANDIDATES)
+                break;
 
             candidates[num_candidates].tile_q = tile_q[tile_idx];
             candidates[num_candidates].tile_r = tile_r[tile_idx];
@@ -1001,11 +1291,13 @@ MinimaxResult ai_minimax_tile(
             candidates[num_candidates].dest_r = valid_r[d_idx];
             num_candidates++;
         }
-        if (num_candidates >= MAX_TILE_CANDIDATES) break;
+        if (num_candidates >= MAX_TILE_CANDIDATES)
+            break;
     }
 
     /* Standard Alpha-Beta Loop for tile evaluation. */
-    for (i = 0; i < num_candidates; ++i) {
+    for (i = 0; i < num_candidates; ++i)
+    {
         ai_save_state(&snapshot, board, *current_player, *turn_phase);
 
         ai_move_tile_state(
@@ -1030,7 +1322,8 @@ MinimaxResult ai_minimax_tile(
                 best_tile_move.to_r = candidates[i].dest_r;
                 best_tile_move.is_set = 1;
             }
-            if (value > alpha) alpha = value;
+            if (value > alpha)
+                alpha = value;
         }
         else
         {
@@ -1043,16 +1336,19 @@ MinimaxResult ai_minimax_tile(
                 best_tile_move.to_r = candidates[i].dest_r;
                 best_tile_move.is_set = 1;
             }
-            if (value < beta) beta = value;
+            if (value < beta)
+                beta = value;
         }
 
-        if (alpha >= beta) break;
+        if (alpha >= beta)
+            break;
     }
 
 store_and_return_tile:
 
     if (!best_tile_move.is_set)
     {
+        ai_search_counters.leaf_nodes += 1ULL;
         return ai_new_result(ai_cost_function(board, maximizing_player, max_color, params));
     }
 
@@ -1065,11 +1361,16 @@ store_and_return_tile:
     tt_entry->value = value;
     tt_entry->best_piece_move = ai_empty_move();
     tt_entry->best_tile_move = best_tile_move;
-    if (value <= alpha_orig) {
+    if (value <= alpha_orig)
+    {
         tt_entry->flag = TT_UPPER;
-    } else if (value >= beta) {
+    }
+    else if (value >= beta)
+    {
         tt_entry->flag = TT_LOWER;
-    } else {
+    }
+    else
+    {
         tt_entry->flag = TT_EXACT;
     }
 
@@ -1093,15 +1394,16 @@ MinimaxResult ai_search_iterative_deepening(
 
     overall_best = ai_new_result(0);
 
-    /* 
-     * Iterative Deepening leverages Transposition Tables by saving the best path from 
+    /*
+     * Iterative Deepening leverages Transposition Tables by saving the best path from
      * Depth N to automatically re-order and accelerate the search of Depth N+1.
-     * The TT is intentionally preserved across game turns. Because board fragments typically 
-     * remain unmodified, previously searched branches maintain their boundary validity deep 
+     * The TT is intentionally preserved across game turns. Because board fragments typically
+     * remain unmodified, previously searched branches maintain their boundary validity deep
      * into the late-game, multiplying performance drastically.
      */
 
-    for (d = 1; d <= max_depth; d++) {
+    for (d = 1; d <= max_depth; d++)
+    {
         current_player_copy = current_player;
         turn_phase_copy = turn_phase;
 
@@ -1115,8 +1417,7 @@ MinimaxResult ai_search_iterative_deepening(
             NEG_INF,
             POS_INF,
             max_color,
-            params
-        );
+            params);
     }
 
     return overall_best;
