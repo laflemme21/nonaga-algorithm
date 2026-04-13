@@ -4019,7 +4019,7 @@ static int __Pyx_carray_from_py_int(PyObject *__pyx_v_o, int *__pyx_v_v, Py_ssiz
 /* "AI.pyx":48
  *     """Minimax AI with alpha-beta pruning for Nonaga."""
  * 
- *     def __init__(self, parameter, int depth=4, int color=BLACK):             # <<<<<<<<<<<<<<
+ *     def __init__(self, parameter, int depth=3, int color=BLACK):             # <<<<<<<<<<<<<<
  *         cdef int i
  *         self.depth = depth
 */
@@ -4092,7 +4092,7 @@ static int __pyx_pw_2AI_2AI_1__init__(PyObject *__pyx_v_self, PyObject *__pyx_ar
     if (values[1]) {
       __pyx_v_depth = __Pyx_PyLong_As_int(values[1]); if (unlikely((__pyx_v_depth == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 48, __pyx_L3_error)
     } else {
-      __pyx_v_depth = ((int)4);
+      __pyx_v_depth = ((int)3);
     }
     if (values[2]) {
       __pyx_v_color = __Pyx_PyLong_As_int(values[2]); if (unlikely((__pyx_v_color == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 48, __pyx_L3_error)
@@ -4139,7 +4139,7 @@ static int __pyx_pf_2AI_2AI___init__(struct __pyx_obj_2AI_AI *__pyx_v_self, PyOb
   __Pyx_TraceStartFunc("__init__", __pyx_f[0], 48, 0, 0, 0, __PYX_ERR(0, 48, __pyx_L1_error));
 
   /* "AI.pyx":50
- *     def __init__(self, parameter, int depth=4, int color=BLACK):
+ *     def __init__(self, parameter, int depth=3, int color=BLACK):
  *         cdef int i
  *         self.depth = depth             # <<<<<<<<<<<<<<
  *         self.max_color = color
@@ -4210,7 +4210,7 @@ static int __pyx_pf_2AI_2AI___init__(struct __pyx_obj_2AI_AI *__pyx_v_self, PyOb
   /* "AI.pyx":48
  *     """Minimax AI with alpha-beta pruning for Nonaga."""
  * 
- *     def __init__(self, parameter, int depth=4, int color=BLACK):             # <<<<<<<<<<<<<<
+ *     def __init__(self, parameter, int depth=3, int color=BLACK):             # <<<<<<<<<<<<<<
  *         cdef int i
  *         self.depth = depth
 */
@@ -9722,7 +9722,7 @@ __Pyx_RefNannySetupContext("PyInit_AI", 0);
   (void)__Pyx_modinit_variable_import_code(__pyx_mstate);
   (void)__Pyx_modinit_function_import_code(__pyx_mstate);
   /*--- Execution code ---*/
-  __Pyx_TraceStartFunc("PyInit_AI", __pyx_f[0], 1, 0, 0, 0, __PYX_ERR(0, 1, __pyx_L1_error));
+  __Pyx_TraceStartFunc("PyInit_AI", __pyx_f[0], 1, 2, 0, 0, __PYX_ERR(0, 1, __pyx_L1_error));
 
   /* "AI.pyx":2
  * # cython: language_level=3, boundscheck=False, wraparound=False, profile=True
@@ -9768,7 +9768,7 @@ __Pyx_RefNannySetupContext("PyInit_AI", 0);
   /* "AI.pyx":48
  *     """Minimax AI with alpha-beta pruning for Nonaga."""
  * 
- *     def __init__(self, parameter, int depth=4, int color=BLACK):             # <<<<<<<<<<<<<<
+ *     def __init__(self, parameter, int depth=3, int color=BLACK):             # <<<<<<<<<<<<<<
  *         cdef int i
  *         self.depth = depth
 */
@@ -9909,7 +9909,7 @@ __Pyx_RefNannySetupContext("PyInit_AI", 0);
   __Pyx_GOTREF(__pyx_t_4);
   if (PyDict_SetItem(__pyx_mstate_global->__pyx_d, __pyx_mstate_global->__pyx_n_u_test, __pyx_t_4) < (0)) __PYX_ERR(0, 1, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  __Pyx_TraceReturnValue(Py_None, 0, 0, __PYX_ERR(0, 1, __pyx_L1_error));
+  __Pyx_TraceReturnValue(Py_None, 2, 0, __PYX_ERR(0, 1, __pyx_L1_error));
   __Pyx_PyMonitoring_ExitScope(0);
 
   /*--- Wrapped vars code ---*/
@@ -9919,7 +9919,7 @@ __Pyx_RefNannySetupContext("PyInit_AI", 0);
   __Pyx_XDECREF(__pyx_t_2);
   __Pyx_XDECREF(__pyx_t_4);
   __Pyx_TraceException(__pyx_lineno, 0, 0);
-  __Pyx_TraceExceptionUnwind(0, 0);
+  __Pyx_TraceExceptionUnwind(2, 0);
   if (__pyx_m) {
     if (__pyx_mstate->__pyx_d && stringtab_initialized) {
       __Pyx_AddTraceback("init AI", __pyx_clineno, __pyx_lineno, __pyx_filename);

@@ -77,24 +77,34 @@ cdef class NonagaLogic:
         cdef int bq[3]
         cdef int br[3]
         cdef int i
+        cdef Py_ssize_t tiles_len = len(tiles)
+        cdef Py_ssize_t red_len = len(red_pieces)
+        cdef Py_ssize_t black_len = len(black_pieces)
 
-        for i in range(len(tiles)):
+        if tiles_len > 448:
+            raise ValueError("tiles must have at most 448 entries")
+        if red_len > 3:
+            raise ValueError("red_pieces must have at most 3 entries")
+        if black_len > 3:
+            raise ValueError("black_pieces must have at most 3 entries")
+
+        for i in range(tiles_len):
             tile_q[i] = tiles[i][0]
             tile_r[i] = tiles[i][1]
 
-        for i in range(len(red_pieces)):
+        for i in range(red_len):
             rq[i] = red_pieces[i][0]
             rr[i] = red_pieces[i][1]
 
-        for i in range(len(black_pieces)):
+        for i in range(black_len):
             bq[i] = black_pieces[i][0]
             br[i] = black_pieces[i][1]
 
         bitboard_set_board_state(
             &self.board,
-            &tile_q[0], &tile_r[0], len(tiles),
-            &rq[0], &rr[0], len(red_pieces),
-            &bq[0], &br[0], len(black_pieces)
+            &tile_q[0], &tile_r[0], <int>tiles_len,
+            &rq[0], &rr[0], <int>red_len,
+            &bq[0], &br[0], <int>black_len
         )
         self.current_player = current_player
         self.turn_phase = turn_phase
@@ -151,7 +161,7 @@ cdef class NonagaLogic:
         cdef set candidate_positions = set()
         cdef tuple existing_pos, offset, candidate, neighbor_pos
         cdef list neighbor_positions
-        cdef int neighbor_count
+        cdef Py_ssize_t neighbor_count
         cdef set valid_positions = set()
 
         for existing_pos in tile_coords_set:
@@ -189,7 +199,7 @@ cdef class NonagaLogic:
         cdef list queue = [start]
         cdef tuple curr, adj_pos
         cdef int cq, cr, i
-        cdef int n_neighbors = len(neighbors)
+        cdef Py_ssize_t n_neighbors = len(neighbors)
 
         while queue:
             curr = queue.pop(0)

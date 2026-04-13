@@ -45,7 +45,7 @@ cdef int POS_INF = 99999999
 cdef class AI:
     """Minimax AI with alpha-beta pruning for Nonaga."""
 
-    def __init__(self, parameter, int depth=4, int color=BLACK):
+    def __init__(self, parameter, int depth=3, int color=BLACK):
         cdef int i
         self.depth = depth
         self.max_color = color

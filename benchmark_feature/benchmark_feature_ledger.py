@@ -536,6 +536,7 @@ def _worker_run_legacy(payload: dict) -> list[dict]:
     samples = int(payload["samples"])
     time_budget_ms = int(payload["time_budget_ms"])
     deterministic_turns_per_iteration = int(payload["deterministic_turns_per_iteration"])
+    ai_moves_per_iteration = int(payload.get("ai_moves_per_iteration", 3))
     max_moves_per_game = int(payload["max_moves_per_game"])
     fixed_iterations = int(payload.get("fixed_iterations", 0))
     budget_mode = str(payload.get("budget_mode", "wall")).strip().lower()
@@ -547,6 +548,8 @@ def _worker_run_legacy(payload: dict) -> list[dict]:
         raise RuntimeError(f"Unsupported position_source: {position_source}")
     if position_source == "fixture_replay" and not fixture_paths:
         raise RuntimeError("fixture_replay requires non-empty fixture_paths")
+    if ai_moves_per_iteration <= 0:
+        raise RuntimeError("ai_moves_per_iteration must be >= 1")
 
     from AI import AI, load_parameters
     from nonaga_constants import RED
@@ -589,22 +592,33 @@ def _worker_run_legacy(payload: dict) -> list[dict]:
                             moves_played = 0
                             break
 
-                elapsed, leaves, best_piece, best_tile = _worker_legacy_search_once(ai, logic)
-                elapsed_total += elapsed
-                minimax_elapsed_total += elapsed
-                search_budget_consumed += elapsed
-                evaluated_nodes_total += leaves
-                iterations += 1
+                for _ in range(ai_moves_per_iteration):
+                    elapsed, leaves, best_piece, best_tile = _worker_legacy_search_once(ai, logic)
+                    elapsed_total += elapsed
+                    minimax_elapsed_total += elapsed
+                    search_budget_consumed += elapsed
+                    evaluated_nodes_total += leaves
+                    iterations += 1
 
-                if position_source != "fixture_replay":
-                    if not _worker_apply_ai_move_legacy(logic, best_piece, best_tile):
-                        logic = _worker_load_legacy_logic()
-                        moves_played = 0
-                    else:
-                        moves_played += 1
-                        if logic.check_win_condition(RED) or logic.check_win_condition(1 - RED) or moves_played >= max_moves_per_game:
+                    if position_source != "fixture_replay":
+                        if not _worker_apply_ai_move_legacy(logic, best_piece, best_tile):
                             logic = _worker_load_legacy_logic()
                             moves_played = 0
+                        else:
+                            moves_played += 1
+                            if logic.check_win_condition(RED) or logic.check_win_condition(1 - RED) or moves_played >= max_moves_per_game:
+                                logic = _worker_load_legacy_logic()
+                                moves_played = 0
+
+                    if _worker_should_stop(
+                        fixed_iterations=fixed_iterations,
+                        iterations=iterations,
+                        budget_mode=budget_mode,
+                        budget_seconds=budget_seconds,
+                        search_budget_consumed=search_budget_consumed,
+                        wall_deadline=wall_deadline,
+                    ):
+                        break
 
                 if _worker_should_stop(
                     fixed_iterations=fixed_iterations,
@@ -701,6 +715,7 @@ def _worker_run_cython(payload: dict) -> list[dict]:
     samples = int(payload["samples"])
     time_budget_ms = int(payload["time_budget_ms"])
     deterministic_turns_per_iteration = int(payload["deterministic_turns_per_iteration"])
+    ai_moves_per_iteration = int(payload.get("ai_moves_per_iteration", 3))
     max_moves_per_game = int(payload["max_moves_per_game"])
     fixed_iterations = int(payload.get("fixed_iterations", 0))
     budget_mode = str(payload.get("budget_mode", "wall")).strip().lower()
@@ -712,6 +727,8 @@ def _worker_run_cython(payload: dict) -> list[dict]:
         raise RuntimeError(f"Unsupported position_source: {position_source}")
     if position_source == "fixture_replay" and not fixture_paths:
         raise RuntimeError("fixture_replay requires non-empty fixture_paths")
+    if ai_moves_per_iteration <= 0:
+        raise RuntimeError("ai_moves_per_iteration must be >= 1")
 
     from AI import AI
     from nonaga_constants import AI_PARAM, BLACK, RED
@@ -754,37 +771,48 @@ def _worker_run_cython(payload: dict) -> list[dict]:
                             moves_played = 0
                             break
 
-                if hasattr(ai, "reset_search_counters"):
-                    ai.reset_search_counters()
-                if hasattr(ai, "get_best_move_benchmark"):
-                    start = time.perf_counter()
-                    best_piece, best_tile, tt_init_elapsed, minimax_elapsed = ai.get_best_move_benchmark(logic)
-                    elapsed = time.perf_counter() - start
-                else:
-                    start = time.perf_counter()
-                    best_piece, best_tile = ai.get_best_move(logic)
-                    elapsed = time.perf_counter() - start
-                    tt_init_elapsed = 0.0
-                    minimax_elapsed = elapsed
-
-                counters = ai.get_search_counters() if hasattr(ai, "get_search_counters") else {}
-                evaluated_nodes_total += int(counters.get("evaluated_nodes", 0))
-                leaf_nodes_total += int(counters.get("leaf_nodes", 0))
-                elapsed_total += elapsed
-                minimax_elapsed_total += float(minimax_elapsed)
-                tt_init_elapsed_total += float(tt_init_elapsed)
-                search_budget_consumed += elapsed
-                iterations += 1
-
-                if position_source != "fixture_replay":
-                    if not _worker_apply_ai_move_cython(logic, best_piece, best_tile):
-                        logic = _worker_load_cython_logic()
-                        moves_played = 0
+                for _ in range(ai_moves_per_iteration):
+                    if hasattr(ai, "reset_search_counters"):
+                        ai.reset_search_counters()
+                    if hasattr(ai, "get_best_move_benchmark"):
+                        start = time.perf_counter()
+                        best_piece, best_tile, tt_init_elapsed, minimax_elapsed = ai.get_best_move_benchmark(logic)
+                        elapsed = time.perf_counter() - start
                     else:
-                        moves_played += 1
-                        if logic.check_win_condition_py(RED) or logic.check_win_condition_py(BLACK) or moves_played >= max_moves_per_game:
+                        start = time.perf_counter()
+                        best_piece, best_tile = ai.get_best_move(logic)
+                        elapsed = time.perf_counter() - start
+                        tt_init_elapsed = 0.0
+                        minimax_elapsed = elapsed
+
+                    counters = ai.get_search_counters() if hasattr(ai, "get_search_counters") else {}
+                    evaluated_nodes_total += int(counters.get("evaluated_nodes", 0))
+                    leaf_nodes_total += int(counters.get("leaf_nodes", 0))
+                    elapsed_total += elapsed
+                    minimax_elapsed_total += float(minimax_elapsed)
+                    tt_init_elapsed_total += float(tt_init_elapsed)
+                    search_budget_consumed += elapsed
+                    iterations += 1
+
+                    if position_source != "fixture_replay":
+                        if not _worker_apply_ai_move_cython(logic, best_piece, best_tile):
                             logic = _worker_load_cython_logic()
                             moves_played = 0
+                        else:
+                            moves_played += 1
+                            if logic.check_win_condition_py(RED) or logic.check_win_condition_py(BLACK) or moves_played >= max_moves_per_game:
+                                logic = _worker_load_cython_logic()
+                                moves_played = 0
+
+                    if _worker_should_stop(
+                        fixed_iterations=fixed_iterations,
+                        iterations=iterations,
+                        budget_mode=budget_mode,
+                        budget_seconds=budget_seconds,
+                        search_budget_consumed=search_budget_consumed,
+                        wall_deadline=wall_deadline,
+                    ):
+                        break
 
                 if _worker_should_stop(
                     fixed_iterations=fixed_iterations,
@@ -1097,6 +1125,7 @@ def run_main(args: argparse.Namespace) -> int:
         "position_source": position_source,
         "fixture_manifest": [str(p) for p in fixture_paths],
         "deterministic_turns_per_iteration": args.deterministic_turns_per_iteration,
+        "ai_moves_per_iteration": args.ai_moves_per_iteration,
         "max_moves_per_game": args.max_moves_per_game,
         "measurement_manifest": {
             "feature_search_nps": "nodes_per_second based on evaluated_nodes divided by minimax-only feature_search_elapsed_seconds when node counters are usable",
@@ -1140,6 +1169,7 @@ def run_main(args: argparse.Namespace) -> int:
                 "samples": args.samples,
                 "time_budget_ms": args.time_budget_ms,
                 "deterministic_turns_per_iteration": args.deterministic_turns_per_iteration,
+                "ai_moves_per_iteration": args.ai_moves_per_iteration,
                 "max_moves_per_game": args.max_moves_per_game,
                 "fixed_iterations": args.fixed_iterations,
                 "budget_mode": args.budget_mode,
@@ -1415,6 +1445,12 @@ def build_arg_parser() -> argparse.ArgumentParser:
         type=int,
         default=1,
         help="How many deterministic first-legal full turns to play before each AI search iteration.",
+    )
+    parser.add_argument(
+        "--ai-moves-per-iteration",
+        type=int,
+        default=3,
+        help="How many consecutive AI search+move applications to execute per benchmark cycle.",
     )
     parser.add_argument(
         "--max-moves-per-game",
