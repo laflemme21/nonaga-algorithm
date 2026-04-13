@@ -34,24 +34,34 @@ cdef class NonagaBitBoardWrapper:
         cdef int black_q[3]
         cdef int black_r[3]
         cdef int i
+        cdef Py_ssize_t tiles_len = len(tiles)
+        cdef Py_ssize_t red_len = len(red_pieces)
+        cdef Py_ssize_t black_len = len(black_pieces)
 
-        for i in range(len(tiles)):
+        if tiles_len > 448:
+            raise ValueError("tiles must have at most 448 entries")
+        if red_len > 3:
+            raise ValueError("red_pieces must have at most 3 entries")
+        if black_len > 3:
+            raise ValueError("black_pieces must have at most 3 entries")
+
+        for i in range(tiles_len):
             tile_q[i] = tiles[i][0]
             tile_r[i] = tiles[i][1]
 
-        for i in range(len(red_pieces)):
+        for i in range(red_len):
             red_q[i] = red_pieces[i][0]
             red_r[i] = red_pieces[i][1]
 
-        for i in range(len(black_pieces)):
+        for i in range(black_len):
             black_q[i] = black_pieces[i][0]
             black_r[i] = black_pieces[i][1]
 
         bitboard_set_board_state(
             &self.board,
-            &tile_q[0], &tile_r[0], len(tiles),
-            &red_q[0], &red_r[0], len(red_pieces),
-            &black_q[0], &black_r[0], len(black_pieces)
+            &tile_q[0], &tile_r[0], <int>tiles_len,
+            &red_q[0], &red_r[0], <int>red_len,
+            &black_q[0], &black_r[0], <int>black_len
         )
 
     cpdef set get_all_tiles(self):

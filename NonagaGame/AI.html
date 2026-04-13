@@ -377,7 +377,7 @@ body.cython { font-family: courier; font-size: 12; }
 static struct __pyx_vtabstruct_2AI_AI *__pyx_vtabptr_2AI_AI;
 </pre><pre class="cython line score-0">&#xA0;<span class="">046</span>:     """Minimax AI with alpha-beta pruning for Nonaga."""</pre>
 <pre class="cython line score-0">&#xA0;<span class="">047</span>: </pre>
-<pre class="cython line score-59" onclick="(function(f,s,c){c=f.nodeValue=='+';s.display=c?'block':'none';f.nodeValue=c?'−':'+'})(this.firstChild,this.nextElementSibling.style)">+<span class="">048</span>:     def __init__(self, parameter, int depth=4, int color=BLACK):</pre>
+<pre class="cython line score-59" onclick="(function(f,s,c){c=f.nodeValue=='+';s.display=c?'block':'none';f.nodeValue=c?'−':'+'})(this.firstChild,this.nextElementSibling.style)">+<span class="">048</span>:     def __init__(self, parameter, int depth=3, int color=BLACK):</pre>
 <pre class='cython code score-59 '>/* Python wrapper */
 static int __pyx_pw_2AI_2AI_1__init__(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
 static int __pyx_pw_2AI_2AI_1__init__(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
@@ -443,7 +443,7 @@ static int __pyx_pw_2AI_2AI_1__init__(PyObject *__pyx_v_self, PyObject *__pyx_ar
     if (values[1]) {
       __pyx_v_depth = <span class='pyx_c_api'>__Pyx_PyLong_As_int</span>(values[1]); if (unlikely((__pyx_v_depth == (int)-1) &amp;&amp; <span class='py_c_api'>PyErr_Occurred</span>())) <span class='error_goto'>__PYX_ERR(0, 48, __pyx_L3_error)</span>
     } else {
-      __pyx_v_depth = ((int)4);
+      __pyx_v_depth = ((int)3);
     }
     if (values[2]) {
       __pyx_v_color = <span class='pyx_c_api'>__Pyx_PyLong_As_int</span>(values[2]); if (unlikely((__pyx_v_color == (int)-1) &amp;&amp; <span class='py_c_api'>PyErr_Occurred</span>())) <span class='error_goto'>__PYX_ERR(0, 48, __pyx_L3_error)</span>
