@@ -208,7 +208,7 @@ def main() -> int:
         description="Fast JSONL benchmark ledger for minimax.")
     parser.add_argument("--description", type=str, default="",
                         help="User-authored run description.")
-    parser.add_argument("--ledger", type=str, default="benchmark_ledger.jsonl")
+    parser.add_argument("--ledger", type=str, default="benchmark_version/benchmark_ledger.jsonl")
     parser.add_argument("--fixtures", type=str,
                         default="saved_board.json,saved_board_backup.json")
     parser.add_argument("--depths", type=str, default="1,2,3")
@@ -239,7 +239,7 @@ def main() -> int:
     if not run_description:
         raise ValueError("run_description is required.")
 
-    repo_root = Path(__file__).resolve().parent
+    repo_root = Path(__file__).resolve().parent.parent
     nonaga_dir = repo_root / "NonagaGame"
     if str(nonaga_dir) not in sys.path:
         sys.path.insert(0, str(nonaga_dir))
