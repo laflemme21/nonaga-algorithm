@@ -17,3 +17,4 @@ PythonSettings.json
 CppProperties.json
 *.diagsession
 *.pdb
+*.html
