@@ -1,5 +1,5 @@
 # cython: language_level=3, boundscheck=False, wraparound=False, profile=True
-from nonaga_constants import RED, BLACK
+from nonaga_constants import RED, BLACK, AI_COLOR
 
 from nonaga_bitboard cimport NonagaBitBoard
 from nonaga_logic cimport NonagaLogic
@@ -45,7 +45,7 @@ cdef int POS_INF = 99999999
 cdef class AI:
     """Minimax AI with alpha-beta pruning for Nonaga."""
 
-    def __init__(self, parameter, int depth=3, int color=BLACK):
+    def __init__(self, parameter, int depth=3, int color=AI_COLOR):
         cdef int i
         self.depth = depth
         self.max_color = color

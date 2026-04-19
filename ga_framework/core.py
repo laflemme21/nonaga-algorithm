@@ -12,7 +12,8 @@ class ModularGA:
                  mutation: MutationStrategy,
                  fitness: FitnessFunction,
                  backend: ParallelBackend,
-                 log_file: str = "ga_metrics.csv"):
+                 log_file: str = "ga_metrics.csv",
+                 initialize_log: bool = True):
         """Initialize the Genetic Algorithm with strategy injection."""
         self.selection = selection
         self.crossover = crossover
@@ -20,13 +21,14 @@ class ModularGA:
         self.fitness = fitness
         self.backend = backend
         self.log_file = log_file
+        self.initialize_log = initialize_log
 
         # Init the CSV headers if it's new
-        if not os.path.exists(self.log_file):
+        if self.initialize_log and not os.path.exists(self.log_file):
             with open(self.log_file, 'w', newline='') as f:
                 writer = csv.writer(f)
                 headers = ["Generation", "Best_Fitness", "Average_Fitness",
-                           "Worst_Fitness"] + [f"Top_{i}_Genome" for i in range(1, 11)]
+                           "Worst_Fitness"] + [f"Top_{i}_Genome" for i in range(1, 6)]
                 writer.writerow(headers)
 
     def _generate_initial_population(self, pop_size: int, genome_length: int, min_val: int = -100, max_val: int = 100) -> List[List[int]]:

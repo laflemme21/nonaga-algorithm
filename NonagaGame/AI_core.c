@@ -1153,11 +1153,8 @@ MinimaxResult ai_minimax_piece(
 
     value = maximizing_player ? NEG_INF - 1000 : POS_INF + 1000;
 
-    /*
-     * Move Ordering: Try TT move FIRST
-     * By attempting the 'best move' cached from a previous shallow depth search,
-     * we are statistically highly likely to cause an immediate beta-cutoff.
-     */
+    /* Best-move-first ordering: try the cached TT move before generating the
+        remaining candidates. No additional heuristic sorting is applied here. */
     if (tt_hit && tt_piece_move.is_set)
     {
         ai_save_state(&snapshot, board, *current_player, *turn_phase);
@@ -1198,7 +1195,7 @@ MinimaxResult ai_minimax_piece(
         }
     }
 
-    /* Move Ordering: Generate Candidates */
+    /* Generate the remaining piece moves in enumeration order. */
     for (piece_idx = 0; piece_idx < piece_count; ++piece_idx)
     {
         int dim;
@@ -1228,8 +1225,7 @@ MinimaxResult ai_minimax_piece(
                 candidates[num_candidates].piece_r = piece_r[piece_idx];
                 candidates[num_candidates].dest_q = dest_q;
                 candidates[num_candidates].dest_r = dest_r;
-                /* Note: Candidates are initialized with a neutral score. In deeper extensions,
-                   History Heuristics or static piece compactness weights would update this score. */
+                /* The score field is currently unused; candidates are not sorted. */
                 candidates[num_candidates].score = 0;
                 num_candidates++;
             }
@@ -1422,7 +1418,8 @@ MinimaxResult ai_minimax_tile(
 
     value = maximizing_player ? NEG_INF - 1000 : POS_INF + 1000;
 
-    /* Move Ordering: Evaluate the TT cache's best tile move first to maximize beta-cutoff speed. */
+    /* Best-move-first ordering: try the cached TT move before generating the
+        remaining candidates. No additional heuristic sorting is applied here. */
     if (tt_hit && tt_tile_move.is_set)
     {
         ai_save_state(&snapshot, board, *current_player, *turn_phase);
@@ -1460,7 +1457,7 @@ MinimaxResult ai_minimax_tile(
         }
     }
 
-    /* Move Ordering: Generate Candidates */
+    /* Generate the remaining tile moves in enumeration order. */
     for (tile_idx = 0; tile_idx < tile_count; ++tile_idx)
     {
         int valid_q[MAX_TILE_CANDIDATES];
