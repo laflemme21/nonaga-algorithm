@@ -13,10 +13,11 @@ import os
 class Game:
     """Manages the PyGame game loop and rendering."""
 
-    def __init__(self, ai: bool = False, screen_width=800, screen_height=500):
+    def __init__(self, ai: bool = False, screen_width=800, screen_height=500, ai_color=AI_COLOR):
         """Initialize the game."""
         self.ai_playing: bool = ai
-        self.ai = AI(AI_PARAM)
+        self.ai_color = ai_color
+        self.ai = AI(AI_PARAM, color=self.ai_color)
         self.screen_width = screen_width
         self.screen_height = screen_height
         self.screen = None
@@ -25,7 +26,7 @@ class Game:
         self.fps = 60
 
         self.title = "Red to play"
-        self.game_logic: NonagaLogic = NonagaLogic(None, self.ai_playing)
+        self.game_logic: NonagaLogic = self._create_game_logic()
 
         self.hovered_piece: tuple = None
         self.hovered_tile: tuple = None
@@ -55,6 +56,12 @@ class Game:
         self.btn_save_rect = None
         self.btn_load_rect = None
         self.free_move_mode = False
+
+    def _create_game_logic(self):
+        """Create a logic instance with the AI attached to its configured side."""
+        ai_red = self.ai if self.ai_playing and self.ai_color == RED else None
+        ai_black = self.ai if self.ai_playing and self.ai_color == BLACK else None
+        return NonagaLogic(ai_red, ai_black)
 
     def setup(self):
         """Set up the game window and resources."""
@@ -99,8 +106,7 @@ class Game:
 
     def _rebuild_state_from_history(self):
         """Restore board state from the snapshot stored at current_history_index."""
-        ai_player = self.ai if self.ai_playing else None
-        self.game_logic = NonagaLogic(None, ai_player)
+        self.game_logic = self._create_game_logic()
         if self.current_history_index == 0:
             pass  # fresh default board is already correct
         else:
@@ -191,9 +197,9 @@ class Game:
                             self.move_history = self.move_history[:self.current_history_index]
                             self._rebuild_state_from_history()
 
-                            # If AI is black, and AI is supposed to move a tile (meaning human mid-turn quit/resume),
+                            # If the AI is supposed to move a tile (meaning human mid-turn quit/resume),
                             # rollback the last piece move so AI plays its full piece+tile turn.
-                            if self.ai_playing and self.game_logic.get_current_player() == BLACK \
+                            if self.ai_playing and self.game_logic.get_current_player() == self.ai_color \
                                     and self.game_logic.get_current_turn_phase() == TILE_TO_MOVE:
                                 if len(self.move_history) > 0 and self.move_history[-1]['type'] == 'piece':
                                     self.move_history.pop()
@@ -240,7 +246,7 @@ class Game:
 
     def ai_plays(self):
 
-        if self.ai_playing and self.game_logic.get_current_player() == BLACK:
+        if self.ai_playing and self.game_logic.get_current_player() == self.ai_color:
             self._make_bot_move()
 
     def _make_bot_move(self):
@@ -294,8 +300,7 @@ class Game:
         with open("saved_board.json", "r") as f:
             data = json.load(f)
 
-        ai_player = self.ai if self.ai_playing else None
-        self.game_logic = NonagaLogic(None, ai_player)
+        self.game_logic = self._create_game_logic()
         tiles = [(t[0], t[1]) for t in data.get("board", {}).get("tiles", [])]
         red_pieces = [(p[0], p[1]) for p in data.get("board", {}).get("pieces", []) if p[3] == RED]
         black_pieces = [(p[0], p[1]) for p in data.get("board", {}).get("pieces", []) if p[3] == BLACK]
