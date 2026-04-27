@@ -47,6 +47,7 @@ setup(
                 extra_link_args=link_args,
             ),
         ],
+        include_path=["NonagaGame"],
         compiler_directives={
             "language_level": "3",
             "boundscheck": False,

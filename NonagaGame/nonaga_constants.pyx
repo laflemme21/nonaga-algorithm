@@ -4,6 +4,9 @@
 RED = 0
 BLACK = 1
 
+# Default side controlled by the AI. Change this to RED to flip the AI side.
+AI_COLOR = RED
+
 AI_PARAM = [35, 14, 40, 20, 35, 40, 39, 34]
 
 PIECE_TO_MOVE = 0

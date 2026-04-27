@@ -49,6 +49,29 @@ if __name__ == '__main__':
     final_population = ga.run(generations=10, pop_size=20, genome_length=8)
 ```
 
+## Staged Search Launcher
+
+The repository's `ga_framework/main.py` entrypoint now runs the GA in stages by default. It evaluates several search-space slices separately, keeps the resulting survivors, and then performs one final combined GA round over the merged population.
+
+The default partitioning matches the existing launcher behavior:
+
+```text
+0:13,13:25,25:37,37:50
+```
+
+You can change the staged search slices and the final search range from the command line:
+
+```bash
+python ga_framework/main.py --run-name experiment_01 --partition-ranges 0:10,10:20,20:35,35:50 --final-range 0:50
+```
+
+Useful knobs include:
+
+- `--stage-generations` and `--stage-pop-size` for the partitioned rounds.
+- `--final-generations` for the final merged round.
+- `--stage-k-opponents` / `--final-k-opponents` to tune the tournament evaluation for each phase.
+- `--run-name` to choose the output filename for this run.
+
 ## Creating Custom Strategies
 
 To implement your own logic for the game or evaluation workflow, simply subclass the relevant interface from `interfaces.py`.
@@ -72,4 +95,12 @@ Then, inject `GameFitness()` into the `ModularGA` at instantiation.
 
 ## Logging
 
-The `ModularGA` automatically appends generation-level metrics (Generation ID, Best, Average, and Worst fitness) to the specified `log_file` (default: `ga_metrics.csv`). This prevents massive memory buildup and ensures your data is saved incrementally during long HPC runs.
+The staged launcher writes one file per top-level run into `GA results/<run-name>.csv`.
+
+Each run file contains:
+
+1. A top preamble with all run parameters provided on the command line.
+2. Human-readable sections for each stage and the final combined round.
+3. A CSV metrics header and generation rows for each section.
+
+This keeps parallel fitness evaluation safe while preserving a single segmented log file for each run.

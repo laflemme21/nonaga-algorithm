@@ -1,0 +1,1 @@
+"""Nonaga game package."""
