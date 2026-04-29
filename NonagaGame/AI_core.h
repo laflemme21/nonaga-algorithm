@@ -34,6 +34,17 @@ extern "C"
     {
         unsigned long long evaluated_nodes;
         unsigned long long leaf_nodes;
+        unsigned long long tt_probes;
+        unsigned long long tt_hits;
+        unsigned long long tt_exact_hits;
+        unsigned long long tt_lower_hits;
+        unsigned long long tt_upper_hits;
+        unsigned long long tt_cached_move_first_tries;
+        unsigned long long tt_cached_move_first_cutoffs;
+        unsigned long long piece_candidates_generated;
+        unsigned long long tile_candidates_generated;
+        unsigned long long piece_candidates_evaluated;
+        unsigned long long tile_candidates_evaluated;
     } AiSearchCounters;
 
     Move2D ai_empty_move(void);

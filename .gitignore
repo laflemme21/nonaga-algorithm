@@ -18,3 +18,4 @@ CppProperties.json
 *.diagsession
 *.pdb
 *.html
+.tmp*/

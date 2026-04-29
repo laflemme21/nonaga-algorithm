@@ -19,6 +19,7 @@ from pathlib import Path
 
 RECORD_TYPES = {"run_start", "sample", "aggregate", "run_end"}
 METRIC_ORIGINS = {"exact", "partial", "estimated", "error"}
+DEFAULT_LEDGER_RELATIVE = "benchmark_feature/benchmark_feature_ledger.jsonl"
 
 
 @dataclass(frozen=True)
@@ -51,6 +52,14 @@ def parse_depths(value: str) -> list[int]:
 
 def parse_csv_str(value: str) -> list[str]:
     return [v.strip() for v in value.split(",") if v.strip()]
+
+
+def resolve_ledger_path(repo_root: Path, run_id: str, raw_ledger: str) -> Path:
+    if raw_ledger != DEFAULT_LEDGER_RELATIVE:
+        ledger_path = Path(raw_ledger)
+        return ledger_path if ledger_path.is_absolute() else (repo_root / ledger_path).resolve()
+
+    return (repo_root / "benchmark_feature" / "results" / run_id / "benchmark_feature_ledger.jsonl").resolve()
 
 
 def _read_fixture_board_payload(state_path: Path):
@@ -571,6 +580,17 @@ def _worker_run_legacy(payload: dict) -> list[dict]:
             minimax_elapsed_total = 0.0
             tt_init_elapsed_total = 0.0
             search_budget_consumed = 0.0
+            tt_probes_total = 0
+            tt_hits_total = 0
+            tt_exact_hits_total = 0
+            tt_lower_hits_total = 0
+            tt_upper_hits_total = 0
+            tt_cached_move_first_tries_total = 0
+            tt_cached_move_first_cutoffs_total = 0
+            piece_candidates_generated_total = 0
+            tile_candidates_generated_total = 0
+            piece_candidates_evaluated_total = 0
+            tile_candidates_evaluated_total = 0
 
             budget_seconds = time_budget_ms / 1000.0
             wall_deadline = time.perf_counter() + budget_seconds
@@ -644,6 +664,17 @@ def _worker_run_legacy(payload: dict) -> list[dict]:
                     "elapsed_seconds": elapsed_total,
                     "evaluated_nodes": evaluated_nodes_total,
                     "leaf_nodes": evaluated_nodes_total,
+                    "tt_probes": None,
+                    "tt_hits": None,
+                    "tt_exact_hits": None,
+                    "tt_lower_hits": None,
+                    "tt_upper_hits": None,
+                    "tt_cached_move_first_tries": None,
+                    "tt_cached_move_first_cutoffs": None,
+                    "piece_candidates_generated": None,
+                    "tile_candidates_generated": None,
+                    "piece_candidates_evaluated": None,
+                    "tile_candidates_evaluated": None,
                     "total_nodes": None,
                     "nps": nps,
                     "nps_minimax": nps_minimax,
@@ -788,6 +819,17 @@ def _worker_run_cython(payload: dict) -> list[dict]:
                     counters = ai.get_search_counters() if hasattr(ai, "get_search_counters") else {}
                     evaluated_nodes_total += int(counters.get("evaluated_nodes", 0))
                     leaf_nodes_total += int(counters.get("leaf_nodes", 0))
+                    tt_probes_total += int(counters.get("tt_probes", 0))
+                    tt_hits_total += int(counters.get("tt_hits", 0))
+                    tt_exact_hits_total += int(counters.get("tt_exact_hits", 0))
+                    tt_lower_hits_total += int(counters.get("tt_lower_hits", 0))
+                    tt_upper_hits_total += int(counters.get("tt_upper_hits", 0))
+                    tt_cached_move_first_tries_total += int(counters.get("tt_cached_move_first_tries", 0))
+                    tt_cached_move_first_cutoffs_total += int(counters.get("tt_cached_move_first_cutoffs", 0))
+                    piece_candidates_generated_total += int(counters.get("piece_candidates_generated", 0))
+                    tile_candidates_generated_total += int(counters.get("tile_candidates_generated", 0))
+                    piece_candidates_evaluated_total += int(counters.get("piece_candidates_evaluated", 0))
+                    tile_candidates_evaluated_total += int(counters.get("tile_candidates_evaluated", 0))
                     elapsed_total += elapsed
                     minimax_elapsed_total += float(minimax_elapsed)
                     tt_init_elapsed_total += float(tt_init_elapsed)
@@ -860,6 +902,17 @@ def _worker_run_cython(payload: dict) -> list[dict]:
                     "elapsed_seconds": elapsed_total,
                     "evaluated_nodes": evaluated_nodes_value,
                     "leaf_nodes": leaf_nodes_value,
+                    "tt_probes": tt_probes_total,
+                    "tt_hits": tt_hits_total,
+                    "tt_exact_hits": tt_exact_hits_total,
+                    "tt_lower_hits": tt_lower_hits_total,
+                    "tt_upper_hits": tt_upper_hits_total,
+                    "tt_cached_move_first_tries": tt_cached_move_first_tries_total,
+                    "tt_cached_move_first_cutoffs": tt_cached_move_first_cutoffs_total,
+                    "piece_candidates_generated": piece_candidates_generated_total,
+                    "tile_candidates_generated": tile_candidates_generated_total,
+                    "piece_candidates_evaluated": piece_candidates_evaluated_total,
+                    "tile_candidates_evaluated": tile_candidates_evaluated_total,
                     "total_nodes": None,
                     "nps": nps,
                     "nps_minimax": nps_minimax,
@@ -1075,7 +1128,9 @@ def run_main(args: argparse.Namespace) -> int:
 
     # Script now lives under benchmark_feature/, so project root is one level up.
     repo_root = Path(__file__).resolve().parent.parent
-    ledger_path = (repo_root / args.ledger).resolve()
+    run_id = str(uuid.uuid4())
+    ledger_path = resolve_ledger_path(repo_root, run_id, args.ledger)
+    ledger_path.parent.mkdir(parents=True, exist_ok=True)
     depths = parse_depths(args.depths)
     commits = parse_csv_str(args.commits)
     fixture_paths = [(repo_root / p).resolve() for p in parse_csv_str(args.fixtures)]
@@ -1098,7 +1153,6 @@ def run_main(args: argparse.Namespace) -> int:
     if not scenarios:
         raise RuntimeError("No benchmark scenarios were generated.")
 
-    run_id = str(uuid.uuid4())
     run_start = {
         "run_id": run_id,
         "ts_utc": now_utc_iso(),
@@ -1200,6 +1254,17 @@ def run_main(args: argparse.Namespace) -> int:
                     "feature_search_elapsed_seconds": sample_data["elapsed_seconds_minimax"],
                     "evaluated_nodes": sample_data["evaluated_nodes"],
                     "leaf_nodes": sample_data["leaf_nodes"],
+                    "tt_probes": sample_data["tt_probes"],
+                    "tt_hits": sample_data["tt_hits"],
+                    "tt_exact_hits": sample_data["tt_exact_hits"],
+                    "tt_lower_hits": sample_data["tt_lower_hits"],
+                    "tt_upper_hits": sample_data["tt_upper_hits"],
+                    "tt_cached_move_first_tries": sample_data["tt_cached_move_first_tries"],
+                    "tt_cached_move_first_cutoffs": sample_data["tt_cached_move_first_cutoffs"],
+                    "piece_candidates_generated": sample_data["piece_candidates_generated"],
+                    "tile_candidates_generated": sample_data["tile_candidates_generated"],
+                    "piece_candidates_evaluated": sample_data["piece_candidates_evaluated"],
+                    "tile_candidates_evaluated": sample_data["tile_candidates_evaluated"],
                     "total_nodes": sample_data["total_nodes"],
                     "feature_search_nps": sample_data["nps_minimax"] if sample_data.get("nps_minimax") is not None else sample_data["nps"],
                     "nps_minimax": sample_data["nps_minimax"],
@@ -1271,6 +1336,17 @@ def run_main(args: argparse.Namespace) -> int:
                         if r.get("elapsed_seconds_nonminimax") is not None
                     ]
                     eval_values = [r["evaluated_nodes"] for r in depth_rows if r["evaluated_nodes"] is not None]
+                    tt_probe_values = [r["tt_probes"] for r in depth_rows if r.get("tt_probes") is not None]
+                    tt_hit_values = [r["tt_hits"] for r in depth_rows if r.get("tt_hits") is not None]
+                    tt_exact_hit_values = [r["tt_exact_hits"] for r in depth_rows if r.get("tt_exact_hits") is not None]
+                    tt_lower_hit_values = [r["tt_lower_hits"] for r in depth_rows if r.get("tt_lower_hits") is not None]
+                    tt_upper_hit_values = [r["tt_upper_hits"] for r in depth_rows if r.get("tt_upper_hits") is not None]
+                    tt_cached_tries_values = [r["tt_cached_move_first_tries"] for r in depth_rows if r.get("tt_cached_move_first_tries") is not None]
+                    tt_cached_cutoff_values = [r["tt_cached_move_first_cutoffs"] for r in depth_rows if r.get("tt_cached_move_first_cutoffs") is not None]
+                    piece_generated_values = [r["piece_candidates_generated"] for r in depth_rows if r.get("piece_candidates_generated") is not None]
+                    tile_generated_values = [r["tile_candidates_generated"] for r in depth_rows if r.get("tile_candidates_generated") is not None]
+                    piece_evaluated_values = [r["piece_candidates_evaluated"] for r in depth_rows if r.get("piece_candidates_evaluated") is not None]
+                    tile_evaluated_values = [r["tile_candidates_evaluated"] for r in depth_rows if r.get("tile_candidates_evaluated") is not None]
                     eval_raw_values = [
                         r["evaluated_nodes_counter_raw"]
                         for r in depth_rows
@@ -1301,6 +1377,17 @@ def run_main(args: argparse.Namespace) -> int:
                         "sample_count": len(depth_rows),
                         "feature_search_elapsed_seconds_mean": statistics.mean(elapsed_values),
                         "evaluated_nodes_mean": statistics.mean(eval_values) if eval_values else None,
+                        "tt_probes_mean": statistics.mean(tt_probe_values) if tt_probe_values else None,
+                        "tt_hits_mean": statistics.mean(tt_hit_values) if tt_hit_values else None,
+                        "tt_exact_hits_mean": statistics.mean(tt_exact_hit_values) if tt_exact_hit_values else None,
+                        "tt_lower_hits_mean": statistics.mean(tt_lower_hit_values) if tt_lower_hit_values else None,
+                        "tt_upper_hits_mean": statistics.mean(tt_upper_hit_values) if tt_upper_hit_values else None,
+                        "tt_cached_move_first_tries_mean": statistics.mean(tt_cached_tries_values) if tt_cached_tries_values else None,
+                        "tt_cached_move_first_cutoffs_mean": statistics.mean(tt_cached_cutoff_values) if tt_cached_cutoff_values else None,
+                        "piece_candidates_generated_mean": statistics.mean(piece_generated_values) if piece_generated_values else None,
+                        "tile_candidates_generated_mean": statistics.mean(tile_generated_values) if tile_generated_values else None,
+                        "piece_candidates_evaluated_mean": statistics.mean(piece_evaluated_values) if piece_evaluated_values else None,
+                        "tile_candidates_evaluated_mean": statistics.mean(tile_evaluated_values) if tile_evaluated_values else None,
                         "evaluated_nodes_counter_raw_mean": statistics.mean(eval_raw_values) if eval_raw_values else None,
                         "leaf_nodes_counter_raw_mean": statistics.mean(leaf_raw_values) if leaf_raw_values else None,
                         "total_nodes_mean": None,

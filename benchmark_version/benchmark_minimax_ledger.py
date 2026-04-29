@@ -12,6 +12,7 @@ from pathlib import Path
 
 RECORD_TYPES = {"run_start", "sample", "aggregate", "run_end"}
 METRIC_ORIGINS = {"exact", "partial", "estimated", "error"}
+DEFAULT_LEDGER_RELATIVE = "benchmark_version/benchmark_ledger.jsonl"
 
 
 def now_utc_iso() -> str:
@@ -39,12 +40,19 @@ def get_commit_date_utc() -> str:
 def parse_csv_str(value: str) -> list[str]:
     return [v.strip() for v in value.split(",") if v.strip()]
 
-
 def parse_depths(value: str) -> list[int]:
     depths = [int(v.strip()) for v in value.split(",") if v.strip()]
     if not depths:
         raise ValueError("At least one depth is required.")
     return depths
+
+
+def resolve_ledger_path(repo_root: Path, run_id: str, raw_ledger: str) -> Path:
+    if raw_ledger != DEFAULT_LEDGER_RELATIVE:
+        ledger_path = Path(raw_ledger)
+        return ledger_path if ledger_path.is_absolute() else (repo_root / ledger_path).resolve()
+
+    return (repo_root / "benchmark_version" / "results" / run_id / "benchmark_ledger.jsonl").resolve()
 
 
 def append_record(ledger_path: Path, record: dict) -> None:
@@ -170,6 +178,17 @@ def run_sample(ai, fixture_path: Path, depth: int, time_budget_ms: int, total_no
     counters = ai.get_search_counters()
     evaluated_nodes = counters.get("evaluated_nodes")
     leaf_nodes = counters.get("leaf_nodes")
+    tt_probes = counters.get("tt_probes")
+    tt_hits = counters.get("tt_hits")
+    tt_exact_hits = counters.get("tt_exact_hits")
+    tt_lower_hits = counters.get("tt_lower_hits")
+    tt_upper_hits = counters.get("tt_upper_hits")
+    tt_cached_move_first_tries = counters.get("tt_cached_move_first_tries")
+    tt_cached_move_first_cutoffs = counters.get("tt_cached_move_first_cutoffs")
+    piece_candidates_generated = counters.get("piece_candidates_generated")
+    tile_candidates_generated = counters.get("tile_candidates_generated")
+    piece_candidates_evaluated = counters.get("piece_candidates_evaluated")
+    tile_candidates_evaluated = counters.get("tile_candidates_evaluated")
     total_nodes = total_nodes_exact
 
     nps = None
@@ -191,6 +210,17 @@ def run_sample(ai, fixture_path: Path, depth: int, time_budget_ms: int, total_no
         "version_search_elapsed_seconds": elapsed,
         "evaluated_nodes": evaluated_nodes,
         "leaf_nodes": leaf_nodes,
+        "tt_probes": tt_probes,
+        "tt_hits": tt_hits,
+        "tt_exact_hits": tt_exact_hits,
+        "tt_lower_hits": tt_lower_hits,
+        "tt_upper_hits": tt_upper_hits,
+        "tt_cached_move_first_tries": tt_cached_move_first_tries,
+        "tt_cached_move_first_cutoffs": tt_cached_move_first_cutoffs,
+        "piece_candidates_generated": piece_candidates_generated,
+        "tile_candidates_generated": tile_candidates_generated,
+        "piece_candidates_evaluated": piece_candidates_evaluated,
+        "tile_candidates_evaluated": tile_candidates_evaluated,
         "total_nodes": total_nodes,
         "version_search_nps": nps,
         "coverage_ratio": coverage_ratio,
@@ -250,7 +280,8 @@ def main() -> int:
     run_id = str(uuid.uuid4())
     commit_hash = get_commit_hash()
     commit_date_utc = get_commit_date_utc()
-    ledger_path = (repo_root / args.ledger).resolve()
+    ledger_path = resolve_ledger_path(repo_root, run_id, args.ledger)
+    ledger_path.parent.mkdir(parents=True, exist_ok=True)
     fixture_paths = [repo_root / p for p in parse_csv_str(args.fixtures)]
     depths = parse_depths(args.depths)
 
@@ -315,6 +346,17 @@ def main() -> int:
                 "version_search_elapsed_seconds": 0.0,
                 "evaluated_nodes": None,
                 "leaf_nodes": None,
+                    "tt_probes": None,
+                    "tt_hits": None,
+                    "tt_exact_hits": None,
+                    "tt_lower_hits": None,
+                    "tt_upper_hits": None,
+                    "tt_cached_move_first_tries": None,
+                    "tt_cached_move_first_cutoffs": None,
+                    "piece_candidates_generated": None,
+                    "tile_candidates_generated": None,
+                    "piece_candidates_evaluated": None,
+                    "tile_candidates_evaluated": None,
                 "total_nodes": None,
                 "version_search_nps": None,
                 "coverage_ratio": None,
@@ -352,6 +394,17 @@ def main() -> int:
                         "version_search_elapsed_seconds": 0.0,
                         "evaluated_nodes": None,
                         "leaf_nodes": None,
+                        "tt_probes": None,
+                        "tt_hits": None,
+                        "tt_exact_hits": None,
+                        "tt_lower_hits": None,
+                        "tt_upper_hits": None,
+                        "tt_cached_move_first_tries": None,
+                        "tt_cached_move_first_cutoffs": None,
+                        "piece_candidates_generated": None,
+                        "tile_candidates_generated": None,
+                        "piece_candidates_evaluated": None,
+                        "tile_candidates_evaluated": None,
                         "total_nodes": total_nodes_exact,
                         "version_search_nps": None,
                         "coverage_ratio": None,
@@ -378,6 +431,17 @@ def main() -> int:
                     "version_search_elapsed_seconds": sample_data["version_search_elapsed_seconds"],
                     "evaluated_nodes": sample_data["evaluated_nodes"],
                     "leaf_nodes": sample_data["leaf_nodes"],
+                    "tt_probes": sample_data["tt_probes"],
+                    "tt_hits": sample_data["tt_hits"],
+                    "tt_exact_hits": sample_data["tt_exact_hits"],
+                    "tt_lower_hits": sample_data["tt_lower_hits"],
+                    "tt_upper_hits": sample_data["tt_upper_hits"],
+                    "tt_cached_move_first_tries": sample_data["tt_cached_move_first_tries"],
+                    "tt_cached_move_first_cutoffs": sample_data["tt_cached_move_first_cutoffs"],
+                    "piece_candidates_generated": sample_data["piece_candidates_generated"],
+                    "tile_candidates_generated": sample_data["tile_candidates_generated"],
+                    "piece_candidates_evaluated": sample_data["piece_candidates_evaluated"],
+                    "tile_candidates_evaluated": sample_data["tile_candidates_evaluated"],
                     "total_nodes": sample_data["total_nodes"],
                     "version_search_nps": sample_data["version_search_nps"],
                     "coverage_ratio": sample_data["coverage_ratio"],
@@ -401,6 +465,17 @@ def main() -> int:
                 elapsed_values = [r["version_search_elapsed_seconds"] for r in ok_rows]
                 eval_values = [r["evaluated_nodes"]
                                for r in ok_rows if r["evaluated_nodes"] is not None]
+                tt_probe_values = [r["tt_probes"] for r in ok_rows if r["tt_probes"] is not None]
+                tt_hit_values = [r["tt_hits"] for r in ok_rows if r["tt_hits"] is not None]
+                tt_exact_hit_values = [r["tt_exact_hits"] for r in ok_rows if r["tt_exact_hits"] is not None]
+                tt_lower_hit_values = [r["tt_lower_hits"] for r in ok_rows if r["tt_lower_hits"] is not None]
+                tt_upper_hit_values = [r["tt_upper_hits"] for r in ok_rows if r["tt_upper_hits"] is not None]
+                tt_cached_tries_values = [r["tt_cached_move_first_tries"] for r in ok_rows if r["tt_cached_move_first_tries"] is not None]
+                tt_cached_cutoff_values = [r["tt_cached_move_first_cutoffs"] for r in ok_rows if r["tt_cached_move_first_cutoffs"] is not None]
+                piece_generated_values = [r["piece_candidates_generated"] for r in ok_rows if r["piece_candidates_generated"] is not None]
+                tile_generated_values = [r["tile_candidates_generated"] for r in ok_rows if r["tile_candidates_generated"] is not None]
+                piece_evaluated_values = [r["piece_candidates_evaluated"] for r in ok_rows if r["piece_candidates_evaluated"] is not None]
+                tile_evaluated_values = [r["tile_candidates_evaluated"] for r in ok_rows if r["tile_candidates_evaluated"] is not None]
                 total_values = [r["total_nodes"]
                                 for r in ok_rows if r["total_nodes"] is not None]
                 coverage_values = [r["coverage_ratio"]
@@ -424,6 +499,17 @@ def main() -> int:
                     "sample_count": len(ok_rows),
                     "version_search_elapsed_seconds_mean": statistics.mean(elapsed_values),
                     "evaluated_nodes_mean": statistics.mean(eval_values) if eval_values else None,
+                    "tt_probes_mean": statistics.mean(tt_probe_values) if tt_probe_values else None,
+                    "tt_hits_mean": statistics.mean(tt_hit_values) if tt_hit_values else None,
+                    "tt_exact_hits_mean": statistics.mean(tt_exact_hit_values) if tt_exact_hit_values else None,
+                    "tt_lower_hits_mean": statistics.mean(tt_lower_hit_values) if tt_lower_hit_values else None,
+                    "tt_upper_hits_mean": statistics.mean(tt_upper_hit_values) if tt_upper_hit_values else None,
+                    "tt_cached_move_first_tries_mean": statistics.mean(tt_cached_tries_values) if tt_cached_tries_values else None,
+                    "tt_cached_move_first_cutoffs_mean": statistics.mean(tt_cached_cutoff_values) if tt_cached_cutoff_values else None,
+                    "piece_candidates_generated_mean": statistics.mean(piece_generated_values) if piece_generated_values else None,
+                    "tile_candidates_generated_mean": statistics.mean(tile_generated_values) if tile_generated_values else None,
+                    "piece_candidates_evaluated_mean": statistics.mean(piece_evaluated_values) if piece_evaluated_values else None,
+                    "tile_candidates_evaluated_mean": statistics.mean(tile_evaluated_values) if tile_evaluated_values else None,
                     "total_nodes_mean": statistics.mean(total_values) if total_values else None,
                     "version_search_nps_mean": statistics.mean(nps_values),
                     "version_search_nps_median": statistics.median(nps_values),

@@ -24,6 +24,17 @@ cdef extern from "AI_core.h":
     ctypedef struct AiSearchCounters:
         unsigned long long evaluated_nodes
         unsigned long long leaf_nodes
+        unsigned long long tt_probes
+        unsigned long long tt_hits
+        unsigned long long tt_exact_hits
+        unsigned long long tt_lower_hits
+        unsigned long long tt_upper_hits
+        unsigned long long tt_cached_move_first_tries
+        unsigned long long tt_cached_move_first_cutoffs
+        unsigned long long piece_candidates_generated
+        unsigned long long tile_candidates_generated
+        unsigned long long piece_candidates_evaluated
+        unsigned long long tile_candidates_evaluated
 
     Move2D ai_empty_move()
     MinimaxResult ai_new_result(int cost)
@@ -251,6 +262,17 @@ cdef class AI:
         return {
             "evaluated_nodes": int(counters.evaluated_nodes),
             "leaf_nodes": int(counters.leaf_nodes),
+            "tt_probes": int(counters.tt_probes),
+            "tt_hits": int(counters.tt_hits),
+            "tt_exact_hits": int(counters.tt_exact_hits),
+            "tt_lower_hits": int(counters.tt_lower_hits),
+            "tt_upper_hits": int(counters.tt_upper_hits),
+            "tt_cached_move_first_tries": int(counters.tt_cached_move_first_tries),
+            "tt_cached_move_first_cutoffs": int(counters.tt_cached_move_first_cutoffs),
+            "piece_candidates_generated": int(counters.piece_candidates_generated),
+            "tile_candidates_generated": int(counters.tile_candidates_generated),
+            "piece_candidates_evaluated": int(counters.piece_candidates_evaluated),
+            "tile_candidates_evaluated": int(counters.tile_candidates_evaluated),
         }
 
     cpdef unsigned long long count_total_nodes(self, game_state):

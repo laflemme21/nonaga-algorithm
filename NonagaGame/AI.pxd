@@ -19,7 +19,24 @@ cdef extern from "AI_core.h":
         Move2D piece_move
         Move2D tile_move
 
+    ctypedef struct AiSearchCounters:
+        unsigned long long evaluated_nodes
+        unsigned long long leaf_nodes
+        unsigned long long tt_probes
+        unsigned long long tt_hits
+        unsigned long long tt_exact_hits
+        unsigned long long tt_lower_hits
+        unsigned long long tt_upper_hits
+        unsigned long long tt_cached_move_first_tries
+        unsigned long long tt_cached_move_first_cutoffs
+        unsigned long long piece_candidates_generated
+        unsigned long long tile_candidates_generated
+        unsigned long long piece_candidates_evaluated
+        unsigned long long tile_candidates_evaluated
+
     void ai_init_tt()
+    void ai_reset_search_counters()
+    AiSearchCounters ai_get_search_counters()
     MinimaxResult ai_search_iterative_deepening(NonagaBitBoard* board, int current_player, int turn_phase, int max_depth, int maximizing_player, int color, int max_color, const int* params)
 
 cdef class AI:

@@ -46,6 +46,17 @@ void ai_reset_search_counters(void)
 {
     ai_search_counters.evaluated_nodes = 0ULL;
     ai_search_counters.leaf_nodes = 0ULL;
+    ai_search_counters.tt_probes = 0ULL;
+    ai_search_counters.tt_hits = 0ULL;
+    ai_search_counters.tt_exact_hits = 0ULL;
+    ai_search_counters.tt_lower_hits = 0ULL;
+    ai_search_counters.tt_upper_hits = 0ULL;
+    ai_search_counters.tt_cached_move_first_tries = 0ULL;
+    ai_search_counters.tt_cached_move_first_cutoffs = 0ULL;
+    ai_search_counters.piece_candidates_generated = 0ULL;
+    ai_search_counters.tile_candidates_generated = 0ULL;
+    ai_search_counters.piece_candidates_evaluated = 0ULL;
+    ai_search_counters.tile_candidates_evaluated = 0ULL;
 }
 
 AiSearchCounters ai_get_search_counters(void)
@@ -899,6 +910,7 @@ static unsigned long long ai_count_nodes_piece(
                     continue;
                 }
 
+                ai_search_counters.piece_candidates_generated += 1ULL;
                 ai_save_state(&snapshot, board, *current_player, *turn_phase);
                 ai_move_piece_state(
                     board,
@@ -969,6 +981,7 @@ static unsigned long long ai_count_nodes_tile(
 
         for (d_idx = 0; d_idx < valid_count; ++d_idx)
         {
+            ai_search_counters.tile_candidates_generated += 1ULL;
             ai_save_state(&snapshot, board, *current_player, *turn_phase);
             ai_move_tile_state(
                 board,
@@ -1086,12 +1099,14 @@ MinimaxResult ai_minimax_piece(
         return ai_new_result(ai_cost_function(board, maximizing_player, max_color, params));
     }
     /* TT Lookup */
+    ai_search_counters.tt_probes += 1ULL;
     current_hash = ai_compute_hash(board, *current_player, *turn_phase);
     tt_entry = &ai_tt[current_hash & (TT_SIZE - 1)];
 
     if (tt_entry->hash == current_hash)
     {
         tt_hit = 1;
+        ai_search_counters.tt_hits += 1ULL;
         tt_piece_move = tt_entry->best_piece_move;
         tt_tile_move = tt_entry->best_tile_move;
 
@@ -1116,6 +1131,7 @@ MinimaxResult ai_minimax_piece(
         {
             if (tt_entry->flag == TT_EXACT && tt_pair_valid)
             {
+                ai_search_counters.tt_exact_hits += 1ULL;
                 out = ai_new_result(tt_entry->value);
                 out.piece_move = tt_piece_move;
                 out.tile_move = tt_tile_move;
@@ -1123,11 +1139,13 @@ MinimaxResult ai_minimax_piece(
             }
             else if (tt_entry->flag == TT_LOWER)
             {
+                ai_search_counters.tt_lower_hits += 1ULL;
                 if (tt_entry->value > alpha)
                     alpha = tt_entry->value;
             }
             else if (tt_entry->flag == TT_UPPER)
             {
+                ai_search_counters.tt_upper_hits += 1ULL;
                 if (tt_entry->value < beta)
                     beta = tt_entry->value;
             }
@@ -1157,6 +1175,7 @@ MinimaxResult ai_minimax_piece(
         remaining candidates. No additional heuristic sorting is applied here. */
     if (tt_hit && tt_piece_move.is_set)
     {
+        ai_search_counters.tt_cached_move_first_tries += 1ULL;
         ai_save_state(&snapshot, board, *current_player, *turn_phase);
         ai_move_piece_state(board, current_player, turn_phase, tt_piece_move.from_q, tt_piece_move.from_r, tt_piece_move.to_q, tt_piece_move.to_r);
         result = ai_minimax_tile(board, current_player, turn_phase, depth, maximizing_player, color, alpha, beta, max_color, params);
@@ -1191,6 +1210,7 @@ MinimaxResult ai_minimax_piece(
         {
             /* Alpha-Beta Pruning: The cached TT move successfully bounded the search.
                We can completely skip generating other destination candidates! */
+            ai_search_counters.tt_cached_move_first_cutoffs += 1ULL;
             goto store_and_return;
         }
     }
@@ -1238,6 +1258,7 @@ MinimaxResult ai_minimax_piece(
      */
     for (i = 0; i < num_candidates; ++i)
     {
+        ai_search_counters.piece_candidates_evaluated += 1ULL;
         ai_save_state(&snapshot, board, *current_player, *turn_phase);
 
         ai_move_piece_state(
@@ -1369,12 +1390,14 @@ MinimaxResult ai_minimax_tile(
     }
 
     /* TT Lookup */
+    ai_search_counters.tt_probes += 1ULL;
     current_hash = ai_compute_hash(board, *current_player, *turn_phase);
     tt_entry = &ai_tt[current_hash & (TT_SIZE - 1)];
 
     if (tt_entry->hash == current_hash)
     {
         tt_hit = 1;
+        ai_search_counters.tt_hits += 1ULL;
         tt_tile_move = tt_entry->best_tile_move;
 
         if (tt_tile_move.is_set)
@@ -1390,17 +1413,20 @@ MinimaxResult ai_minimax_tile(
         {
             if (tt_entry->flag == TT_EXACT && tt_tile_move_valid)
             {
+                ai_search_counters.tt_exact_hits += 1ULL;
                 out = ai_new_result(tt_entry->value);
                 out.tile_move = tt_tile_move;
                 return out;
             }
             else if (tt_entry->flag == TT_LOWER)
             {
+                ai_search_counters.tt_lower_hits += 1ULL;
                 if (tt_entry->value > alpha)
                     alpha = tt_entry->value;
             }
             else if (tt_entry->flag == TT_UPPER)
             {
+                ai_search_counters.tt_upper_hits += 1ULL;
                 if (tt_entry->value < beta)
                     beta = tt_entry->value;
             }
@@ -1422,6 +1448,7 @@ MinimaxResult ai_minimax_tile(
         remaining candidates. No additional heuristic sorting is applied here. */
     if (tt_hit && tt_tile_move.is_set)
     {
+        ai_search_counters.tt_cached_move_first_tries += 1ULL;
         ai_save_state(&snapshot, board, *current_player, *turn_phase);
         ai_move_tile_state(board, current_player, turn_phase, tt_tile_move.from_q, tt_tile_move.from_r, tt_tile_move.to_q, tt_tile_move.to_r);
         result = ai_minimax_piece(board, current_player, turn_phase, depth - 1, !maximizing_player, (color + 1) % 2, alpha, beta, max_color, params);
@@ -1453,6 +1480,7 @@ MinimaxResult ai_minimax_tile(
         if (alpha >= beta)
         {
             /* Alpha-Beta Pruning: Found immediate tile move cutoff. */
+            ai_search_counters.tt_cached_move_first_cutoffs += 1ULL;
             goto store_and_return_tile;
         }
     }
@@ -1480,6 +1508,7 @@ MinimaxResult ai_minimax_tile(
             if (num_candidates >= MAX_TILE_CANDIDATES)
                 break;
 
+            ai_search_counters.tile_candidates_generated += 1ULL;
             candidates[num_candidates].tile_q = tile_q[tile_idx];
             candidates[num_candidates].tile_r = tile_r[tile_idx];
             candidates[num_candidates].dest_q = valid_q[d_idx];
@@ -1493,6 +1522,7 @@ MinimaxResult ai_minimax_tile(
     /* Standard Alpha-Beta Loop for tile evaluation. */
     for (i = 0; i < num_candidates; ++i)
     {
+        ai_search_counters.tile_candidates_evaluated += 1ULL;
         ai_save_state(&snapshot, board, *current_player, *turn_phase);
 
         ai_move_tile_state(
