@@ -1,12 +1,12 @@
 #!/bin/bash
 #SBATCH --job-name=run_5_python_scripts     # A name for your job
-#SBATCH --output=output_%j.out              # Standard output log (%j will be replaced by the Job ID)
+#SBATCH --output=output_GA_bench_%j.out              # Standard output log
 #SBATCH --error=error_%j.err                # Standard error log
-#SBATCH --time=05:00:00                     # Requested runtime (HH:MM:SS) - Adjust to your needs
+#SBATCH --time=05:00:00                     # Requested runtime (HH:MM:SS)
 #SBATCH --nodes=1                           # Number of nodes
 #SBATCH --ntasks=1                          # Number of tasks
-#SBATCH --cpus-per-task=1                   # CPU cores requested per task (adjust if scripts use multiprocessing)
-#SBATCH --mem=4G                            # Total memory requested (adjust depending on your scripts' needs)
+#SBATCH --cpus-per-task=46                   # CPU cores requested per task
+#SBATCH --mem=16G                            # Total memory requested
 
 # 1. Load the Miniforge module to access Python
 module load miniforge/24.7.1
