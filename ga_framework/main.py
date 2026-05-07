@@ -25,6 +25,21 @@ GA_RESULTS_DIR_NAME = "GA results"
 METRIC_HEADERS = ["Generation", "Best_Fitness", "Average_Fitness",
                   "Worst_Fitness"] + [f"Top_{i}_Genome" for i in range(1, 6)]
 
+STAGE_GENERATIONS = 10
+STAGE_POP_SIZE = 25
+STAGE_MUTATION_PROB = 0.4
+STAGE_K_OPPONENTS = 4
+STAGE_DEPTH = 3
+STAGE_MAX_MOVES = 30
+FINAL_GENERATIONS = 15
+FINAL_MUTATION_PROB = 0.6
+FINAL_K_OPPONENTS = 33
+FINAL_DEPTH = 3
+FINAL_MAX_MOVES = 30
+GENOME_LENGTH = 8
+MUTATION_RATE = 0.8
+SCHEDULE_SEED = 7777777
+
 
 def _parse_run_name(raw_name: str) -> str:
     cleaned = raw_name.strip()
@@ -154,6 +169,8 @@ def _run_staged_search(
     stage_populations: List[List[int]] = []
 
     for stage_index, (min_gene_val, max_gene_val) in enumerate(stage_ranges, start=1):
+        if args.stage_generations <= 0:
+            break
         print(
             f"Running stage {stage_index}/{len(stage_ranges)} over search range [{min_gene_val}, {max_gene_val}]...")
         _append_section_header(
@@ -163,19 +180,19 @@ def _run_staged_search(
                 ("range", f"{min_gene_val}:{max_gene_val}"),
                 ("generations", args.stage_generations),
                 ("pop_size", args.stage_pop_size),
-                ("mutation_prob", args.stage_mutation_prob),
+                ("mutation_prob", STAGE_MUTATION_PROB),
                 ("k_opponents", args.stage_k_opponents),
-                ("depth", args.stage_depth),
-                ("max_moves", args.stage_max_moves),
-                ("genome_length", args.genome_length),
-                ("mutation_rate", args.mutation_rate),
+                ("depth", STAGE_DEPTH),
+                ("max_moves", STAGE_MAX_MOVES),
+                ("genome_length", GENOME_LENGTH),
+                ("mutation_rate", MUTATION_RATE),
             ],
         )
         stage_fitness = strategies.NonagaTournamentFitness(
             k_opponents=args.stage_k_opponents,
-            max_moves=args.stage_max_moves,
-            depth=args.stage_depth,
-            schedule_seed=args.schedule_seed,
+            max_moves=STAGE_MAX_MOVES,
+            depth=STAGE_DEPTH,
+            schedule_seed=SCHEDULE_SEED,
         )
         stage_ga = ModularGA(
             selection=selection,
@@ -190,20 +207,20 @@ def _run_staged_search(
             stage_ga,
             generations=args.stage_generations,
             pop_size=args.stage_pop_size,
-            genome_length=args.genome_length,
+            genome_length=GENOME_LENGTH,
             min_gene_val=min_gene_val,
             max_gene_val=max_gene_val,
-            mutation_prob=args.stage_mutation_prob,
+            mutation_prob=STAGE_MUTATION_PROB,
         )
         stage_populations.extend(stage_population)
         print(
             f"Stage {stage_index} complete. Collected {len(stage_population)} survivors.")
 
     final_fitness = strategies.NonagaTournamentFitness(
-        k_opponents=args.final_k_opponents,
-        max_moves=args.final_max_moves,
-        depth=args.final_depth,
-        schedule_seed=args.schedule_seed,
+        k_opponents=FINAL_K_OPPONENTS,
+        max_moves=FINAL_MAX_MOVES,
+        depth=FINAL_DEPTH,
+        schedule_seed=SCHEDULE_SEED,
     )
     final_ga = ModularGA(
         selection=selection,
@@ -214,32 +231,33 @@ def _run_staged_search(
         log_file=args.log_file,
         initialize_log=False,
     )
+    final_pop_size = len(stage_populations) if stage_populations else args.stage_pop_size * len(stage_ranges)
     _append_section_header(
         args.log_file,
         section_title="Final Combined Round",
         section_params=[
             ("range", f"{final_range[0]}:{final_range[1]}"),
             ("generations", args.final_generations),
-            ("pop_size", len(stage_populations)),
-            ("mutation_prob", args.final_mutation_prob),
-            ("k_opponents", args.final_k_opponents),
-            ("depth", args.final_depth),
-            ("max_moves", args.final_max_moves),
-            ("genome_length", args.genome_length),
-            ("mutation_rate", args.mutation_rate),
+            ("pop_size", final_pop_size),
+            ("mutation_prob", FINAL_MUTATION_PROB),
+            ("k_opponents", FINAL_K_OPPONENTS),
+            ("depth", FINAL_DEPTH),
+            ("max_moves", FINAL_MAX_MOVES),
+            ("genome_length", GENOME_LENGTH),
+            ("mutation_rate", MUTATION_RATE),
         ],
     )
     print(
-        f"Running final combined GA round over search range [{final_range[0]}, {final_range[1]}] with {len(stage_populations)} merged survivors...")
+        f"Running final combined GA round over search range [{final_range[0]}, {final_range[1]}] with {final_pop_size} merged survivors...")
     return _run_ga_round(
         final_ga,
         generations=args.final_generations,
-        pop_size=len(stage_populations),
-        genome_length=args.genome_length,
+        pop_size=final_pop_size,
+        genome_length=GENOME_LENGTH,
         min_gene_val=final_range[0],
         max_gene_val=final_range[1],
-        mutation_prob=args.final_mutation_prob,
-        population=stage_populations,
+        mutation_prob=FINAL_MUTATION_PROB,
+        population=stage_populations if stage_populations else None,
     )
 
 
@@ -252,43 +270,18 @@ if __name__ == '__main__':
                         help="Execution mode: 'local' (fixed cores) or 'slurm' (dynamic cores)")
     parser.add_argument("--run-name", type=_parse_run_name, required=True,
                         help="Unique run label used as the output filename inside GA results.")
-    parser.add_argument("--partition-ranges", type=str, default=",".join(
-        f"{lower}:{upper}" for lower, upper in DEFAULT_STAGE_RANGES),
-        help="Comma-separated search-space slices to evaluate before the final combined round. Use LOW:HIGH pairs.")
-    parser.add_argument("--final-range", type=str, default=f"{DEFAULT_FINAL_RANGE[0]}:{DEFAULT_FINAL_RANGE[1]}",
-                        help="Search-space range for the final combined GA round. Use LOW:HIGH.")
-    parser.add_argument("--stage-generations", type=int, default=10,
+    parser.add_argument("--stage-generations", type=int, default=STAGE_GENERATIONS,
                         help="Number of generations per partitioned stage.")
-    parser.add_argument("--stage-pop-size", type=int, default=5,
+    parser.add_argument("--stage-pop-size", type=int, default=STAGE_POP_SIZE,
                         help="Population size per partitioned stage.")
-    parser.add_argument("--stage-mutation-prob", type=float, default=0.4,
-                        help="Mutation probability applied during partitioned stages.")
-    parser.add_argument("--stage-k-opponents", type=int, default=4,
+    parser.add_argument("--stage-k-opponents", type=int, default=STAGE_K_OPPONENTS,
                         help="Number of opponents used for partitioned-stage fitness evaluation.")
-    parser.add_argument("--stage-depth", type=int, default=2,
-                        help="Search depth used for partitioned-stage fitness evaluation.")
-    parser.add_argument("--stage-max-moves", type=int, default=30,
-                        help="Max moves allowed during partitioned-stage fitness evaluation.")
-    parser.add_argument("--final-generations", type=int, default=15,
+    parser.add_argument("--final-generations", type=int, default=FINAL_GENERATIONS,
                         help="Number of generations in the final combined GA round.")
-    parser.add_argument("--final-mutation-prob", type=float, default=0.4,
-                        help="Mutation probability applied during the final combined round.")
-    parser.add_argument("--final-k-opponents", type=int, default=6,
-                        help="Number of opponents used for final-round fitness evaluation.")
-    parser.add_argument("--final-depth", type=int, default=3,
-                        help="Search depth used for final-round fitness evaluation.")
-    parser.add_argument("--final-max-moves", type=int, default=30,
-                        help="Max moves allowed during final-round fitness evaluation.")
-    parser.add_argument("--genome-length", type=int, default=8,
-                        help="Genome length used for every GA run in the staged workflow.")
-    parser.add_argument("--mutation-rate", type=float, default=0.5,
-                        help="Mutation rate used by the integer mutation strategy.")
-    parser.add_argument("--schedule-seed", type=int, default=7777777,
-                        help="Optional seed for deterministic tournament scheduling")
     args = parser.parse_args()
 
-    stage_ranges = _parse_range_list(args.partition_ranges)
-    final_range = _parse_range_spec(args.final_range)
+    stage_ranges = DEFAULT_STAGE_RANGES
+    final_range = DEFAULT_FINAL_RANGE
     args.log_file = _resolve_run_log_file(args.run_name)
     _initialize_run_log_file(args.log_file, args, sys.argv[1:])
     print(f"Logging this run to: {args.log_file}")
@@ -304,7 +297,7 @@ if __name__ == '__main__':
     selection = strategies.RouletteWheelSelection()
     crossover = strategies.ArithmeticCrossover()
     mutation = strategies.RandomIntMutation(
-        mutation_rate=args.mutation_rate, min_val=0, max_val=final_range[1])
+        mutation_rate=MUTATION_RATE, min_val=0, max_val=final_range[1])
 
     backend = _build_backend(args)
 
