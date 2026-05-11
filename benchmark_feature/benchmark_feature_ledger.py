@@ -781,6 +781,17 @@ def _worker_run_cython(payload: dict) -> list[dict]:
             minimax_elapsed_total = 0.0
             tt_init_elapsed_total = 0.0
             search_budget_consumed = 0.0
+            tt_probes_total = 0
+            tt_hits_total = 0
+            tt_exact_hits_total = 0
+            tt_lower_hits_total = 0
+            tt_upper_hits_total = 0
+            tt_cached_move_first_tries_total = 0
+            tt_cached_move_first_cutoffs_total = 0
+            piece_candidates_generated_total = 0
+            tile_candidates_generated_total = 0
+            piece_candidates_evaluated_total = 0
+            tile_candidates_evaluated_total = 0
 
             budget_seconds = time_budget_ms / 1000.0
             wall_deadline = time.perf_counter() + budget_seconds
