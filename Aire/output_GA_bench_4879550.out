@@ -1,0 +1,787 @@
+Starting GA run with 200 generations...
+running build_ext
+building 'nonaga_constants' extension
+gcc -pthread -B /users/sc23ksk/nonaga-algorithm/Aire/conda_env/compiler_compat -DNDEBUG -fwrapv -O2 -Wall -fPIC -O2 -isystem /users/sc23ksk/nonaga-algorithm/Aire/conda_env/include -fPIC -O2 -isystem /users/sc23ksk/nonaga-algorithm/Aire/conda_env/include -fPIC -I/users/sc23ksk/nonaga-algorithm/Aire/conda_env/include/python3.11 -c NonagaGame/nonaga_constants.c -o build/temp.linux-x86_64-cpython-311/NonagaGame/nonaga_constants.o -O3 -march=native -flto -fomit-frame-pointer -DNDEBUG
+gcc -pthread -B /users/sc23ksk/nonaga-algorithm/Aire/conda_env/compiler_compat -shared -Wl,--allow-shlib-undefined -Wl,-rpath,/users/sc23ksk/nonaga-algorithm/Aire/conda_env/lib -Wl,-rpath-link,/users/sc23ksk/nonaga-algorithm/Aire/conda_env/lib -L/users/sc23ksk/nonaga-algorithm/Aire/conda_env/lib -Wl,--allow-shlib-undefined -Wl,-rpath,/users/sc23ksk/nonaga-algorithm/Aire/conda_env/lib -Wl,-rpath-link,/users/sc23ksk/nonaga-algorithm/Aire/conda_env/lib -L/users/sc23ksk/nonaga-algorithm/Aire/conda_env/lib build/temp.linux-x86_64-cpython-311/NonagaGame/nonaga_constants.o -o build/lib.linux-x86_64-cpython-311/nonaga_constants.cpython-311-x86_64-linux-gnu.so -flto
+building 'nonaga_logic' extension
+gcc -pthread -B /users/sc23ksk/nonaga-algorithm/Aire/conda_env/compiler_compat -DNDEBUG -fwrapv -O2 -Wall -fPIC -O2 -isystem /users/sc23ksk/nonaga-algorithm/Aire/conda_env/include -fPIC -O2 -isystem /users/sc23ksk/nonaga-algorithm/Aire/conda_env/include -fPIC -INonagaGame -I/users/sc23ksk/nonaga-algorithm/Aire/conda_env/include/python3.11 -c NonagaGame/nonaga_bitboard.c -o build/temp.linux-x86_64-cpython-311/NonagaGame/nonaga_bitboard.o -O3 -march=native -flto -fomit-frame-pointer -DNDEBUG
+gcc -pthread -B /users/sc23ksk/nonaga-algorithm/Aire/conda_env/compiler_compat -DNDEBUG -fwrapv -O2 -Wall -fPIC -O2 -isystem /users/sc23ksk/nonaga-algorithm/Aire/conda_env/include -fPIC -O2 -isystem /users/sc23ksk/nonaga-algorithm/Aire/conda_env/include -fPIC -INonagaGame -I/users/sc23ksk/nonaga-algorithm/Aire/conda_env/include/python3.11 -c NonagaGame/nonaga_logic.c -o build/temp.linux-x86_64-cpython-311/NonagaGame/nonaga_logic.o -O3 -march=native -flto -fomit-frame-pointer -DNDEBUG
+gcc -pthread -B /users/sc23ksk/nonaga-algorithm/Aire/conda_env/compiler_compat -shared -Wl,--allow-shlib-undefined -Wl,-rpath,/users/sc23ksk/nonaga-algorithm/Aire/conda_env/lib -Wl,-rpath-link,/users/sc23ksk/nonaga-algorithm/Aire/conda_env/lib -L/users/sc23ksk/nonaga-algorithm/Aire/conda_env/lib -Wl,--allow-shlib-undefined -Wl,-rpath,/users/sc23ksk/nonaga-algorithm/Aire/conda_env/lib -Wl,-rpath-link,/users/sc23ksk/nonaga-algorithm/Aire/conda_env/lib -L/users/sc23ksk/nonaga-algorithm/Aire/conda_env/lib build/temp.linux-x86_64-cpython-311/NonagaGame/nonaga_bitboard.o build/temp.linux-x86_64-cpython-311/NonagaGame/nonaga_logic.o -o build/lib.linux-x86_64-cpython-311/nonaga_logic.cpython-311-x86_64-linux-gnu.so -flto
+building 'AI' extension
+gcc -pthread -B /users/sc23ksk/nonaga-algorithm/Aire/conda_env/compiler_compat -DNDEBUG -fwrapv -O2 -Wall -fPIC -O2 -isystem /users/sc23ksk/nonaga-algorithm/Aire/conda_env/include -fPIC -O2 -isystem /users/sc23ksk/nonaga-algorithm/Aire/conda_env/include -fPIC -INonagaGame -I/users/sc23ksk/nonaga-algorithm/Aire/conda_env/include/python3.11 -c NonagaGame/AI.c -o build/temp.linux-x86_64-cpython-311/NonagaGame/AI.o -O3 -march=native -flto -fomit-frame-pointer -DNDEBUG
+gcc -pthread -B /users/sc23ksk/nonaga-algorithm/Aire/conda_env/compiler_compat -DNDEBUG -fwrapv -O2 -Wall -fPIC -O2 -isystem /users/sc23ksk/nonaga-algorithm/Aire/conda_env/include -fPIC -O2 -isystem /users/sc23ksk/nonaga-algorithm/Aire/conda_env/include -fPIC -INonagaGame -I/users/sc23ksk/nonaga-algorithm/Aire/conda_env/include/python3.11 -c NonagaGame/AI_core.c -o build/temp.linux-x86_64-cpython-311/NonagaGame/AI_core.o -O3 -march=native -flto -fomit-frame-pointer -DNDEBUG
+gcc -pthread -B /users/sc23ksk/nonaga-algorithm/Aire/conda_env/compiler_compat -DNDEBUG -fwrapv -O2 -Wall -fPIC -O2 -isystem /users/sc23ksk/nonaga-algorithm/Aire/conda_env/include -fPIC -O2 -isystem /users/sc23ksk/nonaga-algorithm/Aire/conda_env/include -fPIC -INonagaGame -I/users/sc23ksk/nonaga-algorithm/Aire/conda_env/include/python3.11 -c NonagaGame/nonaga_bitboard.c -o build/temp.linux-x86_64-cpython-311/NonagaGame/nonaga_bitboard.o -O3 -march=native -flto -fomit-frame-pointer -DNDEBUG
+gcc -pthread -B /users/sc23ksk/nonaga-algorithm/Aire/conda_env/compiler_compat -shared -Wl,--allow-shlib-undefined -Wl,-rpath,/users/sc23ksk/nonaga-algorithm/Aire/conda_env/lib -Wl,-rpath-link,/users/sc23ksk/nonaga-algorithm/Aire/conda_env/lib -L/users/sc23ksk/nonaga-algorithm/Aire/conda_env/lib -Wl,--allow-shlib-undefined -Wl,-rpath,/users/sc23ksk/nonaga-algorithm/Aire/conda_env/lib -Wl,-rpath-link,/users/sc23ksk/nonaga-algorithm/Aire/conda_env/lib -L/users/sc23ksk/nonaga-algorithm/Aire/conda_env/lib build/temp.linux-x86_64-cpython-311/NonagaGame/AI.o build/temp.linux-x86_64-cpython-311/NonagaGame/AI_core.o build/temp.linux-x86_64-cpython-311/NonagaGame/nonaga_bitboard.o -o build/lib.linux-x86_64-cpython-311/AI.cpython-311-x86_64-linux-gnu.so -flto
+building 'nonaga_bitboard_wrapper' extension
+gcc -pthread -B /users/sc23ksk/nonaga-algorithm/Aire/conda_env/compiler_compat -DNDEBUG -fwrapv -O2 -Wall -fPIC -O2 -isystem /users/sc23ksk/nonaga-algorithm/Aire/conda_env/include -fPIC -O2 -isystem /users/sc23ksk/nonaga-algorithm/Aire/conda_env/include -fPIC -INonagaGame -I/users/sc23ksk/nonaga-algorithm/Aire/conda_env/include/python3.11 -c NonagaGame/nonaga_bitboard.c -o build/temp.linux-x86_64-cpython-311/NonagaGame/nonaga_bitboard.o -O3 -march=native -flto -fomit-frame-pointer -DNDEBUG
+gcc -pthread -B /users/sc23ksk/nonaga-algorithm/Aire/conda_env/compiler_compat -DNDEBUG -fwrapv -O2 -Wall -fPIC -O2 -isystem /users/sc23ksk/nonaga-algorithm/Aire/conda_env/include -fPIC -O2 -isystem /users/sc23ksk/nonaga-algorithm/Aire/conda_env/include -fPIC -INonagaGame -I/users/sc23ksk/nonaga-algorithm/Aire/conda_env/include/python3.11 -c NonagaGame/nonaga_bitboard_wrapper.c -o build/temp.linux-x86_64-cpython-311/NonagaGame/nonaga_bitboard_wrapper.o -O3 -march=native -flto -fomit-frame-pointer -DNDEBUG
+gcc -pthread -B /users/sc23ksk/nonaga-algorithm/Aire/conda_env/compiler_compat -shared -Wl,--allow-shlib-undefined -Wl,-rpath,/users/sc23ksk/nonaga-algorithm/Aire/conda_env/lib -Wl,-rpath-link,/users/sc23ksk/nonaga-algorithm/Aire/conda_env/lib -L/users/sc23ksk/nonaga-algorithm/Aire/conda_env/lib -Wl,--allow-shlib-undefined -Wl,-rpath,/users/sc23ksk/nonaga-algorithm/Aire/conda_env/lib -Wl,-rpath-link,/users/sc23ksk/nonaga-algorithm/Aire/conda_env/lib -L/users/sc23ksk/nonaga-algorithm/Aire/conda_env/lib build/temp.linux-x86_64-cpython-311/NonagaGame/nonaga_bitboard.o build/temp.linux-x86_64-cpython-311/NonagaGame/nonaga_bitboard_wrapper.o -o build/lib.linux-x86_64-cpython-311/nonaga_bitboard_wrapper.cpython-311-x86_64-linux-gnu.so -flto
+copying build/lib.linux-x86_64-cpython-311/nonaga_constants.cpython-311-x86_64-linux-gnu.so -> 
+copying build/lib.linux-x86_64-cpython-311/nonaga_logic.cpython-311-x86_64-linux-gnu.so -> 
+copying build/lib.linux-x86_64-cpython-311/AI.cpython-311-x86_64-linux-gnu.so -> 
+copying build/lib.linux-x86_64-cpython-311/nonaga_bitboard_wrapper.cpython-311-x86_64-linux-gnu.so -> 
+Logging this run to: /users/sc23ksk/nonaga-algorithm/GA results/ga_gen_200.csv
+Ensuring Cython core components are compiled...
+Copied AI.cpython-311-x86_64-linux-gnu.so -> NonagaGame/ (from /users/sc23ksk/nonaga-algorithm/build/lib.linux-x86_64-cpython-311)
+Copied nonaga_bitboard_wrapper.cpython-311-x86_64-linux-gnu.so -> NonagaGame/ (from /users/sc23ksk/nonaga-algorithm/build/lib.linux-x86_64-cpython-311)
+Copied nonaga_constants.cpython-311-x86_64-linux-gnu.so -> NonagaGame/ (from /users/sc23ksk/nonaga-algorithm/build/lib.linux-x86_64-cpython-311)
+Copied nonaga_logic.cpython-311-x86_64-linux-gnu.so -> NonagaGame/ (from /users/sc23ksk/nonaga-algorithm/build/lib.linux-x86_64-cpython-311)
+Removed outside artifact: /users/sc23ksk/nonaga-algorithm/AI.cpython-311-x86_64-linux-gnu.so
+Removed outside artifact: /users/sc23ksk/nonaga-algorithm/build/lib.linux-x86_64-cpython-311/AI.cpython-311-x86_64-linux-gnu.so
+Removed outside artifact: /users/sc23ksk/nonaga-algorithm/nonaga_bitboard_wrapper.cpython-311-x86_64-linux-gnu.so
+Removed outside artifact: /users/sc23ksk/nonaga-algorithm/build/lib.linux-x86_64-cpython-311/nonaga_bitboard_wrapper.cpython-311-x86_64-linux-gnu.so
+Removed outside artifact: /users/sc23ksk/nonaga-algorithm/nonaga_constants.cpython-311-x86_64-linux-gnu.so
+Removed outside artifact: /users/sc23ksk/nonaga-algorithm/build/lib.linux-x86_64-cpython-311/nonaga_constants.cpython-311-x86_64-linux-gnu.so
+Removed outside artifact: /users/sc23ksk/nonaga-algorithm/nonaga_logic.cpython-311-x86_64-linux-gnu.so
+Removed outside artifact: /users/sc23ksk/nonaga-algorithm/build/lib.linux-x86_64-cpython-311/nonaga_logic.cpython-311-x86_64-linux-gnu.so
+Cython files compiled successfully.
+Initializing Modular GA...
+[SLURM] Running parallel backend with 99 workers.
+Running final combined GA round over search range [0, 50] with 56 merged survivors...
+Gen 0 | Best: 0.79 | Avg: 0.50 | Worst: 0.12
+Gen 1 | Best: 0.75 | Avg: 0.50 | Worst: 0.12
+Gen 2 | Best: 0.75 | Avg: 0.50 | Worst: 0.25
+Gen 3 | Best: 0.75 | Avg: 0.50 | Worst: 0.19
+Gen 4 | Best: 0.73 | Avg: 0.50 | Worst: 0.21
+Gen 5 | Best: 0.92 | Avg: 0.50 | Worst: 0.02
+Gen 6 | Best: 0.77 | Avg: 0.50 | Worst: 0.21
+Gen 7 | Best: 0.85 | Avg: 0.50 | Worst: 0.12
+Gen 8 | Best: 0.83 | Avg: 0.50 | Worst: 0.21
+Gen 9 | Best: 0.79 | Avg: 0.50 | Worst: 0.17
+Gen 10 | Best: 0.83 | Avg: 0.50 | Worst: 0.17
+Gen 11 | Best: 0.77 | Avg: 0.50 | Worst: 0.21
+Gen 12 | Best: 0.83 | Avg: 0.50 | Worst: 0.21
+Gen 13 | Best: 0.81 | Avg: 0.50 | Worst: 0.25
+Gen 14 | Best: 0.75 | Avg: 0.50 | Worst: 0.00
+Gen 15 | Best: 0.67 | Avg: 0.50 | Worst: 0.21
+Gen 16 | Best: 0.83 | Avg: 0.50 | Worst: 0.17
+Gen 17 | Best: 0.79 | Avg: 0.50 | Worst: 0.25
+Gen 18 | Best: 0.75 | Avg: 0.50 | Worst: 0.12
+Gen 19 | Best: 0.85 | Avg: 0.50 | Worst: 0.21
+Gen 20 | Best: 0.85 | Avg: 0.50 | Worst: 0.25
+Gen 21 | Best: 0.81 | Avg: 0.50 | Worst: 0.12
+Gen 22 | Best: 0.88 | Avg: 0.50 | Worst: 0.19
+Gen 23 | Best: 0.77 | Avg: 0.50 | Worst: 0.08
+Gen 24 | Best: 0.71 | Avg: 0.50 | Worst: 0.21
+Gen 25 | Best: 0.81 | Avg: 0.50 | Worst: 0.25
+Gen 26 | Best: 0.77 | Avg: 0.50 | Worst: 0.21
+Gen 27 | Best: 0.83 | Avg: 0.50 | Worst: 0.08
+Gen 28 | Best: 0.77 | Avg: 0.50 | Worst: 0.23
+Gen 29 | Best: 0.79 | Avg: 0.50 | Worst: 0.23
+Gen 30 | Best: 0.88 | Avg: 0.50 | Worst: 0.15
+Gen 31 | Best: 0.75 | Avg: 0.50 | Worst: 0.17
+Gen 32 | Best: 0.85 | Avg: 0.50 | Worst: 0.21
+Gen 33 | Best: 0.90 | Avg: 0.50 | Worst: 0.19
+Gen 34 | Best: 0.92 | Avg: 0.50 | Worst: 0.12
+Gen 35 | Best: 0.79 | Avg: 0.50 | Worst: 0.23
+Gen 36 | Best: 0.83 | Avg: 0.50 | Worst: 0.29
+Gen 37 | Best: 0.79 | Avg: 0.50 | Worst: 0.23
+Gen 38 | Best: 0.79 | Avg: 0.50 | Worst: 0.21
+Gen 39 | Best: 0.77 | Avg: 0.50 | Worst: 0.21
+Gen 40 | Best: 0.77 | Avg: 0.50 | Worst: 0.12
+Gen 41 | Best: 0.75 | Avg: 0.50 | Worst: 0.25
+Gen 42 | Best: 0.79 | Avg: 0.50 | Worst: 0.21
+Gen 43 | Best: 0.85 | Avg: 0.50 | Worst: 0.21
+Gen 44 | Best: 0.75 | Avg: 0.50 | Worst: 0.17
+Gen 45 | Best: 0.83 | Avg: 0.50 | Worst: 0.21
+Gen 46 | Best: 0.79 | Avg: 0.50 | Worst: 0.10
+Gen 47 | Best: 0.85 | Avg: 0.50 | Worst: 0.17
+Gen 48 | Best: 0.75 | Avg: 0.50 | Worst: 0.17
+Gen 49 | Best: 0.79 | Avg: 0.50 | Worst: 0.21
+Gen 50 | Best: 0.75 | Avg: 0.50 | Worst: 0.15
+Gen 51 | Best: 0.75 | Avg: 0.50 | Worst: 0.21
+Gen 52 | Best: 0.79 | Avg: 0.50 | Worst: 0.12
+Gen 53 | Best: 0.79 | Avg: 0.50 | Worst: 0.21
+Gen 54 | Best: 0.79 | Avg: 0.50 | Worst: 0.17
+Gen 55 | Best: 0.79 | Avg: 0.50 | Worst: 0.19
+Gen 56 | Best: 0.79 | Avg: 0.50 | Worst: 0.19
+Gen 57 | Best: 0.71 | Avg: 0.50 | Worst: 0.17
+Gen 58 | Best: 0.77 | Avg: 0.50 | Worst: 0.12
+Gen 59 | Best: 0.92 | Avg: 0.50 | Worst: 0.08
+Gen 60 | Best: 0.79 | Avg: 0.50 | Worst: 0.17
+Gen 61 | Best: 0.75 | Avg: 0.50 | Worst: 0.12
+Gen 62 | Best: 0.83 | Avg: 0.50 | Worst: 0.21
+Gen 63 | Best: 0.92 | Avg: 0.50 | Worst: 0.25
+Gen 64 | Best: 0.92 | Avg: 0.50 | Worst: 0.10
+Gen 65 | Best: 0.79 | Avg: 0.50 | Worst: 0.25
+Gen 66 | Best: 0.88 | Avg: 0.50 | Worst: 0.12
+Gen 67 | Best: 0.88 | Avg: 0.50 | Worst: 0.15
+Gen 68 | Best: 0.88 | Avg: 0.50 | Worst: 0.15
+Gen 69 | Best: 0.92 | Avg: 0.50 | Worst: 0.17
+Gen 70 | Best: 0.77 | Avg: 0.50 | Worst: 0.21
+Gen 71 | Best: 0.73 | Avg: 0.50 | Worst: 0.25
+Gen 72 | Best: 0.77 | Avg: 0.50 | Worst: 0.08
+Gen 73 | Best: 0.79 | Avg: 0.50 | Worst: 0.17
+Gen 74 | Best: 0.79 | Avg: 0.50 | Worst: 0.23
+Gen 75 | Best: 0.92 | Avg: 0.50 | Worst: 0.08
+Gen 76 | Best: 0.79 | Avg: 0.50 | Worst: 0.21
+Gen 77 | Best: 0.83 | Avg: 0.50 | Worst: 0.19
+Gen 78 | Best: 0.75 | Avg: 0.50 | Worst: 0.17
+Gen 79 | Best: 0.79 | Avg: 0.50 | Worst: 0.17
+Gen 80 | Best: 0.77 | Avg: 0.50 | Worst: 0.21
+Gen 81 | Best: 0.85 | Avg: 0.50 | Worst: 0.12
+Gen 82 | Best: 0.85 | Avg: 0.50 | Worst: 0.17
+Gen 83 | Best: 0.77 | Avg: 0.50 | Worst: 0.17
+Gen 84 | Best: 0.92 | Avg: 0.50 | Worst: 0.21
+Gen 85 | Best: 0.83 | Avg: 0.50 | Worst: 0.08
+Gen 86 | Best: 0.71 | Avg: 0.50 | Worst: 0.21
+Gen 87 | Best: 0.83 | Avg: 0.50 | Worst: 0.17
+Gen 88 | Best: 0.83 | Avg: 0.50 | Worst: 0.06
+Gen 89 | Best: 0.75 | Avg: 0.50 | Worst: 0.15
+Gen 90 | Best: 0.79 | Avg: 0.50 | Worst: 0.12
+Gen 91 | Best: 0.81 | Avg: 0.50 | Worst: 0.12
+Gen 92 | Best: 0.81 | Avg: 0.50 | Worst: 0.21
+Gen 93 | Best: 0.79 | Avg: 0.50 | Worst: 0.17
+Gen 94 | Best: 0.73 | Avg: 0.50 | Worst: 0.21
+Gen 95 | Best: 0.75 | Avg: 0.50 | Worst: 0.17
+Gen 96 | Best: 0.83 | Avg: 0.50 | Worst: 0.17
+Gen 97 | Best: 0.75 | Avg: 0.50 | Worst: 0.08
+Gen 98 | Best: 0.81 | Avg: 0.50 | Worst: 0.17
+Gen 99 | Best: 0.75 | Avg: 0.50 | Worst: 0.12
+Gen 100 | Best: 0.79 | Avg: 0.50 | Worst: 0.15
+Gen 101 | Best: 0.75 | Avg: 0.50 | Worst: 0.12
+Gen 102 | Best: 0.83 | Avg: 0.50 | Worst: 0.17
+Gen 103 | Best: 0.73 | Avg: 0.50 | Worst: 0.27
+Gen 104 | Best: 0.75 | Avg: 0.50 | Worst: 0.12
+Gen 105 | Best: 0.75 | Avg: 0.50 | Worst: 0.17
+Gen 106 | Best: 0.79 | Avg: 0.50 | Worst: 0.25
+Gen 107 | Best: 0.75 | Avg: 0.50 | Worst: 0.08
+Gen 108 | Best: 0.79 | Avg: 0.50 | Worst: 0.04
+Gen 109 | Best: 0.79 | Avg: 0.50 | Worst: 0.12
+Gen 110 | Best: 0.75 | Avg: 0.50 | Worst: 0.25
+Gen 111 | Best: 0.79 | Avg: 0.50 | Worst: 0.25
+Gen 112 | Best: 0.73 | Avg: 0.50 | Worst: 0.21
+Gen 113 | Best: 0.79 | Avg: 0.50 | Worst: 0.21
+Gen 114 | Best: 0.88 | Avg: 0.50 | Worst: 0.12
+Gen 115 | Best: 0.79 | Avg: 0.50 | Worst: 0.17
+Gen 116 | Best: 0.73 | Avg: 0.50 | Worst: 0.17
+Gen 117 | Best: 0.79 | Avg: 0.50 | Worst: 0.21
+Gen 118 | Best: 0.71 | Avg: 0.50 | Worst: 0.27
+Gen 119 | Best: 0.81 | Avg: 0.50 | Worst: 0.12
+Gen 120 | Best: 0.92 | Avg: 0.50 | Worst: 0.12
+Gen 121 | Best: 0.83 | Avg: 0.50 | Worst: 0.08
+Gen 122 | Best: 0.83 | Avg: 0.50 | Worst: 0.12
+Gen 123 | Best: 0.81 | Avg: 0.50 | Worst: 0.25
+Gen 124 | Best: 0.77 | Avg: 0.50 | Worst: 0.04
+Gen 125 | Best: 0.92 | Avg: 0.50 | Worst: 0.15
+Gen 126 | Best: 0.85 | Avg: 0.50 | Worst: 0.15
+Gen 127 | Best: 0.75 | Avg: 0.50 | Worst: 0.17
+Gen 128 | Best: 0.77 | Avg: 0.50 | Worst: 0.17
+Gen 129 | Best: 0.92 | Avg: 0.50 | Worst: 0.15
+Gen 130 | Best: 0.83 | Avg: 0.50 | Worst: 0.12
+Gen 131 | Best: 0.88 | Avg: 0.50 | Worst: 0.23
+Gen 132 | Best: 0.81 | Avg: 0.50 | Worst: 0.12
+Gen 133 | Best: 0.83 | Avg: 0.50 | Worst: 0.12
+Gen 134 | Best: 0.81 | Avg: 0.50 | Worst: 0.12
+Gen 135 | Best: 0.79 | Avg: 0.50 | Worst: 0.08
+Gen 136 | Best: 0.85 | Avg: 0.50 | Worst: 0.12
+Gen 137 | Best: 0.75 | Avg: 0.50 | Worst: 0.12
+Gen 138 | Best: 0.79 | Avg: 0.50 | Worst: 0.08
+Gen 139 | Best: 0.83 | Avg: 0.50 | Worst: 0.21
+Gen 140 | Best: 0.77 | Avg: 0.50 | Worst: 0.04
+Gen 141 | Best: 0.79 | Avg: 0.50 | Worst: 0.15
+Gen 142 | Best: 0.71 | Avg: 0.50 | Worst: 0.19
+Gen 143 | Best: 0.79 | Avg: 0.50 | Worst: 0.23
+Gen 144 | Best: 0.81 | Avg: 0.50 | Worst: 0.19
+Gen 145 | Best: 0.83 | Avg: 0.50 | Worst: 0.17
+Gen 146 | Best: 0.92 | Avg: 0.50 | Worst: 0.12
+Gen 147 | Best: 0.81 | Avg: 0.50 | Worst: 0.12
+Gen 148 | Best: 0.85 | Avg: 0.50 | Worst: 0.15
+Gen 149 | Best: 0.79 | Avg: 0.50 | Worst: 0.27
+Gen 150 | Best: 0.75 | Avg: 0.50 | Worst: 0.12
+Gen 151 | Best: 0.75 | Avg: 0.50 | Worst: 0.23
+Gen 152 | Best: 0.75 | Avg: 0.50 | Worst: 0.15
+Gen 153 | Best: 0.71 | Avg: 0.50 | Worst: 0.19
+Gen 154 | Best: 0.88 | Avg: 0.50 | Worst: 0.12
+Gen 155 | Best: 0.75 | Avg: 0.50 | Worst: 0.12
+Gen 156 | Best: 0.83 | Avg: 0.50 | Worst: 0.17
+Gen 157 | Best: 0.75 | Avg: 0.50 | Worst: 0.08
+Gen 158 | Best: 0.79 | Avg: 0.50 | Worst: 0.17
+Gen 159 | Best: 0.77 | Avg: 0.50 | Worst: 0.19
+Gen 160 | Best: 0.79 | Avg: 0.50 | Worst: 0.15
+Gen 161 | Best: 0.77 | Avg: 0.50 | Worst: 0.25
+Gen 162 | Best: 0.75 | Avg: 0.50 | Worst: 0.15
+Gen 163 | Best: 0.79 | Avg: 0.50 | Worst: 0.10
+Gen 164 | Best: 0.81 | Avg: 0.50 | Worst: 0.21
+Gen 165 | Best: 0.81 | Avg: 0.50 | Worst: 0.21
+Gen 166 | Best: 0.75 | Avg: 0.50 | Worst: 0.15
+Gen 167 | Best: 0.88 | Avg: 0.50 | Worst: 0.17
+Gen 168 | Best: 0.81 | Avg: 0.50 | Worst: 0.08
+Gen 169 | Best: 0.77 | Avg: 0.50 | Worst: 0.08
+Gen 170 | Best: 0.71 | Avg: 0.50 | Worst: 0.15
+Gen 171 | Best: 0.88 | Avg: 0.50 | Worst: 0.17
+Gen 172 | Best: 0.79 | Avg: 0.50 | Worst: 0.23
+Gen 173 | Best: 0.77 | Avg: 0.50 | Worst: 0.21
+Gen 174 | Best: 0.79 | Avg: 0.50 | Worst: 0.12
+Gen 175 | Best: 0.83 | Avg: 0.50 | Worst: 0.10
+Gen 176 | Best: 0.79 | Avg: 0.50 | Worst: 0.21
+Gen 177 | Best: 0.85 | Avg: 0.50 | Worst: 0.04
+Gen 178 | Best: 0.79 | Avg: 0.50 | Worst: 0.25
+Gen 179 | Best: 0.75 | Avg: 0.50 | Worst: 0.08
+Gen 180 | Best: 0.79 | Avg: 0.50 | Worst: 0.19
+Gen 181 | Best: 0.79 | Avg: 0.50 | Worst: 0.21
+Gen 182 | Best: 0.79 | Avg: 0.50 | Worst: 0.12
+Gen 183 | Best: 0.92 | Avg: 0.50 | Worst: 0.21
+Gen 184 | Best: 0.81 | Avg: 0.50 | Worst: 0.25
+Gen 185 | Best: 0.79 | Avg: 0.50 | Worst: 0.17
+Gen 186 | Best: 0.81 | Avg: 0.50 | Worst: 0.21
+Gen 187 | Best: 0.79 | Avg: 0.50 | Worst: 0.17
+Gen 188 | Best: 0.88 | Avg: 0.50 | Worst: 0.21
+Gen 189 | Best: 0.79 | Avg: 0.50 | Worst: 0.21
+Gen 190 | Best: 0.83 | Avg: 0.50 | Worst: 0.08
+Gen 191 | Best: 0.75 | Avg: 0.50 | Worst: 0.12
+Gen 192 | Best: 0.77 | Avg: 0.50 | Worst: 0.23
+Gen 193 | Best: 0.71 | Avg: 0.50 | Worst: 0.19
+Gen 194 | Best: 0.75 | Avg: 0.50 | Worst: 0.23
+Gen 195 | Best: 0.75 | Avg: 0.50 | Worst: 0.17
+Gen 196 | Best: 0.75 | Avg: 0.50 | Worst: 0.12
+Gen 197 | Best: 0.79 | Avg: 0.50 | Worst: 0.21
+Gen 198 | Best: 0.79 | Avg: 0.50 | Worst: 0.17
+Gen 199 | Best: 0.85 | Avg: 0.50 | Worst: 0.19
+Final merged population size: 56
+
+Optimization Complete. View /users/sc23ksk/nonaga-algorithm/GA results/ga_gen_200.csv for generation logs.
+Starting GA run with 500 generations...
+running build_ext
+building 'nonaga_constants' extension
+gcc -pthread -B /users/sc23ksk/nonaga-algorithm/Aire/conda_env/compiler_compat -DNDEBUG -fwrapv -O2 -Wall -fPIC -O2 -isystem /users/sc23ksk/nonaga-algorithm/Aire/conda_env/include -fPIC -O2 -isystem /users/sc23ksk/nonaga-algorithm/Aire/conda_env/include -fPIC -I/users/sc23ksk/nonaga-algorithm/Aire/conda_env/include/python3.11 -c NonagaGame/nonaga_constants.c -o build/temp.linux-x86_64-cpython-311/NonagaGame/nonaga_constants.o -O3 -march=native -flto -fomit-frame-pointer -DNDEBUG
+gcc -pthread -B /users/sc23ksk/nonaga-algorithm/Aire/conda_env/compiler_compat -shared -Wl,--allow-shlib-undefined -Wl,-rpath,/users/sc23ksk/nonaga-algorithm/Aire/conda_env/lib -Wl,-rpath-link,/users/sc23ksk/nonaga-algorithm/Aire/conda_env/lib -L/users/sc23ksk/nonaga-algorithm/Aire/conda_env/lib -Wl,--allow-shlib-undefined -Wl,-rpath,/users/sc23ksk/nonaga-algorithm/Aire/conda_env/lib -Wl,-rpath-link,/users/sc23ksk/nonaga-algorithm/Aire/conda_env/lib -L/users/sc23ksk/nonaga-algorithm/Aire/conda_env/lib build/temp.linux-x86_64-cpython-311/NonagaGame/nonaga_constants.o -o build/lib.linux-x86_64-cpython-311/nonaga_constants.cpython-311-x86_64-linux-gnu.so -flto
+building 'nonaga_logic' extension
+gcc -pthread -B /users/sc23ksk/nonaga-algorithm/Aire/conda_env/compiler_compat -DNDEBUG -fwrapv -O2 -Wall -fPIC -O2 -isystem /users/sc23ksk/nonaga-algorithm/Aire/conda_env/include -fPIC -O2 -isystem /users/sc23ksk/nonaga-algorithm/Aire/conda_env/include -fPIC -INonagaGame -I/users/sc23ksk/nonaga-algorithm/Aire/conda_env/include/python3.11 -c NonagaGame/nonaga_bitboard.c -o build/temp.linux-x86_64-cpython-311/NonagaGame/nonaga_bitboard.o -O3 -march=native -flto -fomit-frame-pointer -DNDEBUG
+gcc -pthread -B /users/sc23ksk/nonaga-algorithm/Aire/conda_env/compiler_compat -DNDEBUG -fwrapv -O2 -Wall -fPIC -O2 -isystem /users/sc23ksk/nonaga-algorithm/Aire/conda_env/include -fPIC -O2 -isystem /users/sc23ksk/nonaga-algorithm/Aire/conda_env/include -fPIC -INonagaGame -I/users/sc23ksk/nonaga-algorithm/Aire/conda_env/include/python3.11 -c NonagaGame/nonaga_logic.c -o build/temp.linux-x86_64-cpython-311/NonagaGame/nonaga_logic.o -O3 -march=native -flto -fomit-frame-pointer -DNDEBUG
+gcc -pthread -B /users/sc23ksk/nonaga-algorithm/Aire/conda_env/compiler_compat -shared -Wl,--allow-shlib-undefined -Wl,-rpath,/users/sc23ksk/nonaga-algorithm/Aire/conda_env/lib -Wl,-rpath-link,/users/sc23ksk/nonaga-algorithm/Aire/conda_env/lib -L/users/sc23ksk/nonaga-algorithm/Aire/conda_env/lib -Wl,--allow-shlib-undefined -Wl,-rpath,/users/sc23ksk/nonaga-algorithm/Aire/conda_env/lib -Wl,-rpath-link,/users/sc23ksk/nonaga-algorithm/Aire/conda_env/lib -L/users/sc23ksk/nonaga-algorithm/Aire/conda_env/lib build/temp.linux-x86_64-cpython-311/NonagaGame/nonaga_bitboard.o build/temp.linux-x86_64-cpython-311/NonagaGame/nonaga_logic.o -o build/lib.linux-x86_64-cpython-311/nonaga_logic.cpython-311-x86_64-linux-gnu.so -flto
+building 'AI' extension
+gcc -pthread -B /users/sc23ksk/nonaga-algorithm/Aire/conda_env/compiler_compat -DNDEBUG -fwrapv -O2 -Wall -fPIC -O2 -isystem /users/sc23ksk/nonaga-algorithm/Aire/conda_env/include -fPIC -O2 -isystem /users/sc23ksk/nonaga-algorithm/Aire/conda_env/include -fPIC -INonagaGame -I/users/sc23ksk/nonaga-algorithm/Aire/conda_env/include/python3.11 -c NonagaGame/AI.c -o build/temp.linux-x86_64-cpython-311/NonagaGame/AI.o -O3 -march=native -flto -fomit-frame-pointer -DNDEBUG
+gcc -pthread -B /users/sc23ksk/nonaga-algorithm/Aire/conda_env/compiler_compat -DNDEBUG -fwrapv -O2 -Wall -fPIC -O2 -isystem /users/sc23ksk/nonaga-algorithm/Aire/conda_env/include -fPIC -O2 -isystem /users/sc23ksk/nonaga-algorithm/Aire/conda_env/include -fPIC -INonagaGame -I/users/sc23ksk/nonaga-algorithm/Aire/conda_env/include/python3.11 -c NonagaGame/AI_core.c -o build/temp.linux-x86_64-cpython-311/NonagaGame/AI_core.o -O3 -march=native -flto -fomit-frame-pointer -DNDEBUG
+gcc -pthread -B /users/sc23ksk/nonaga-algorithm/Aire/conda_env/compiler_compat -DNDEBUG -fwrapv -O2 -Wall -fPIC -O2 -isystem /users/sc23ksk/nonaga-algorithm/Aire/conda_env/include -fPIC -O2 -isystem /users/sc23ksk/nonaga-algorithm/Aire/conda_env/include -fPIC -INonagaGame -I/users/sc23ksk/nonaga-algorithm/Aire/conda_env/include/python3.11 -c NonagaGame/nonaga_bitboard.c -o build/temp.linux-x86_64-cpython-311/NonagaGame/nonaga_bitboard.o -O3 -march=native -flto -fomit-frame-pointer -DNDEBUG
+gcc -pthread -B /users/sc23ksk/nonaga-algorithm/Aire/conda_env/compiler_compat -shared -Wl,--allow-shlib-undefined -Wl,-rpath,/users/sc23ksk/nonaga-algorithm/Aire/conda_env/lib -Wl,-rpath-link,/users/sc23ksk/nonaga-algorithm/Aire/conda_env/lib -L/users/sc23ksk/nonaga-algorithm/Aire/conda_env/lib -Wl,--allow-shlib-undefined -Wl,-rpath,/users/sc23ksk/nonaga-algorithm/Aire/conda_env/lib -Wl,-rpath-link,/users/sc23ksk/nonaga-algorithm/Aire/conda_env/lib -L/users/sc23ksk/nonaga-algorithm/Aire/conda_env/lib build/temp.linux-x86_64-cpython-311/NonagaGame/AI.o build/temp.linux-x86_64-cpython-311/NonagaGame/AI_core.o build/temp.linux-x86_64-cpython-311/NonagaGame/nonaga_bitboard.o -o build/lib.linux-x86_64-cpython-311/AI.cpython-311-x86_64-linux-gnu.so -flto
+building 'nonaga_bitboard_wrapper' extension
+gcc -pthread -B /users/sc23ksk/nonaga-algorithm/Aire/conda_env/compiler_compat -DNDEBUG -fwrapv -O2 -Wall -fPIC -O2 -isystem /users/sc23ksk/nonaga-algorithm/Aire/conda_env/include -fPIC -O2 -isystem /users/sc23ksk/nonaga-algorithm/Aire/conda_env/include -fPIC -INonagaGame -I/users/sc23ksk/nonaga-algorithm/Aire/conda_env/include/python3.11 -c NonagaGame/nonaga_bitboard.c -o build/temp.linux-x86_64-cpython-311/NonagaGame/nonaga_bitboard.o -O3 -march=native -flto -fomit-frame-pointer -DNDEBUG
+gcc -pthread -B /users/sc23ksk/nonaga-algorithm/Aire/conda_env/compiler_compat -DNDEBUG -fwrapv -O2 -Wall -fPIC -O2 -isystem /users/sc23ksk/nonaga-algorithm/Aire/conda_env/include -fPIC -O2 -isystem /users/sc23ksk/nonaga-algorithm/Aire/conda_env/include -fPIC -INonagaGame -I/users/sc23ksk/nonaga-algorithm/Aire/conda_env/include/python3.11 -c NonagaGame/nonaga_bitboard_wrapper.c -o build/temp.linux-x86_64-cpython-311/NonagaGame/nonaga_bitboard_wrapper.o -O3 -march=native -flto -fomit-frame-pointer -DNDEBUG
+gcc -pthread -B /users/sc23ksk/nonaga-algorithm/Aire/conda_env/compiler_compat -shared -Wl,--allow-shlib-undefined -Wl,-rpath,/users/sc23ksk/nonaga-algorithm/Aire/conda_env/lib -Wl,-rpath-link,/users/sc23ksk/nonaga-algorithm/Aire/conda_env/lib -L/users/sc23ksk/nonaga-algorithm/Aire/conda_env/lib -Wl,--allow-shlib-undefined -Wl,-rpath,/users/sc23ksk/nonaga-algorithm/Aire/conda_env/lib -Wl,-rpath-link,/users/sc23ksk/nonaga-algorithm/Aire/conda_env/lib -L/users/sc23ksk/nonaga-algorithm/Aire/conda_env/lib build/temp.linux-x86_64-cpython-311/NonagaGame/nonaga_bitboard.o build/temp.linux-x86_64-cpython-311/NonagaGame/nonaga_bitboard_wrapper.o -o build/lib.linux-x86_64-cpython-311/nonaga_bitboard_wrapper.cpython-311-x86_64-linux-gnu.so -flto
+copying build/lib.linux-x86_64-cpython-311/nonaga_constants.cpython-311-x86_64-linux-gnu.so -> 
+copying build/lib.linux-x86_64-cpython-311/nonaga_logic.cpython-311-x86_64-linux-gnu.so -> 
+copying build/lib.linux-x86_64-cpython-311/AI.cpython-311-x86_64-linux-gnu.so -> 
+copying build/lib.linux-x86_64-cpython-311/nonaga_bitboard_wrapper.cpython-311-x86_64-linux-gnu.so -> 
+Logging this run to: /users/sc23ksk/nonaga-algorithm/GA results/ga_gen_500.csv
+Ensuring Cython core components are compiled...
+Copied AI.cpython-311-x86_64-linux-gnu.so -> NonagaGame/ (from /users/sc23ksk/nonaga-algorithm/build/lib.linux-x86_64-cpython-311)
+Copied nonaga_bitboard_wrapper.cpython-311-x86_64-linux-gnu.so -> NonagaGame/ (from /users/sc23ksk/nonaga-algorithm/build/lib.linux-x86_64-cpython-311)
+Copied nonaga_constants.cpython-311-x86_64-linux-gnu.so -> NonagaGame/ (from /users/sc23ksk/nonaga-algorithm/build/lib.linux-x86_64-cpython-311)
+Copied nonaga_logic.cpython-311-x86_64-linux-gnu.so -> NonagaGame/ (from /users/sc23ksk/nonaga-algorithm/build/lib.linux-x86_64-cpython-311)
+Removed outside artifact: /users/sc23ksk/nonaga-algorithm/AI.cpython-311-x86_64-linux-gnu.so
+Removed outside artifact: /users/sc23ksk/nonaga-algorithm/build/lib.linux-x86_64-cpython-311/AI.cpython-311-x86_64-linux-gnu.so
+Removed outside artifact: /users/sc23ksk/nonaga-algorithm/nonaga_bitboard_wrapper.cpython-311-x86_64-linux-gnu.so
+Removed outside artifact: /users/sc23ksk/nonaga-algorithm/build/lib.linux-x86_64-cpython-311/nonaga_bitboard_wrapper.cpython-311-x86_64-linux-gnu.so
+Removed outside artifact: /users/sc23ksk/nonaga-algorithm/nonaga_constants.cpython-311-x86_64-linux-gnu.so
+Removed outside artifact: /users/sc23ksk/nonaga-algorithm/build/lib.linux-x86_64-cpython-311/nonaga_constants.cpython-311-x86_64-linux-gnu.so
+Removed outside artifact: /users/sc23ksk/nonaga-algorithm/nonaga_logic.cpython-311-x86_64-linux-gnu.so
+Removed outside artifact: /users/sc23ksk/nonaga-algorithm/build/lib.linux-x86_64-cpython-311/nonaga_logic.cpython-311-x86_64-linux-gnu.so
+Cython files compiled successfully.
+Initializing Modular GA...
+[SLURM] Running parallel backend with 99 workers.
+Running final combined GA round over search range [0, 50] with 56 merged survivors...
+Gen 0 | Best: 0.71 | Avg: 0.50 | Worst: 0.17
+Gen 1 | Best: 0.79 | Avg: 0.50 | Worst: 0.17
+Gen 2 | Best: 0.83 | Avg: 0.50 | Worst: 0.17
+Gen 3 | Best: 0.83 | Avg: 0.50 | Worst: 0.17
+Gen 4 | Best: 0.77 | Avg: 0.50 | Worst: 0.17
+Gen 5 | Best: 0.77 | Avg: 0.50 | Worst: 0.23
+Gen 6 | Best: 0.79 | Avg: 0.50 | Worst: 0.17
+Gen 7 | Best: 0.75 | Avg: 0.50 | Worst: 0.21
+Gen 8 | Best: 0.88 | Avg: 0.50 | Worst: 0.21
+Gen 9 | Best: 0.83 | Avg: 0.50 | Worst: 0.04
+Gen 10 | Best: 0.79 | Avg: 0.50 | Worst: 0.12
+Gen 11 | Best: 0.75 | Avg: 0.50 | Worst: 0.21
+Gen 12 | Best: 0.75 | Avg: 0.50 | Worst: 0.10
+Gen 13 | Best: 0.83 | Avg: 0.50 | Worst: 0.21
+Gen 14 | Best: 0.79 | Avg: 0.50 | Worst: 0.17
+Gen 15 | Best: 0.92 | Avg: 0.50 | Worst: 0.25
+Gen 16 | Best: 0.71 | Avg: 0.50 | Worst: 0.08
+Gen 17 | Best: 0.75 | Avg: 0.50 | Worst: 0.25
+Gen 18 | Best: 0.81 | Avg: 0.50 | Worst: 0.08
+Gen 19 | Best: 0.77 | Avg: 0.50 | Worst: 0.12
+Gen 20 | Best: 0.83 | Avg: 0.50 | Worst: 0.04
+Gen 21 | Best: 0.75 | Avg: 0.50 | Worst: 0.21
+Gen 22 | Best: 0.77 | Avg: 0.50 | Worst: 0.21
+Gen 23 | Best: 0.77 | Avg: 0.50 | Worst: 0.08
+Gen 24 | Best: 0.79 | Avg: 0.50 | Worst: 0.10
+Gen 25 | Best: 0.81 | Avg: 0.50 | Worst: 0.17
+Gen 26 | Best: 0.83 | Avg: 0.50 | Worst: 0.12
+Gen 27 | Best: 0.83 | Avg: 0.50 | Worst: 0.21
+Gen 28 | Best: 0.79 | Avg: 0.50 | Worst: 0.21
+Gen 29 | Best: 0.79 | Avg: 0.50 | Worst: 0.12
+Gen 30 | Best: 0.88 | Avg: 0.50 | Worst: 0.17
+Gen 31 | Best: 0.83 | Avg: 0.50 | Worst: 0.21
+Gen 32 | Best: 0.88 | Avg: 0.50 | Worst: 0.19
+Gen 33 | Best: 0.79 | Avg: 0.50 | Worst: 0.23
+Gen 34 | Best: 0.79 | Avg: 0.50 | Worst: 0.21
+Gen 35 | Best: 0.83 | Avg: 0.50 | Worst: 0.12
+Gen 36 | Best: 0.81 | Avg: 0.50 | Worst: 0.08
+Gen 37 | Best: 0.79 | Avg: 0.50 | Worst: 0.17
+Gen 38 | Best: 0.79 | Avg: 0.50 | Worst: 0.27
+Gen 39 | Best: 0.71 | Avg: 0.50 | Worst: 0.21
+Gen 40 | Best: 0.79 | Avg: 0.50 | Worst: 0.17
+Gen 41 | Best: 0.79 | Avg: 0.50 | Worst: 0.17
+Gen 42 | Best: 0.75 | Avg: 0.50 | Worst: 0.08
+Gen 43 | Best: 0.73 | Avg: 0.50 | Worst: 0.12
+Gen 44 | Best: 0.77 | Avg: 0.50 | Worst: 0.21
+Gen 45 | Best: 0.83 | Avg: 0.50 | Worst: 0.08
+Gen 46 | Best: 0.81 | Avg: 0.50 | Worst: 0.23
+Gen 47 | Best: 0.73 | Avg: 0.50 | Worst: 0.21
+Gen 48 | Best: 0.79 | Avg: 0.50 | Worst: 0.21
+Gen 49 | Best: 0.88 | Avg: 0.50 | Worst: 0.12
+Gen 50 | Best: 0.83 | Avg: 0.50 | Worst: 0.21
+Gen 51 | Best: 0.77 | Avg: 0.50 | Worst: 0.19
+Gen 52 | Best: 0.81 | Avg: 0.50 | Worst: 0.21
+Gen 53 | Best: 0.77 | Avg: 0.50 | Worst: 0.25
+Gen 54 | Best: 0.79 | Avg: 0.50 | Worst: 0.25
+Gen 55 | Best: 0.79 | Avg: 0.50 | Worst: 0.12
+Gen 56 | Best: 0.83 | Avg: 0.50 | Worst: 0.25
+Gen 57 | Best: 0.83 | Avg: 0.50 | Worst: 0.21
+Gen 58 | Best: 0.79 | Avg: 0.50 | Worst: 0.17
+Gen 59 | Best: 0.79 | Avg: 0.50 | Worst: 0.15
+Gen 60 | Best: 0.94 | Avg: 0.50 | Worst: 0.21
+Gen 61 | Best: 0.88 | Avg: 0.50 | Worst: 0.08
+Gen 62 | Best: 0.79 | Avg: 0.50 | Worst: 0.21
+Gen 63 | Best: 0.79 | Avg: 0.50 | Worst: 0.12
+Gen 64 | Best: 0.73 | Avg: 0.50 | Worst: 0.17
+Gen 65 | Best: 0.79 | Avg: 0.50 | Worst: 0.17
+Gen 66 | Best: 0.85 | Avg: 0.50 | Worst: 0.17
+Gen 67 | Best: 0.81 | Avg: 0.50 | Worst: 0.21
+Gen 68 | Best: 0.83 | Avg: 0.50 | Worst: 0.12
+Gen 69 | Best: 0.96 | Avg: 0.50 | Worst: 0.21
+Gen 70 | Best: 0.92 | Avg: 0.50 | Worst: 0.19
+Gen 71 | Best: 0.88 | Avg: 0.50 | Worst: 0.04
+Gen 72 | Best: 0.81 | Avg: 0.50 | Worst: 0.08
+Gen 73 | Best: 0.81 | Avg: 0.50 | Worst: 0.21
+Gen 74 | Best: 0.85 | Avg: 0.50 | Worst: 0.15
+Gen 75 | Best: 0.79 | Avg: 0.50 | Worst: 0.12
+Gen 76 | Best: 0.79 | Avg: 0.50 | Worst: 0.15
+Gen 77 | Best: 0.79 | Avg: 0.50 | Worst: 0.08
+Gen 78 | Best: 0.88 | Avg: 0.50 | Worst: 0.23
+Gen 79 | Best: 0.83 | Avg: 0.50 | Worst: 0.08
+Gen 80 | Best: 0.75 | Avg: 0.50 | Worst: 0.25
+Gen 81 | Best: 0.83 | Avg: 0.50 | Worst: 0.21
+Gen 82 | Best: 0.75 | Avg: 0.50 | Worst: 0.21
+Gen 83 | Best: 0.73 | Avg: 0.50 | Worst: 0.21
+Gen 84 | Best: 0.75 | Avg: 0.50 | Worst: 0.21
+Gen 85 | Best: 0.85 | Avg: 0.50 | Worst: 0.10
+Gen 86 | Best: 0.79 | Avg: 0.50 | Worst: 0.04
+Gen 87 | Best: 0.75 | Avg: 0.50 | Worst: 0.21
+Gen 88 | Best: 0.83 | Avg: 0.50 | Worst: 0.12
+Gen 89 | Best: 0.90 | Avg: 0.50 | Worst: 0.21
+Gen 90 | Best: 0.73 | Avg: 0.50 | Worst: 0.25
+Gen 91 | Best: 0.83 | Avg: 0.50 | Worst: 0.19
+Gen 92 | Best: 0.81 | Avg: 0.50 | Worst: 0.17
+Gen 93 | Best: 0.88 | Avg: 0.50 | Worst: 0.08
+Gen 94 | Best: 0.75 | Avg: 0.50 | Worst: 0.17
+Gen 95 | Best: 0.75 | Avg: 0.50 | Worst: 0.17
+Gen 96 | Best: 0.83 | Avg: 0.50 | Worst: 0.21
+Gen 97 | Best: 0.83 | Avg: 0.50 | Worst: 0.19
+Gen 98 | Best: 0.77 | Avg: 0.50 | Worst: 0.25
+Gen 99 | Best: 0.79 | Avg: 0.50 | Worst: 0.21
+Gen 100 | Best: 0.75 | Avg: 0.50 | Worst: 0.19
+Gen 101 | Best: 0.75 | Avg: 0.50 | Worst: 0.25
+Gen 102 | Best: 0.83 | Avg: 0.50 | Worst: 0.19
+Gen 103 | Best: 0.73 | Avg: 0.50 | Worst: 0.12
+Gen 104 | Best: 0.79 | Avg: 0.50 | Worst: 0.12
+Gen 105 | Best: 0.75 | Avg: 0.50 | Worst: 0.17
+Gen 106 | Best: 0.79 | Avg: 0.50 | Worst: 0.17
+Gen 107 | Best: 0.79 | Avg: 0.50 | Worst: 0.12
+Gen 108 | Best: 0.79 | Avg: 0.50 | Worst: 0.15
+Gen 109 | Best: 0.79 | Avg: 0.50 | Worst: 0.23
+Gen 110 | Best: 0.90 | Avg: 0.50 | Worst: 0.17
+Gen 111 | Best: 0.85 | Avg: 0.50 | Worst: 0.12
+Gen 112 | Best: 0.75 | Avg: 0.50 | Worst: 0.21
+Gen 113 | Best: 0.79 | Avg: 0.50 | Worst: 0.23
+Gen 114 | Best: 0.81 | Avg: 0.50 | Worst: 0.17
+Gen 115 | Best: 0.75 | Avg: 0.50 | Worst: 0.19
+Gen 116 | Best: 0.79 | Avg: 0.50 | Worst: 0.17
+Gen 117 | Best: 0.88 | Avg: 0.50 | Worst: 0.08
+Gen 118 | Best: 0.83 | Avg: 0.50 | Worst: 0.25
+Gen 119 | Best: 0.73 | Avg: 0.50 | Worst: 0.12
+Gen 120 | Best: 0.83 | Avg: 0.50 | Worst: 0.21
+Gen 121 | Best: 0.79 | Avg: 0.50 | Worst: 0.21
+Gen 122 | Best: 0.83 | Avg: 0.50 | Worst: 0.10
+Gen 123 | Best: 0.75 | Avg: 0.50 | Worst: 0.21
+Gen 124 | Best: 0.81 | Avg: 0.50 | Worst: 0.17
+Gen 125 | Best: 0.79 | Avg: 0.50 | Worst: 0.19
+Gen 126 | Best: 0.75 | Avg: 0.50 | Worst: 0.21
+Gen 127 | Best: 0.83 | Avg: 0.50 | Worst: 0.17
+Gen 128 | Best: 0.88 | Avg: 0.50 | Worst: 0.17
+Gen 129 | Best: 0.79 | Avg: 0.50 | Worst: 0.12
+Gen 130 | Best: 0.71 | Avg: 0.50 | Worst: 0.21
+Gen 131 | Best: 0.75 | Avg: 0.50 | Worst: 0.17
+Gen 132 | Best: 0.75 | Avg: 0.50 | Worst: 0.17
+Gen 133 | Best: 0.83 | Avg: 0.50 | Worst: 0.12
+Gen 134 | Best: 0.96 | Avg: 0.50 | Worst: 0.17
+Gen 135 | Best: 0.79 | Avg: 0.50 | Worst: 0.17
+Gen 136 | Best: 0.83 | Avg: 0.50 | Worst: 0.17
+Gen 137 | Best: 0.75 | Avg: 0.50 | Worst: 0.17
+Gen 138 | Best: 0.79 | Avg: 0.50 | Worst: 0.17
+Gen 139 | Best: 0.73 | Avg: 0.50 | Worst: 0.21
+Gen 140 | Best: 0.79 | Avg: 0.50 | Worst: 0.25
+Gen 141 | Best: 0.81 | Avg: 0.50 | Worst: 0.21
+Gen 142 | Best: 0.83 | Avg: 0.50 | Worst: 0.25
+Gen 143 | Best: 0.79 | Avg: 0.50 | Worst: 0.25
+Gen 144 | Best: 0.83 | Avg: 0.50 | Worst: 0.21
+Gen 145 | Best: 0.88 | Avg: 0.50 | Worst: 0.21
+Gen 146 | Best: 0.79 | Avg: 0.50 | Worst: 0.23
+Gen 147 | Best: 0.77 | Avg: 0.50 | Worst: 0.17
+Gen 148 | Best: 0.79 | Avg: 0.50 | Worst: 0.23
+Gen 149 | Best: 0.88 | Avg: 0.50 | Worst: 0.06
+Gen 150 | Best: 0.79 | Avg: 0.50 | Worst: 0.21
+Gen 151 | Best: 0.79 | Avg: 0.50 | Worst: 0.10
+Gen 152 | Best: 0.79 | Avg: 0.50 | Worst: 0.12
+Gen 153 | Best: 0.75 | Avg: 0.50 | Worst: 0.21
+Gen 154 | Best: 0.75 | Avg: 0.50 | Worst: 0.21
+Gen 155 | Best: 0.83 | Avg: 0.50 | Worst: 0.25
+Gen 156 | Best: 0.79 | Avg: 0.50 | Worst: 0.25
+Gen 157 | Best: 0.79 | Avg: 0.50 | Worst: 0.21
+Gen 158 | Best: 0.81 | Avg: 0.50 | Worst: 0.17
+Gen 159 | Best: 0.83 | Avg: 0.50 | Worst: 0.21
+Gen 160 | Best: 0.79 | Avg: 0.50 | Worst: 0.17
+Gen 161 | Best: 0.85 | Avg: 0.50 | Worst: 0.04
+Gen 162 | Best: 0.88 | Avg: 0.50 | Worst: 0.25
+Gen 163 | Best: 0.75 | Avg: 0.50 | Worst: 0.17
+Gen 164 | Best: 0.92 | Avg: 0.50 | Worst: 0.17
+Gen 165 | Best: 0.75 | Avg: 0.50 | Worst: 0.17
+Gen 166 | Best: 0.81 | Avg: 0.50 | Worst: 0.21
+Gen 167 | Best: 0.77 | Avg: 0.50 | Worst: 0.25
+Gen 168 | Best: 0.79 | Avg: 0.50 | Worst: 0.17
+Gen 169 | Best: 0.77 | Avg: 0.50 | Worst: 0.29
+Gen 170 | Best: 0.73 | Avg: 0.50 | Worst: 0.21
+Gen 171 | Best: 0.83 | Avg: 0.50 | Worst: 0.23
+Gen 172 | Best: 0.79 | Avg: 0.50 | Worst: 0.10
+Gen 173 | Best: 0.83 | Avg: 0.50 | Worst: 0.21
+Gen 174 | Best: 0.75 | Avg: 0.50 | Worst: 0.08
+Gen 175 | Best: 0.79 | Avg: 0.50 | Worst: 0.21
+Gen 176 | Best: 0.75 | Avg: 0.50 | Worst: 0.15
+Gen 177 | Best: 0.83 | Avg: 0.50 | Worst: 0.21
+Gen 178 | Best: 0.79 | Avg: 0.50 | Worst: 0.21
+Gen 179 | Best: 0.79 | Avg: 0.50 | Worst: 0.21
+Gen 180 | Best: 0.88 | Avg: 0.50 | Worst: 0.17
+Gen 181 | Best: 0.77 | Avg: 0.50 | Worst: 0.25
+Gen 182 | Best: 0.92 | Avg: 0.50 | Worst: 0.21
+Gen 183 | Best: 0.79 | Avg: 0.50 | Worst: 0.08
+Gen 184 | Best: 0.79 | Avg: 0.50 | Worst: 0.00
+Gen 185 | Best: 0.79 | Avg: 0.50 | Worst: 0.12
+Gen 186 | Best: 0.83 | Avg: 0.50 | Worst: 0.17
+Gen 187 | Best: 0.75 | Avg: 0.50 | Worst: 0.12
+Gen 188 | Best: 0.75 | Avg: 0.50 | Worst: 0.21
+Gen 189 | Best: 0.90 | Avg: 0.50 | Worst: 0.21
+Gen 190 | Best: 0.75 | Avg: 0.50 | Worst: 0.25
+Gen 191 | Best: 0.79 | Avg: 0.50 | Worst: 0.21
+Gen 192 | Best: 0.75 | Avg: 0.50 | Worst: 0.23
+Gen 193 | Best: 0.81 | Avg: 0.50 | Worst: 0.19
+Gen 194 | Best: 0.79 | Avg: 0.50 | Worst: 0.12
+Gen 195 | Best: 0.79 | Avg: 0.50 | Worst: 0.21
+Gen 196 | Best: 0.83 | Avg: 0.50 | Worst: 0.21
+Gen 197 | Best: 0.75 | Avg: 0.50 | Worst: 0.17
+Gen 198 | Best: 0.71 | Avg: 0.50 | Worst: 0.08
+Gen 199 | Best: 0.79 | Avg: 0.50 | Worst: 0.17
+Gen 200 | Best: 0.81 | Avg: 0.50 | Worst: 0.25
+Gen 201 | Best: 0.79 | Avg: 0.50 | Worst: 0.21
+Gen 202 | Best: 0.79 | Avg: 0.50 | Worst: 0.21
+Gen 203 | Best: 0.75 | Avg: 0.50 | Worst: 0.15
+Gen 204 | Best: 0.79 | Avg: 0.50 | Worst: 0.12
+Gen 205 | Best: 0.77 | Avg: 0.50 | Worst: 0.25
+Gen 206 | Best: 0.75 | Avg: 0.50 | Worst: 0.25
+Gen 207 | Best: 0.73 | Avg: 0.50 | Worst: 0.21
+Gen 208 | Best: 0.79 | Avg: 0.50 | Worst: 0.12
+Gen 209 | Best: 0.79 | Avg: 0.50 | Worst: 0.21
+Gen 210 | Best: 0.75 | Avg: 0.50 | Worst: 0.12
+Gen 211 | Best: 0.75 | Avg: 0.50 | Worst: 0.21
+Gen 212 | Best: 0.83 | Avg: 0.50 | Worst: 0.19
+Gen 213 | Best: 0.88 | Avg: 0.50 | Worst: 0.21
+Gen 214 | Best: 0.92 | Avg: 0.50 | Worst: 0.17
+Gen 215 | Best: 0.83 | Avg: 0.50 | Worst: 0.17
+Gen 216 | Best: 0.75 | Avg: 0.50 | Worst: 0.21
+Gen 217 | Best: 0.79 | Avg: 0.50 | Worst: 0.25
+Gen 218 | Best: 0.81 | Avg: 0.50 | Worst: 0.12
+Gen 219 | Best: 0.75 | Avg: 0.50 | Worst: 0.17
+Gen 220 | Best: 0.79 | Avg: 0.50 | Worst: 0.17
+Gen 221 | Best: 0.75 | Avg: 0.50 | Worst: 0.12
+Gen 222 | Best: 0.83 | Avg: 0.50 | Worst: 0.04
+Gen 223 | Best: 0.83 | Avg: 0.50 | Worst: 0.08
+Gen 224 | Best: 0.77 | Avg: 0.50 | Worst: 0.21
+Gen 225 | Best: 0.83 | Avg: 0.50 | Worst: 0.23
+Gen 226 | Best: 0.90 | Avg: 0.50 | Worst: 0.17
+Gen 227 | Best: 0.96 | Avg: 0.50 | Worst: 0.21
+Gen 228 | Best: 0.85 | Avg: 0.50 | Worst: 0.17
+Gen 229 | Best: 0.79 | Avg: 0.50 | Worst: 0.17
+Gen 230 | Best: 0.79 | Avg: 0.50 | Worst: 0.04
+Gen 231 | Best: 0.90 | Avg: 0.50 | Worst: 0.17
+Gen 232 | Best: 0.81 | Avg: 0.50 | Worst: 0.29
+Gen 233 | Best: 0.79 | Avg: 0.50 | Worst: 0.21
+Gen 234 | Best: 0.85 | Avg: 0.50 | Worst: 0.17
+Gen 235 | Best: 0.75 | Avg: 0.50 | Worst: 0.23
+Gen 236 | Best: 0.79 | Avg: 0.50 | Worst: 0.27
+Gen 237 | Best: 0.79 | Avg: 0.50 | Worst: 0.21
+Gen 238 | Best: 0.88 | Avg: 0.50 | Worst: 0.19
+Gen 239 | Best: 0.81 | Avg: 0.50 | Worst: 0.17
+Gen 240 | Best: 0.77 | Avg: 0.50 | Worst: 0.12
+Gen 241 | Best: 0.83 | Avg: 0.50 | Worst: 0.21
+Gen 242 | Best: 0.71 | Avg: 0.50 | Worst: 0.21
+Gen 243 | Best: 0.83 | Avg: 0.50 | Worst: 0.19
+Gen 244 | Best: 0.73 | Avg: 0.50 | Worst: 0.25
+Gen 245 | Best: 0.77 | Avg: 0.50 | Worst: 0.23
+Gen 246 | Best: 0.77 | Avg: 0.50 | Worst: 0.19
+Gen 247 | Best: 0.83 | Avg: 0.50 | Worst: 0.25
+Gen 248 | Best: 0.71 | Avg: 0.50 | Worst: 0.21
+Gen 249 | Best: 0.92 | Avg: 0.50 | Worst: 0.21
+Gen 250 | Best: 0.79 | Avg: 0.50 | Worst: 0.08
+Gen 251 | Best: 0.75 | Avg: 0.50 | Worst: 0.17
+Gen 252 | Best: 0.83 | Avg: 0.50 | Worst: 0.19
+Gen 253 | Best: 0.81 | Avg: 0.50 | Worst: 0.19
+Gen 254 | Best: 0.77 | Avg: 0.50 | Worst: 0.19
+Gen 255 | Best: 0.79 | Avg: 0.50 | Worst: 0.12
+Gen 256 | Best: 0.71 | Avg: 0.50 | Worst: 0.25
+Gen 257 | Best: 0.83 | Avg: 0.50 | Worst: 0.21
+Gen 258 | Best: 0.79 | Avg: 0.50 | Worst: 0.17
+Gen 259 | Best: 0.81 | Avg: 0.50 | Worst: 0.17
+Gen 260 | Best: 0.83 | Avg: 0.50 | Worst: 0.19
+Gen 261 | Best: 0.92 | Avg: 0.50 | Worst: 0.15
+Gen 262 | Best: 0.83 | Avg: 0.50 | Worst: 0.10
+Gen 263 | Best: 0.83 | Avg: 0.50 | Worst: 0.12
+Gen 264 | Best: 0.88 | Avg: 0.50 | Worst: 0.21
+Gen 265 | Best: 0.71 | Avg: 0.50 | Worst: 0.12
+Gen 266 | Best: 0.75 | Avg: 0.50 | Worst: 0.19
+Gen 267 | Best: 0.75 | Avg: 0.50 | Worst: 0.21
+Gen 268 | Best: 0.71 | Avg: 0.50 | Worst: 0.17
+Gen 269 | Best: 0.73 | Avg: 0.50 | Worst: 0.23
+Gen 270 | Best: 0.77 | Avg: 0.50 | Worst: 0.21
+Gen 271 | Best: 0.71 | Avg: 0.50 | Worst: 0.12
+Gen 272 | Best: 0.88 | Avg: 0.50 | Worst: 0.17
+Gen 273 | Best: 0.75 | Avg: 0.50 | Worst: 0.19
+Gen 274 | Best: 0.77 | Avg: 0.50 | Worst: 0.10
+Gen 275 | Best: 0.79 | Avg: 0.50 | Worst: 0.06
+Gen 276 | Best: 0.79 | Avg: 0.50 | Worst: 0.04
+Gen 277 | Best: 0.88 | Avg: 0.50 | Worst: 0.21
+Gen 278 | Best: 0.83 | Avg: 0.50 | Worst: 0.17
+Gen 279 | Best: 0.77 | Avg: 0.50 | Worst: 0.21
+Gen 280 | Best: 0.79 | Avg: 0.50 | Worst: 0.21
+Gen 281 | Best: 0.79 | Avg: 0.50 | Worst: 0.08
+Gen 282 | Best: 0.77 | Avg: 0.50 | Worst: 0.27
+Gen 283 | Best: 0.77 | Avg: 0.50 | Worst: 0.21
+Gen 284 | Best: 0.71 | Avg: 0.50 | Worst: 0.21
+Gen 285 | Best: 0.79 | Avg: 0.50 | Worst: 0.21
+Gen 286 | Best: 0.83 | Avg: 0.50 | Worst: 0.21
+Gen 287 | Best: 0.88 | Avg: 0.50 | Worst: 0.08
+Gen 288 | Best: 0.73 | Avg: 0.50 | Worst: 0.17
+Gen 289 | Best: 0.79 | Avg: 0.50 | Worst: 0.12
+Gen 290 | Best: 0.75 | Avg: 0.50 | Worst: 0.15
+Gen 291 | Best: 0.83 | Avg: 0.50 | Worst: 0.17
+Gen 292 | Best: 0.81 | Avg: 0.50 | Worst: 0.12
+Gen 293 | Best: 0.83 | Avg: 0.50 | Worst: 0.15
+Gen 294 | Best: 0.75 | Avg: 0.50 | Worst: 0.23
+Gen 295 | Best: 0.79 | Avg: 0.50 | Worst: 0.25
+Gen 296 | Best: 0.79 | Avg: 0.50 | Worst: 0.00
+Gen 297 | Best: 0.81 | Avg: 0.50 | Worst: 0.23
+Gen 298 | Best: 0.79 | Avg: 0.50 | Worst: 0.12
+Gen 299 | Best: 0.73 | Avg: 0.50 | Worst: 0.17
+Gen 300 | Best: 0.71 | Avg: 0.50 | Worst: 0.12
+Gen 301 | Best: 0.81 | Avg: 0.50 | Worst: 0.29
+Gen 302 | Best: 0.73 | Avg: 0.50 | Worst: 0.04
+Gen 303 | Best: 0.75 | Avg: 0.50 | Worst: 0.21
+Gen 304 | Best: 0.79 | Avg: 0.50 | Worst: 0.19
+Gen 305 | Best: 0.75 | Avg: 0.50 | Worst: 0.21
+Gen 306 | Best: 0.79 | Avg: 0.50 | Worst: 0.21
+Gen 307 | Best: 0.79 | Avg: 0.50 | Worst: 0.21
+Gen 308 | Best: 0.79 | Avg: 0.50 | Worst: 0.23
+Gen 309 | Best: 0.79 | Avg: 0.50 | Worst: 0.17
+Gen 310 | Best: 0.75 | Avg: 0.50 | Worst: 0.10
+Gen 311 | Best: 0.77 | Avg: 0.50 | Worst: 0.21
+Gen 312 | Best: 0.83 | Avg: 0.50 | Worst: 0.17
+Gen 313 | Best: 0.77 | Avg: 0.50 | Worst: 0.21
+Gen 314 | Best: 0.75 | Avg: 0.50 | Worst: 0.17
+Gen 315 | Best: 0.79 | Avg: 0.50 | Worst: 0.12
+Gen 316 | Best: 0.75 | Avg: 0.50 | Worst: 0.15
+Gen 317 | Best: 0.88 | Avg: 0.50 | Worst: 0.08
+Gen 318 | Best: 0.77 | Avg: 0.50 | Worst: 0.12
+Gen 319 | Best: 0.79 | Avg: 0.50 | Worst: 0.12
+Gen 320 | Best: 0.92 | Avg: 0.50 | Worst: 0.23
+Gen 321 | Best: 0.79 | Avg: 0.50 | Worst: 0.12
+Gen 322 | Best: 0.75 | Avg: 0.50 | Worst: 0.25
+Gen 323 | Best: 0.83 | Avg: 0.50 | Worst: 0.21
+Gen 324 | Best: 0.88 | Avg: 0.50 | Worst: 0.12
+Gen 325 | Best: 0.75 | Avg: 0.50 | Worst: 0.21
+Gen 326 | Best: 0.79 | Avg: 0.50 | Worst: 0.19
+Gen 327 | Best: 0.77 | Avg: 0.50 | Worst: 0.15
+Gen 328 | Best: 0.79 | Avg: 0.50 | Worst: 0.25
+Gen 329 | Best: 0.81 | Avg: 0.50 | Worst: 0.25
+Gen 330 | Best: 0.75 | Avg: 0.50 | Worst: 0.17
+Gen 331 | Best: 0.75 | Avg: 0.50 | Worst: 0.21
+Gen 332 | Best: 0.73 | Avg: 0.50 | Worst: 0.23
+Gen 333 | Best: 0.75 | Avg: 0.50 | Worst: 0.25
+Gen 334 | Best: 0.81 | Avg: 0.50 | Worst: 0.19
+Gen 335 | Best: 0.75 | Avg: 0.50 | Worst: 0.25
+Gen 336 | Best: 0.75 | Avg: 0.50 | Worst: 0.29
+Gen 337 | Best: 0.77 | Avg: 0.50 | Worst: 0.21
+Gen 338 | Best: 0.83 | Avg: 0.50 | Worst: 0.08
+Gen 339 | Best: 0.79 | Avg: 0.50 | Worst: 0.15
+Gen 340 | Best: 0.79 | Avg: 0.50 | Worst: 0.27
+Gen 341 | Best: 0.83 | Avg: 0.50 | Worst: 0.10
+Gen 342 | Best: 0.81 | Avg: 0.50 | Worst: 0.17
+Gen 343 | Best: 0.79 | Avg: 0.50 | Worst: 0.12
+Gen 344 | Best: 0.81 | Avg: 0.50 | Worst: 0.21
+Gen 345 | Best: 0.71 | Avg: 0.50 | Worst: 0.21
+Gen 346 | Best: 0.81 | Avg: 0.50 | Worst: 0.17
+Gen 347 | Best: 0.79 | Avg: 0.50 | Worst: 0.17
+Gen 348 | Best: 0.79 | Avg: 0.50 | Worst: 0.17
+Gen 349 | Best: 0.81 | Avg: 0.50 | Worst: 0.19
+Gen 350 | Best: 0.81 | Avg: 0.50 | Worst: 0.23
+Gen 351 | Best: 0.75 | Avg: 0.50 | Worst: 0.15
+Gen 352 | Best: 0.88 | Avg: 0.50 | Worst: 0.04
+Gen 353 | Best: 0.83 | Avg: 0.50 | Worst: 0.17
+Gen 354 | Best: 0.79 | Avg: 0.50 | Worst: 0.17
+Gen 355 | Best: 0.79 | Avg: 0.50 | Worst: 0.21
+Gen 356 | Best: 0.77 | Avg: 0.50 | Worst: 0.23
+Gen 357 | Best: 0.83 | Avg: 0.50 | Worst: 0.04
+Gen 358 | Best: 0.81 | Avg: 0.50 | Worst: 0.19
+Gen 359 | Best: 0.71 | Avg: 0.50 | Worst: 0.25
+Gen 360 | Best: 0.77 | Avg: 0.50 | Worst: 0.21
+Gen 361 | Best: 0.88 | Avg: 0.50 | Worst: 0.15
+Gen 362 | Best: 0.79 | Avg: 0.50 | Worst: 0.06
+Gen 363 | Best: 0.77 | Avg: 0.50 | Worst: 0.21
+Gen 364 | Best: 0.79 | Avg: 0.50 | Worst: 0.17
+Gen 365 | Best: 0.88 | Avg: 0.50 | Worst: 0.17
+Gen 366 | Best: 0.77 | Avg: 0.50 | Worst: 0.17
+Gen 367 | Best: 0.81 | Avg: 0.50 | Worst: 0.04
+Gen 368 | Best: 0.81 | Avg: 0.50 | Worst: 0.19
+Gen 369 | Best: 0.79 | Avg: 0.50 | Worst: 0.19
+Gen 370 | Best: 0.81 | Avg: 0.50 | Worst: 0.17
+Gen 371 | Best: 0.88 | Avg: 0.50 | Worst: 0.21
+Gen 372 | Best: 0.75 | Avg: 0.50 | Worst: 0.21
+Gen 373 | Best: 0.73 | Avg: 0.50 | Worst: 0.19
+Gen 374 | Best: 0.81 | Avg: 0.50 | Worst: 0.12
+Gen 375 | Best: 0.79 | Avg: 0.50 | Worst: 0.27
+Gen 376 | Best: 0.79 | Avg: 0.50 | Worst: 0.21
+Gen 377 | Best: 0.79 | Avg: 0.50 | Worst: 0.23
+Gen 378 | Best: 0.83 | Avg: 0.50 | Worst: 0.17
+Gen 379 | Best: 0.90 | Avg: 0.50 | Worst: 0.23
+Gen 380 | Best: 0.79 | Avg: 0.50 | Worst: 0.12
+Gen 381 | Best: 0.79 | Avg: 0.50 | Worst: 0.21
+Gen 382 | Best: 0.81 | Avg: 0.50 | Worst: 0.21
+Gen 383 | Best: 0.83 | Avg: 0.50 | Worst: 0.17
+Gen 384 | Best: 0.79 | Avg: 0.50 | Worst: 0.25
+Gen 385 | Best: 0.83 | Avg: 0.50 | Worst: 0.12
+Gen 386 | Best: 0.81 | Avg: 0.50 | Worst: 0.17
+Gen 387 | Best: 0.88 | Avg: 0.50 | Worst: 0.21
+Gen 388 | Best: 0.79 | Avg: 0.50 | Worst: 0.19
+Gen 389 | Best: 0.83 | Avg: 0.50 | Worst: 0.29
+Gen 390 | Best: 0.83 | Avg: 0.50 | Worst: 0.12
+Gen 391 | Best: 0.75 | Avg: 0.50 | Worst: 0.17
+Gen 392 | Best: 0.79 | Avg: 0.50 | Worst: 0.21
+Gen 393 | Best: 0.79 | Avg: 0.50 | Worst: 0.17
+Gen 394 | Best: 0.90 | Avg: 0.50 | Worst: 0.17
+Gen 395 | Best: 0.79 | Avg: 0.50 | Worst: 0.15
+Gen 396 | Best: 0.79 | Avg: 0.50 | Worst: 0.08
+Gen 397 | Best: 0.79 | Avg: 0.50 | Worst: 0.17
+Gen 398 | Best: 0.71 | Avg: 0.50 | Worst: 0.21
+Gen 399 | Best: 0.71 | Avg: 0.50 | Worst: 0.15
+Gen 400 | Best: 0.71 | Avg: 0.50 | Worst: 0.21
+Gen 401 | Best: 0.79 | Avg: 0.50 | Worst: 0.19
+Gen 402 | Best: 0.96 | Avg: 0.50 | Worst: 0.21
+Gen 403 | Best: 0.83 | Avg: 0.50 | Worst: 0.25
+Gen 404 | Best: 0.75 | Avg: 0.50 | Worst: 0.17
+Gen 405 | Best: 0.92 | Avg: 0.50 | Worst: 0.12
+Gen 406 | Best: 0.81 | Avg: 0.50 | Worst: 0.21
+Gen 407 | Best: 0.83 | Avg: 0.50 | Worst: 0.17
+Gen 408 | Best: 0.85 | Avg: 0.50 | Worst: 0.17
+Gen 409 | Best: 0.81 | Avg: 0.50 | Worst: 0.19
+Gen 410 | Best: 0.79 | Avg: 0.50 | Worst: 0.06
+Gen 411 | Best: 0.83 | Avg: 0.50 | Worst: 0.10
+Gen 412 | Best: 0.83 | Avg: 0.50 | Worst: 0.23
+Gen 413 | Best: 0.83 | Avg: 0.50 | Worst: 0.10
+Gen 414 | Best: 0.71 | Avg: 0.50 | Worst: 0.23
+Gen 415 | Best: 0.79 | Avg: 0.50 | Worst: 0.21
+Gen 416 | Best: 0.75 | Avg: 0.50 | Worst: 0.21
+Gen 417 | Best: 0.83 | Avg: 0.50 | Worst: 0.08
+Gen 418 | Best: 0.75 | Avg: 0.50 | Worst: 0.21
+Gen 419 | Best: 0.79 | Avg: 0.50 | Worst: 0.12
+Gen 420 | Best: 0.83 | Avg: 0.50 | Worst: 0.17
+Gen 421 | Best: 0.73 | Avg: 0.50 | Worst: 0.00
+Gen 422 | Best: 0.79 | Avg: 0.50 | Worst: 0.21
+Gen 423 | Best: 0.88 | Avg: 0.50 | Worst: 0.21
+Gen 424 | Best: 0.73 | Avg: 0.50 | Worst: 0.21
+Gen 425 | Best: 0.83 | Avg: 0.50 | Worst: 0.17
+Gen 426 | Best: 0.75 | Avg: 0.50 | Worst: 0.21
+Gen 427 | Best: 0.75 | Avg: 0.50 | Worst: 0.12
+Gen 428 | Best: 0.75 | Avg: 0.50 | Worst: 0.25
+Gen 429 | Best: 0.77 | Avg: 0.50 | Worst: 0.21
+Gen 430 | Best: 0.75 | Avg: 0.50 | Worst: 0.21
+Gen 431 | Best: 0.81 | Avg: 0.50 | Worst: 0.17
+Gen 432 | Best: 0.75 | Avg: 0.50 | Worst: 0.19
+Gen 433 | Best: 0.79 | Avg: 0.50 | Worst: 0.21
+Gen 434 | Best: 0.85 | Avg: 0.50 | Worst: 0.17
+Gen 435 | Best: 0.94 | Avg: 0.50 | Worst: 0.08
+Gen 436 | Best: 0.83 | Avg: 0.50 | Worst: 0.12
+Gen 437 | Best: 0.79 | Avg: 0.50 | Worst: 0.19
+Gen 438 | Best: 0.90 | Avg: 0.50 | Worst: 0.17
+Gen 439 | Best: 0.81 | Avg: 0.50 | Worst: 0.12
+Gen 440 | Best: 0.88 | Avg: 0.50 | Worst: 0.21
+Gen 441 | Best: 0.79 | Avg: 0.50 | Worst: 0.08
+Gen 442 | Best: 0.83 | Avg: 0.50 | Worst: 0.15
+Gen 443 | Best: 0.79 | Avg: 0.50 | Worst: 0.12
+Gen 444 | Best: 0.83 | Avg: 0.50 | Worst: 0.17
+Gen 445 | Best: 0.73 | Avg: 0.50 | Worst: 0.17
+Gen 446 | Best: 0.79 | Avg: 0.50 | Worst: 0.17
+Gen 447 | Best: 0.79 | Avg: 0.50 | Worst: 0.25
+Gen 448 | Best: 0.83 | Avg: 0.50 | Worst: 0.12
+Gen 449 | Best: 0.75 | Avg: 0.50 | Worst: 0.17
+Gen 450 | Best: 0.75 | Avg: 0.50 | Worst: 0.29
+Gen 451 | Best: 0.81 | Avg: 0.50 | Worst: 0.23
+Gen 452 | Best: 0.88 | Avg: 0.50 | Worst: 0.21
+Gen 453 | Best: 0.79 | Avg: 0.50 | Worst: 0.21
+Gen 454 | Best: 0.71 | Avg: 0.50 | Worst: 0.12
+Gen 455 | Best: 0.83 | Avg: 0.50 | Worst: 0.15
+Gen 456 | Best: 0.79 | Avg: 0.50 | Worst: 0.17
+Gen 457 | Best: 0.81 | Avg: 0.50 | Worst: 0.12
+Gen 458 | Best: 0.75 | Avg: 0.50 | Worst: 0.15
+Gen 459 | Best: 0.83 | Avg: 0.50 | Worst: 0.27
+Gen 460 | Best: 0.79 | Avg: 0.50 | Worst: 0.29
+Gen 461 | Best: 0.71 | Avg: 0.50 | Worst: 0.23
+Gen 462 | Best: 0.79 | Avg: 0.50 | Worst: 0.21
+Gen 463 | Best: 0.83 | Avg: 0.50 | Worst: 0.25
+Gen 464 | Best: 0.79 | Avg: 0.50 | Worst: 0.31
+Gen 465 | Best: 0.75 | Avg: 0.50 | Worst: 0.15
+Gen 466 | Best: 0.75 | Avg: 0.50 | Worst: 0.23
+Gen 467 | Best: 0.83 | Avg: 0.50 | Worst: 0.15
+Gen 468 | Best: 0.81 | Avg: 0.50 | Worst: 0.21
+Gen 469 | Best: 0.77 | Avg: 0.50 | Worst: 0.21
+Gen 470 | Best: 0.81 | Avg: 0.50 | Worst: 0.04
+Gen 471 | Best: 0.85 | Avg: 0.50 | Worst: 0.19
+Gen 472 | Best: 0.83 | Avg: 0.50 | Worst: 0.08
+Gen 473 | Best: 0.79 | Avg: 0.50 | Worst: 0.12
+Gen 474 | Best: 0.81 | Avg: 0.50 | Worst: 0.12
+Gen 475 | Best: 0.75 | Avg: 0.50 | Worst: 0.12
+Gen 476 | Best: 0.85 | Avg: 0.50 | Worst: 0.17
+Gen 477 | Best: 0.79 | Avg: 0.50 | Worst: 0.08
+Gen 478 | Best: 0.79 | Avg: 0.50 | Worst: 0.25
+Gen 479 | Best: 0.79 | Avg: 0.50 | Worst: 0.12
+Gen 480 | Best: 0.79 | Avg: 0.50 | Worst: 0.12
+Gen 481 | Best: 0.83 | Avg: 0.50 | Worst: 0.19
+Gen 482 | Best: 0.79 | Avg: 0.50 | Worst: 0.21
+Gen 483 | Best: 0.88 | Avg: 0.50 | Worst: 0.17
+Gen 484 | Best: 0.88 | Avg: 0.50 | Worst: 0.17
+Gen 485 | Best: 0.79 | Avg: 0.50 | Worst: 0.12
+Gen 486 | Best: 0.88 | Avg: 0.50 | Worst: 0.12
+Gen 487 | Best: 0.83 | Avg: 0.50 | Worst: 0.21
+Gen 488 | Best: 0.71 | Avg: 0.50 | Worst: 0.15
+Gen 489 | Best: 0.79 | Avg: 0.50 | Worst: 0.00
+Gen 490 | Best: 0.79 | Avg: 0.50 | Worst: 0.25
+Gen 491 | Best: 0.83 | Avg: 0.50 | Worst: 0.12
+Gen 492 | Best: 0.73 | Avg: 0.50 | Worst: 0.21
+Gen 493 | Best: 0.83 | Avg: 0.50 | Worst: 0.04
+Gen 494 | Best: 0.75 | Avg: 0.50 | Worst: 0.12
+Gen 495 | Best: 0.71 | Avg: 0.50 | Worst: 0.12
+Gen 496 | Best: 0.83 | Avg: 0.50 | Worst: 0.21
+Gen 497 | Best: 0.83 | Avg: 0.50 | Worst: 0.31
+Gen 498 | Best: 0.79 | Avg: 0.50 | Worst: 0.08
+Gen 499 | Best: 0.77 | Avg: 0.50 | Worst: 0.19
+Final merged population size: 56
+
+Optimization Complete. View /users/sc23ksk/nonaga-algorithm/GA results/ga_gen_500.csv for generation logs.
+All scripts have completed.

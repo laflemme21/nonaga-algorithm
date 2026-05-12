@@ -1,0 +1,31 @@
+ERROR: Could not open requirements file: [Errno 2] No such file or directory: 'requirements.txt'
+lto-wrapper: warning: using serial compilation of 3 LTRANS jobs
+NonagaGame/AI_core.c:708:12: warning: ‘ai_neighbors_restrain_piece’ defined but not used [-Wunused-function]
+  708 | static int ai_neighbors_restrain_piece(const int *nq, const int *nr, int neighbor_count)
+      |            ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+NonagaGame/AI_core.c:257:12: warning: ‘ai_contains_coord2_set’ defined but not used [-Wunused-function]
+  257 | static int ai_contains_coord2_set(
+      |            ^~~~~~~~~~~~~~~~~~~~~~
+NonagaGame/AI_core.c:224:13: warning: ‘ai_coordset_add’ defined but not used [-Wunused-function]
+  224 | static void ai_coordset_add(AiCoordSet *set, int q, int r)
+      |             ^~~~~~~~~~~~~~~
+NonagaGame/AI_core.c:215:13: warning: ‘ai_coordset_clear’ defined but not used [-Wunused-function]
+  215 | static void ai_coordset_clear(AiCoordSet *set)
+      |             ^~~~~~~~~~~~~~~~~
+lto-wrapper: warning: using serial compilation of 3 LTRANS jobs
+lto-wrapper: warning: using serial compilation of 2 LTRANS jobs
+lto-wrapper: warning: using serial compilation of 3 LTRANS jobs
+NonagaGame/AI_core.c:708:12: warning: ‘ai_neighbors_restrain_piece’ defined but not used [-Wunused-function]
+  708 | static int ai_neighbors_restrain_piece(const int *nq, const int *nr, int neighbor_count)
+      |            ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+NonagaGame/AI_core.c:257:12: warning: ‘ai_contains_coord2_set’ defined but not used [-Wunused-function]
+  257 | static int ai_contains_coord2_set(
+      |            ^~~~~~~~~~~~~~~~~~~~~~
+NonagaGame/AI_core.c:224:13: warning: ‘ai_coordset_add’ defined but not used [-Wunused-function]
+  224 | static void ai_coordset_add(AiCoordSet *set, int q, int r)
+      |             ^~~~~~~~~~~~~~~
+NonagaGame/AI_core.c:215:13: warning: ‘ai_coordset_clear’ defined but not used [-Wunused-function]
+  215 | static void ai_coordset_clear(AiCoordSet *set)
+      |             ^~~~~~~~~~~~~~~~~
+lto-wrapper: warning: using serial compilation of 3 LTRANS jobs
+lto-wrapper: warning: using serial compilation of 2 LTRANS jobs

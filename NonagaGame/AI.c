@@ -4,20 +4,18 @@
 {
     "distutils": {
         "depends": [
-            "NonagaGame\\AI_core.h",
-            "NonagaGame\\nonaga_bitboard.h"
+            "NonagaGame/AI_core.h",
+            "NonagaGame/nonaga_bitboard.h"
         ],
         "extra_compile_args": [
-            "/Ox",
-            "/Ob2",
-            "/Ot",
-            "/GL",
-            "/DNDEBUG"
+            "-O3",
+            "-march=native",
+            "-flto",
+            "-fomit-frame-pointer",
+            "-DNDEBUG"
         ],
         "extra_link_args": [
-            "/LTCG",
-            "/OPT:REF",
-            "/OPT:ICF"
+            "-flto"
         ],
         "include_dirs": [
             "NonagaGame"
