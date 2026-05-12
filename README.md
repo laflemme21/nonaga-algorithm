@@ -23,6 +23,20 @@ From the repo root:
 
 Outputs are written to `GA results/my_run.csv`. Run `python ga_framework/main.py --help` for tuning options.
 
+## Run the tournament (Slurm)
+
+From the repo root:
+
+`python tournament/setup_tournament.py`
+
+Update the array range in `Aire/run_tournament.sh`, then submit:
+
+`sbatch Aire/run_tournament.sh`
+
+After the array finishes:
+
+`python tournament/aggregate_tournament.py`
+
 ## Profiling
 
 Game:
@@ -47,5 +61,6 @@ Note: Profiling the underlying C functions might require using pyspy, running it
 - benchmark_version/ - version-to-version benchmark runner and results.
 - GA results/ - generated GA run logs (CSV).
 - Aire/ - Slurm/HPC batch scripts for automated runs.
+- tournament/ - round-robin setup, worker, and aggregation scripts.
 - build/ - Cython build artifacts.
 - legacy files/ - archived code and older experiments.
