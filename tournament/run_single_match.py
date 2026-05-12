@@ -1,3 +1,4 @@
+from tournament.evaluate_parameters import load_parameters, run_match
 import argparse
 import csv
 import json
@@ -5,8 +6,6 @@ import os
 import sys
 
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
-
-from tournament.evaluate_parameters import load_parameters, run_match
 
 
 def load_task(schedule_path: str, task_id: int) -> tuple[int, int, int]:

@@ -8,14 +8,23 @@ import concurrent.futures
 from typing import List
 
 # Ensure NonagaGame is in the path context so models import cleanly
-my_nonaga_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "NonagaGame"))
+my_nonaga_path = os.path.abspath(os.path.join(
+    os.path.dirname(__file__), "..", "NonagaGame"))
 if my_nonaga_path not in sys.path:
     sys.path.append(my_nonaga_path)
 
-from nonaga_constants import RED, BLACK
-from nonaga_logic import NonagaLogic
-from AI import AI
-from compiler import compile_cython_files
+try:
+    from nonaga_constants import RED, BLACK
+    from nonaga_logic import NonagaLogic
+    from AI import AI
+except ModuleNotFoundError:
+    from compiler import compile_cython_files
+
+    compile_cython_files()
+    from nonaga_constants import RED, BLACK
+    from nonaga_logic import NonagaLogic
+    from AI import AI
+
 
 def _has_any_destinations(move_map: object) -> bool:
     """Return True when a move map contains at least one legal destination."""
