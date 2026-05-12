@@ -8,7 +8,7 @@ import concurrent.futures
 from typing import List
 
 # Ensure NonagaGame is in the path context so models import cleanly
-my_nonaga_path = os.path.abspath("NonagaGame")
+my_nonaga_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "NonagaGame"))
 if my_nonaga_path not in sys.path:
     sys.path.append(my_nonaga_path)
 

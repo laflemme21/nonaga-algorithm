@@ -1,4 +1,3 @@
-from tournament.evaluate_parameters import run_match
 import argparse
 import csv
 import itertools
@@ -7,6 +6,8 @@ import os
 import sys
 
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
+
+from tournament.evaluate_parameters import run_match
 
 
 def _read_rows(path):
