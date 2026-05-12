@@ -1,0 +1,8 @@
+nohup: ignoring input
+Running pre-processing and generating match schedule...
+Traceback (most recent call last):
+  File "/users/sc23ksk/nonaga-algorithm/tournament/rr_from_ga_metrics.py", line 1, in <module>
+    from evaluate_parameters import run_match
+  File "/users/sc23ksk/nonaga-algorithm/tournament/evaluate_parameters.py", line 15, in <module>
+    from nonaga_constants import RED, BLACK
+ModuleNotFoundError: No module named 'nonaga_constants'

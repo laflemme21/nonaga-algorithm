@@ -7,12 +7,16 @@
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=1
 #SBATCH --mem=2G
+#SBATCH --mail-type=BEGIN,END
+#SBATCH --mail-user=sc23ksk@leeds.ac.uk
+
 
 set -euo pipefail
 
 module load miniforge/24.7.1
 
-cd "$SLURM_SUBMIT_DIR"
+cd "${SLURM_SUBMIT_DIR:-$PWD}"
+cd ..
 
 GA_FILES=("GA results/ga_gen_20.csv" "GA results/ga_gen_100.csv" "GA results/ga_gen_200.csv" "GA results/ga_gen_500.csv")
 EVERY=${EVERY:-2}
