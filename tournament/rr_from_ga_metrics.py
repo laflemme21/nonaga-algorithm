@@ -1,4 +1,4 @@
-from tournament.evaluate_parameters import run_match
+from evaluate_parameters import run_match
 import argparse
 import csv
 import itertools

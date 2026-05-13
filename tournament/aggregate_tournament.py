@@ -1,4 +1,4 @@
-from tournament.evaluate_parameters import load_parameters
+from evaluate_parameters import load_parameters
 import argparse
 import csv
 import glob

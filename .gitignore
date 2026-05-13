@@ -19,3 +19,4 @@ CppProperties.json
 *.pdb
 *.html
 .tmp*/
+match_*_result.json
